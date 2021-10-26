@@ -1,0 +1,181 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+    a:hover{
+        color: black;
+    }
+
+select, input{
+    border: 1px solid;
+}
+
+/* TABLAA */
+.form {
+    padding-bottom: 2rem;
+  }
+
+  .form>h1{
+      color: black;
+  }
+  .title{
+    margin-top: 3%;
+    text-align: center;
+    font-size: 50px;
+  }
+  #success{
+    margin-right: -1%;
+    max-width: 730px;
+    width: 100%;
+    z-index: 4;
+  }
+  #messag{
+    margin-bottom: 0;
+  }
+  #mensajes{
+    padding: 13px 5%;
+    font-size: 19px;
+  }
+  .messages{
+    /* display: none; */
+    color: #073821;
+    background-color: #d1e7dd;
+      border-color: #badbcc;
+    border-radius: 7px;
+  }
+  .error{
+    color: #851721;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+  }
+
+  .div-tab{
+    margin: 0.7rem 0.2rem;
+    margin-top: 0.7rem;
+    margin-right: 0.2%;
+  }
+  .div-tab::-webkit-scrollbar-thumb  {
+    background: rgb(59,70,81,84%);
+    border-radius: 8px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  }
+  .div-tab::-webkit-scrollbar {
+    height: 12px;
+    background-color: #aaa; /* or add it to the track */
+  }
+
+  .table thead th {
+    vertical-align: middle;
+}
+
+  .table-cli{
+    background-color: #fbfdfc;
+    color: rgba(26, 24, 24, 0.89);
+  }
+  .table-cli th{
+    padding: 5px 13px;
+  }
+  .table-cli td{
+    text-align: left;
+    padding: 8px;
+  }
+  .table-cli thead tr {
+    background-color: #19181B;
+    color: rgba(235, 228, 228, 0.89);
+  }
+
+  .table-cli tbody tr:nth-child(odd) {
+      background-color: transparent;
+  }
+  .table-cli tbody tr:nth-child(even) {
+      background-color:#d8e2d7de ;
+  }
+
+  .buttonN{
+    position: absolute;
+    right: 1rem;
+    top: -3.8rem;
+    color: #212529;
+    border: 1px solid #0d1722;
+    border-radius: 3px;
+    padding: 5px 12px;
+    font-weight: 400;
+    background-color: transparent;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  .buttonN:hover{
+    background-color: #06242c;
+    color: #fff;
+  }
+  #editid,#deletid{
+    color: #212529;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  #deletid{background-color: rgb(123, 204, 148);}
+  #editid{background-color: rgb(224, 217, 148);}
+    #deletid:hover{background-color: rgb(112, 179, 133);color: #070707;}
+    #editid:hover{background-color: rgb(202, 195, 126);color: #070707;}
+
+
+.imagen{
+    max-height: 10px;
+    padding: 2px 4px;
+}
+.imagen img{
+    max-height: 103px;
+}
+
+
+
+
+
+
+/* DATATABLE */
+
+.table:not(.table-sm) thead th{
+    position: relative;
+}
+
+/* table.table thead .sorting:before {
+    right: 0.5em;
+    color:black;
+    font-size: 15px;
+}
+
+table.table thead .sorting:after {
+    right: 0.1em;
+    color:black;
+    font-size: 15px;
+} */
+
+table.table thead .sorting:before, table.table thead .sorting:after,
+table.table thead .sorting_asc:before, table.table thead .sorting_asc:after,
+table.table thead .sorting_desc:before, table.table thead .sorting_desc:after,
+table.table thead .sorting_asc_disabled:before, table.table thead .sorting_asc_disabled:after,
+table.table thead .sorting_desc_disabled:before, table.table thead .sorting_desc_disabled:after {
+    position: absolute;
+    top: 2.1em;
+    display: block;
+    opacity: 0.53;
+    cursor: pointer;
+    right: 0.7em;
+}
+
+
+table.dataTable thead>tr>th {
+    padding-right: 30px;
+}
+
+

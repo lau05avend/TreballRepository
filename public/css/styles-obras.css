@@ -1,0 +1,278 @@
+/*    CONTENT    */
+
+/* filtro de obras */
+.cont-estado{
+  margin-top: 4%;
+  margin-left: 3%;
+  margin-bottom: 30px;
+  padding: 0;
+  height: 100%;
+  position: static;
+}
+.butt-status{
+  float: left;
+  width: 62%;
+}
+.filter-o{
+  float: right;
+  width: 35%;
+}
+.img-search{
+  width: 6%;
+  float: right;
+  margin-right: 6%;
+}
+.input-o{
+  height: 32px;
+  width: 84%;
+  border: 1px solid rgb(48, 45, 45);
+  border-radius: 5px;
+  padding-left: 5px;
+}
+
+/* obras contenedores */
+.cont-o{
+    background-color: rgba(203, 211, 208, 0.808);
+    height: auto;
+    float: left;
+    padding: 3% 3%;
+    margin-top: 1%;
+    margin-bottom: 5%;
+    display: flex;
+    position: static;
+    width: 100%;
+}
+
+.obra-containers{
+  display: block;
+  width: 32%;
+  height: auto;
+  margin-left: 1%;
+  margin-top: 1%;
+  /* background-color: rgb(209, 152, 162); */
+  padding: 12px 10px;
+  /* border: 1px solid rgb(51, 49, 49); */
+}
+
+.div-obras{
+  background-color: rgb(183, 172, 194);
+  border: 1px solid black;
+  margin-bottom: 4%;
+  border-radius: 6px;
+  cursor: move;
+}
+  /* estilos drag-drop */
+  .div-obras.selected{
+    transform: scale(1.02) rotate(-0.6deg);
+    box-shadow: 0px 0px 15px rgb(44, 42, 42);
+  }
+  .div-obras.fantasma{
+    border: 2px dotted #000;
+  }
+  .div-obras.drag{
+    opacity: 0;
+  }
+
+.title-div{
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 37px;
+  width: 100%;
+  margin-bottom: 2.5%;
+  padding: 3px 12px;
+  flex-direction: row;
+  background-color: rgb(90, 90, 146);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 4px 8px;
+  position: relative;
+}
+.title-div>h3{
+  float: left;
+  position: absolute;
+  color: #1b1724;
+  font-size: 25px;
+}
+.img-drag{
+  width: 7%;
+  float: right;
+  right: 0;
+  margin-right: 3%;
+  margin-top: 3px;
+  position: absolute;
+}
+.content-div{
+  height: 69%;
+  bottom: 0;
+  padding: 0 2%;
+}
+
+.but-reg{
+    margin-top: -2%;
+    margin-bottom: 5%;
+}
+
+/* FORMULARIO */
+.form-ob{
+    margin-top: 2%;
+    background-color: rgb(214, 209, 209);
+    padding:5% 2% 8%;
+    border-radius: 7px;
+}
+div#form {
+    margin: 3% 4%;
+  }
+  .form-ob h1{
+    text-align: center;
+    margin-top: 1%;
+    color: #000;
+    font-size: 45px;
+    margin-bottom: 6%;
+  }
+  .form-ob label{
+      color: #000;
+  }
+  .formula p input, .inpt{
+    float: right;
+    width: 55%;
+  }
+  .formula p{
+    margin-right: 19%;
+    margin-left: 15%;
+    margin-bottom: 30px;
+  }
+  .tipo{
+    width: 39%;
+  }
+  .formula p label{
+    margin-bottom: 3px;
+  }
+  .save{
+    margin-left: 43%;
+    margin-top: 4%;
+    background-color: #0b3529;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 9px 31px;
+    font-weight: 400;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  .save:hover{
+    background-color: #08271f;
+  }
+
+  .buttonN{
+      margin-bottom: 5%;
+  }
+
+/* dialog */
+
+.dialog{
+    justify-content: center;
+    margin-left: 10%;
+}
+
+
+/* TABLA */
+
+a{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    color: black;
+}
+.butt{
+    padding: 5% 6%;
+    border-radius: 4px;
+}
+
+
+
+/* PRUEBA ----------------- */
+.title-o{
+    text-align: center;
+    /* font-size: 64px; */
+    color: #3b3646;
+    font-family: var(--bs-font-sans-serif);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+
+
+.contOb{
+    background-color: rgba(177, 213, 198, 81%);
+    padding: 3% 3.5%;
+    margin: 0 20px;
+    border-radius: 5px;
+    margin-bottom: 5%;
+    flex-shrink: 1;
+}
+
+.obra-div{
+    width: 265px;
+    padding: 1.58rem 1.98rem 2.25rem 1.98rem;
+    left: 0;
+    top: 0;
+    float: left;
+    height: 25.22rem;
+    position: relative;
+    margin:0.53rem;
+}
+
+.obra-div.selected{
+    transform: scale(1.02) rotate(-0.6deg);
+    box-shadow: 0px 0px 15px rgb(44, 42, 42);
+  }
+  .obra-div.fantasma{
+    border: 2px dotted #000;
+  }
+  .obra-div.drag{
+    opacity: 0;
+  }
+
+.title_card{
+    width: 100%;
+    height: 100px;
+    flex:2;
+    overflow: hidden;
+    padding-top: 1.3rem!important;
+}
+.title_card>h1{
+    font-size: 118%;
+    line-height:1.2;
+    font-family: Arial, sans-serif;
+    color: rgb(80, 78, 78);
+}
+.title_card>p{
+    color: #6923D0;
+}
+
+.showo{
+    max-width: 890px;
+}
+
+.title_info{
+    position: absolute;
+    bottom: 30px;
+
+}
+.title_info>button{
+    bottom: 0;
+}
+
+.dirbottom{
+    margin-bottom: 5px;
+    border-bottom: 1px solid #dee2e6;
+}
+.advise{
+    position: fixed;
+    z-index: 1;
+    left:0;
+    width: 29.30rem;
+    height: auto;
+    top:7.38rem;
+    flex: 1;
+}
