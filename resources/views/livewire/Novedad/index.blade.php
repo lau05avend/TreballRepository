@@ -2,15 +2,17 @@
 <link rel="stylesheet" href="{{ asset('css/styles-general.css'); }}">
 @endsection
 
+@section('title','Novedades | Treball')
+
 <div class="shadow-2xl pt-8 px-5 bg-white">
 
     <!--========== CONTENT ==========-->
 
     <div>
-        @if ($openModal)
+        {{-- @if ($openModal) --}}
             @include('livewire.novedad.create')
             @include('livewire.novedad.edit')
-        @endif
+        {{-- @endif --}}
     </div>
     @if (session('message'))
     <div id="success"
@@ -32,8 +34,10 @@
     @endif
 
     <div class="form">
-
+        {{-- <x-select2 class="inpt form-control" id="actividad_id" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
+        <x-select2 class="inpt form-control" id="tipo_novedad_id" modalTipo="CreateNovedad" name="novedad.tipo_novedad_id" multiple wire:model="novedad.tipo_novedad_id" :options="$Tiponov"></x-select2> --}}
         <h1 class="text-center mt-3">Novedad</h1><br>
+        {{-- {{ Auth::user()->cargo()->get()->pluck('id')[0] }} --}}
         <div class="position-relative clear-both mt-6 pb-4">
             <div class="inline-block w-full">
                 <div class="float-left pl-6">

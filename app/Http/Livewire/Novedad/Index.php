@@ -8,8 +8,10 @@ use App\Models\Actividad;
 use App\Models\Cliente;
 use App\Models\Novedad;
 use App\Models\TipoNovedad;
+use App\Models\User;
 use App\Models\Usuario;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,6 +32,7 @@ class Index extends Component
     public $users, $idN, $filterState;
     public $openDelete = false, $openModal = false;
     public $tipoM;
+    public User $userA;
 
     public function updatingSearch(){
         $this->resetPage();
@@ -46,12 +49,14 @@ class Index extends Component
         $this->sortDirection = 'desc';
         $this->novedad = new Novedad();
         $this->filterState = 'Active';
+        $this->userA = Auth::user();
     }
 
     public function render()
     {
-        $TipoNov=TipoNovedad::all()->sortBy('id');
-        $Acti=Actividad::all()->sortBy('id');
+        // $TipoNov=TipoNovedad::all()->sortBy('id');
+        $TipoNov=TipoNovedad::pluck('NombreTipoN','id')->toArray();
+        $Acti=Actividad::pluck('title','id')->toArray();
         $Usu=Usuario::all()->sortBy('id');
         $Cli=Cliente::all()->sortBy('id');
 
@@ -110,8 +115,8 @@ class Index extends Component
             'novedad.DescripcionN' => 'required',
             'novedad.tipo_novedad_id' => 'required',
             'novedad.actividad_id' => 'required',
-            'novedad.empleado_id' => 'nullable',
-            'novedad.cliente_id' => 'nullable'
+            // 'novedad.empleado_id' => 'nullable',
+            // 'novedad.cliente_id' => 'nullable'
         ];
     }
 
@@ -122,13 +127,18 @@ class Index extends Component
             'DescripcionN' => 'Descripción',
             'tipo_novedad_id'=> 'Tipo de Novedad',
             'actividad_id'=> 'Actividad',
-            'empleado_id' => 'Empleado',
-            'cliente_id' => 'Cliente',
+            // 'empleado_id' => 'Empleado',
+            // 'cliente_id' => 'Cliente',
         ];
     }
 
     public function store(){
         $this->validate();
+        if ($this->userA->RolExterno == 'empleado') {
+            $this->novedad->empleado_id = $this->userA->cargo()->get()->pluck('id')[0];
+        }else if ($this->userA->RolExterno == 'cliente'){
+            $this->novedad->cliente_id = $this->userA->cargo()->get()->pluck('id')[0];
+        }
         $this->novedad->save();
         $this->cerrarmodal('#CreateNovedad');
         session()->flash('message', 'Novedad satisfactoriamente creada.');

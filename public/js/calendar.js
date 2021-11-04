@@ -1,17 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    
+
     function getData(url){
         var xhReq = new XMLHttpRequest();
         xhReq.open("GET", url, false);
         xhReq.send(null);
         return JSON.parse(xhReq.responseText);
     }
-    var a =  getData(URLp+'/calendarall').map(({ id:id, title:title, fase_tarea_id: resourceId, start:start, end:end,  fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id }) => ({
-            id, title, resourceId, start, end,  fase_tarea_id, estado_actividad_id, obra_id
-        })
-    );
-    console.log(a);
-
+    var attr = [];
 
     // =========== Calendario ===========
 
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         buttonText: {
             resourceTimelineWeek:'Actividades'
         },
-        initialView: 'resourceTimelineWeek',
+        initialView: 'timeGridWeek',
         resourceAreaHeaderContent: 'Fase',
         nowIndicator: true,
         aspectRatio: 1.8,
@@ -44,8 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         slotMaxTime: '20:30:00',
         slotDuration: '00:30:00',
         slotLabelInterval: 30,
-        minTime: "07:00",
-        maxTime: "20:30",
+        eventMaxStack: 2,
         views:{
             dayGridMonth:{
                 dayHeaderFormat:{ weekday: 'long'},
@@ -56,14 +52,22 @@ document.addEventListener('DOMContentLoaded', function() {
             timeGridDay:{
                 titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
             },
+            timeGrid: {
+                dayMaxEventRows: 3 // adjust to 6 only for timeGridWeek/timeGridDay
+            },
             listWeek:{
                 displayEventTime: true,
+            },
+            resourceTimelineWeek: {
+                slotDuration: '00:30:00',
+                slotLabelInterval: {minutes: 30},
+                eventMaxStack: true,
             }
         },
         businessHours: {
-            dow: [1, 2, 3, 4, 5, 6], // Monday - Friday
-            start: '07:00',
-            end: '19:00'
+            daysOfWeek: [1, 2, 3, 4, 5, 6], // Monday - Friday
+            startTime: '07:00',
+            endTime: '19:00'
         },
         /*validRange:
             function(currentDate) {
@@ -106,54 +110,74 @@ document.addEventListener('DOMContentLoaded', function() {
         ),
         eventSources: [
             {
-                events: getData(URLp+'/calendarall').map(({ id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id }) => ({
-                    id,
-                    title,
-                    resourceId,
-                    start,
-                    end,
-                    estado_actividad_id,
-                    fase_tarea_id,
-                    obra_id
-                })
-                ),
-                method: 'GET',
+                events:
+                function (info, successCallback, failureCallback) {
+                    $.ajax({
+                        url: URLp+'/calendarall/'+numObra,
+                        type: 'GET',
+                        success: function (response) {
+                            var events = [];
+                            console.log(response);
+                            if (response.length > 0) {
+                                $.each(response, function (i, v) {
+                                    events.push({
+                                        id: v.id,title: v.title,start: v.start,end: v.end,resourceId: v.fase_tarea_id,estado_actividad_id: v.estado_actividad_id,obra_id: v.obra_id
+                                    });
+                                });
+                            } else {
+                                console.log('No hay actividades aún.')
+                            }
+                            return successCallback(events);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    })},
+                // getData(URLp+'/calendarall/'+numObra).map(({ id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id }) => ({
+                //     id,
+                //     title,
+                //     resourceId,
+                //     start,
+                //     end,
+                //     estado_actividad_id,
+                //     fase_tarea_id,
+                //     obra_id
+                // })
+                // ),
+                // method: 'GET',
                 color: 'rgb(169 208 144)',
                 borderColor: 'rgb(112 177 68)',
                 textColor: 'black' // a non-ajax option
             }
         ],
-        select:
-      function(start,end){
-          console.log(start);
-          console.log(end);
-          // var selDate = new Date(start);
-          // add your function
-    },
-
-        dateClick: function(info){
+        selectMirror: true,
+        select: function(start,end){
             form.reset();
-
-            var date = new Date(Date.parse(info.dateStr)).toDateString().slice(0, 16)
-            console.log(info)
-            console.log(date)
-            form.start.value = date;
-            form.end.value = date;
-
+            // var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0, 16)
+            form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
+            form.end.value = moment(start.endStr).format('YYYY-MM-DDTHH:mm:ss');
+            form.obra_id.value = numObra;
+            if(start.resource){
+                form.fase_tarea_id.value = start.resource.id
+            }
             $('#evento').modal("show");
+
+        //   console.log(start);
         },
+
         eventClick:function (info){
             var evento = info.event;
-            axios.get(URLp+"/calendar/"+evento.id+"/edit").then((repuesta) => {  //acceder a una url
-                $('#evento').modal("show");
+            // console.log(evento)
+            axios.get(URLp+'/obras/'+numObra+'/cronograma/'+evento.id+"/edit").then((repuesta) => {  //acceder a una url
                 form.id.value = repuesta.data.id;
                 form.title.value = repuesta.data.title;
                 form.description.value = repuesta.data.DescripcionActividad;
                 form.start.value = repuesta.data.start;
                 form.end.value = repuesta.data.end;
-                form.estado_actividad_id.value = repuesta.data.estado_actividad_id,
-                form.fase_tarea_id.value = repuesta.data.fase_tarea_id,
-                form.obra_id.value = repuesta.data.obra_id
+                form.estado_actividad_id.value = repuesta.data.estado_actividad_id;
+                form.fase_tarea_id.value = repuesta.data.fase_tarea_id;
+                form.obra_id.value = repuesta.data.obra_id;
+                $('#evento').modal("show");
             }). catch(
             error => {
                 if(error.response){
@@ -161,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         },
-
 
 
         //parra probaaar
@@ -174,7 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
         eventDrop: function(event, delta) {
             console.log(event)
             console.log(event.title)
-            alert(event.title + ' was moved ' + delta + ' days\n' + '(should probably update your database)');
+            console.log(event.event.title + ' was moved ' + event.delta + ' days\n' + '(should probably update your database)');
+            console.log(event.delta)
         },
     });
 
@@ -183,23 +207,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     $("#btnSave").on('click',function(){
         const datos = new FormData(form);
-        console.log(datos);
-        axios.post(URLp+"/calendar/", datos).then(    //acceder a una url
-            (repuesta) => {
-                // calendar.refetchEvents();  // actualizar el calendario
+        axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
+            (respuesta) => {
+                console.log(respuesta)
+                calendar.refetchEvents();  // actualizar el calendario
                 $('#evento').modal("hide");
-                $("#calendar").fullCalendar('renderEvents', { id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id});
+                Swal.fire({
+                    title: 'Bien!',
+                    text: 'Actividad guardada satisfactoriamente.',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                })
+                // $("#calendar").fullCalendar('renderEvents', { id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id});
         }). catch(
             error => {
                 if(error.response){
-                    console.log(error.response.data);
+                    $.each(error.response.data.errors, function name(attribute,message) {
+                        // if($('#'+attribute)){
+
+                        // }
+                        // else{
+                            $('#'+attribute+'Message').html(message[0]);
+                        // }
+                        attr.push('#'+attribute);
+                    })
+                    console.log(attr)
+                    console.log(error.response.data.errors);
                 }
             }
         )
     });
+    $(attr).each(function(atrr){
+        $(atrr).on('blur', function(){
+            // if($(this).val().trim() != "") {
+            //     $('#'+attr+'Message').text() = '';
+            // }
+            alert(this)
+        })
+    })
     $("#btnEliminar").on('click',function(){
         const datos = new FormData(form);
-        axios.post(URLp+"/calendar/"+datos.id+"/delete").then(    //acceder a una url
+        axios.post(URLp+'/obras/'+numObra+'/cronograma'+datos.id+"/delete").then(    //acceder a una url
             (repuesta) => {
                 calendar.refetchEvents();  // actualizar el calendario
                 $('#evento').modal("hide");
@@ -241,6 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     calendar.render();
-
+    calendar.refetchEvents();
 
 });

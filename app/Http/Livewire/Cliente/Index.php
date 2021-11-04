@@ -6,6 +6,7 @@ use App\Http\Livewire\WithSorting;
 use App\Models\Cliente;
 use App\Models\TipoCliente;
 use App\Models\TipoIdentificacion;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -102,6 +103,7 @@ class Index extends Component
 
     public function store(){
         $this->validate();
+        $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
         $this->cliente->save();
         $this->cerrarmodal('#CreateCliente');
         session()->flash('message', 'Cliente creado satisfactoriamente.');
@@ -117,6 +119,10 @@ class Index extends Component
 
     public function update(){
         $this->validate();
+        $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
+        if(!isset($this->cliente->fotoL)){
+            $this->cliente->FotoL = 'https://ui-avatars.com/api/?name='+$this->cliente->NombreCC+'&color=7F9CF5&background=EBF4FF';
+        }
         $this->cliente->save();
         $this->cerrarmodal('#EditCliente');
         session()->flash('message', 'Cliente actializado satisfactoriamente.');

@@ -1,14 +1,15 @@
 <div>
-    <div wire:ignore class="w-full">
+    <div wire:ignore style="max-width: 100%;" >
         @if(isset($attributes['multiple']))
             <div id="{{ $attributes['id'] }}-btn-container" class="mb-3">
                 <button type="button" class="btn btn-info btn-sm select-all-button">Seleccionar Todos</button>
                 <button type="button" class="btn btn-info btn-sm deselect-all-button">Deseleccionar todos</button>
             </div>
         @endif
-        <select class="select2 form-control" data-placeholder="{{ __('Select your option') }}" {{ $attributes }}>
+        {{-- {{ $attributes['modalTipo'] }} --}}
+        <select class="select2 form-control" data-placeholder="{{ __('Seleccione su opción') }}" {{ $attributes }}>
             @if(!isset($attributes['multiple']))
-                <option></option>
+                <option>Seleccione</option>
             @endif
             @foreach($options as $key => $value)
                 <option value="{{ $key }}">{{ $value }}</option>
@@ -17,9 +18,15 @@
     </div>
 </div>
 
-@push('scripts')
+@push('jss')
 <script>
+        // $("#tipo_novedad_id option[value=2]").attr('selected', 'selected');
+        // $('#tipo_novedad_id').on('change',function(){
+        //     console.log($('#tipo_novedad_id').find(":selected").text());
+        // });
+
     document.addEventListener("livewire:load", () => {
+        console.log('aaaaa');
         let el = $('#{{ $attributes['id'] }}')
         let buttonsId = '#{{ $attributes['id'] }}-btn-container'
 
@@ -38,24 +45,27 @@
         function initSelect () {
             initButtons()
             el.select2({
-                placeholder: '{{ __('Select your option') }}',
-                allowClear: !el.attr('required')
+                dropdownParent: $('#{{ $attributes['modalTipo'] }}'),
+                placeholder: '{{ __('Seleccione su opción') }}',
+                allowClear: !el.attr('required'),
+                
             })
         }
 
-    initSelect()
-
-    Livewire.hook('message.processed', (message, component) => {
         initSelect()
-    });
 
-    el.on('change', function (e) {
-        let data = $(this).select2("val")
-        if (data === "") {
-            data = null
-        }
-@this.set('{{ $attributes['wire:model'] }}', data)
+        Livewire.hook('message.processed', (message, component) => {
+            initSelect()
+        });
+
+        el.on('change', function (e) {
+            let data = $(this).select2("val")
+            if (data === "") {
+                data = null
+            }
+            @this.set('{{ $attributes['wire:model'] }}', data)
+
+        });
     });
-});
 </script>
 @endpush

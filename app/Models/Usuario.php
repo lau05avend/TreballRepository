@@ -11,6 +11,10 @@ class Usuario extends Model
     protected $guarded = [];
     public $table = "empleados";
 
+    public function User(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     //relacion uno a muchos
     public function Rol(){
         return $this->belongsTo(Rol::class);

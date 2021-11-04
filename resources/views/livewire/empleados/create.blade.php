@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="rol_id">Rol de Usuario:</label>
+                        <label for="rol_id">Rol de Empleado:</label>
                         <select class="form-select" wire:model="empleado.rol_id" class="inpt" name="rol_id" id="rol_id">
                             <option value="">Seleccione</option>
                             @forelse ($rol as $rol)

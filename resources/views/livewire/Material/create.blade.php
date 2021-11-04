@@ -23,6 +23,7 @@
                     </div><br>
                     <div class="form-group">
                         <label for="color_id">Color del Material:</label>
+                        <x-select2 class="form-control" id="color_id" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
                         <select class="form-select" wire:model="material.color_id" class="inpt" name="color_id" id="color_id">
                             <option value="">Seleccione</option>
                             @forelse ($color as $cl)

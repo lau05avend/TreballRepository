@@ -1,5 +1,5 @@
-<div wire:ignore.self class="modal fade overflow-scroll" id="CreateNovedad" data-backdrop="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog showo" role="document">
+<div wire:ignore.self class="modal fade overflow-scroll" id="CreateNovedad" data-backdrop="modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog showo" style="max-width: 95%; width: 730px;" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Crear Nuevo Novedad</h5>
@@ -29,11 +29,11 @@
                     <div class="form-group">
                         <label for="tiponov">Tipo Novedad:</label>
                         <select class="inpt form-select" wire:model="novedad.tipo_novedad_id" name="tipo_novedad_id" id="tiponov">
-                            <option value="">Seleccione</option>
-                            @forelse ($Tiponov as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreTipoN }}</option>
+                            <option value="">Seleccione su opcion</option>
+                            @forelse($Tiponov as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
                             @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
+                                <option value="">Ups! No hay disponibles. </option>
                             @endforelse
                         </select>
                         @error('novedad.tipo_novedad_id')<span class="error text-danger">{{ $message }}</span> @enderror
@@ -47,18 +47,19 @@
 
                     <div class="form-group">
                         <label for="Activity">Actividad:</label>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="actividad_id" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
                         <select class="inpt form-select" name="actividad_id" wire:model="novedad.actividad_id" id="Activity">
-                            <option value="">Seleccione</option>
-                            @forelse ($Act as $act)
-                                <option value="{{ $act->id }}">{{ $act->title }}</option>
+                            <option value="">Seleccione fijo</option>
+                            @forelse($Act as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
                             @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
+                                <option value="">Ups! No hay disponibles. </option>
                             @endforelse
                         </select>
                         @error('novedad.actividad_id') <span class="error text-danger">{{ $message }}</span>@enderror
                     </div>
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="Usu">Empleado:</label>
                         <select class="inpt form-select" wire:model="novedad.empleado_id" name="empleado_id" id="Usu">
                             <option value="">Seleccione</option>
@@ -82,7 +83,7 @@
                             @endforelse
                         </select>
                         @error('novedad.cliente_id') <span class="error text-danger">{{ $message }}</span>@enderror
-                    </div>
+                    </div> --}}
 
 
                     <button type="submit" class="btn btn-primary close-modal">Save</button>

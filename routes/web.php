@@ -43,8 +43,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/disenos', DisenoIndex::class)->name('diseno');
     Route::get('/planilla', PlanillaIndex::class)->name('planilla');
     Route::get('/secciones', SeccionesIndex::class)->name('secciones');
-    Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
-    Route::get('/calendarall', [EventoController::class,"allA"]);
+    Route::resource('obras.cronograma', EventoController::class)->names('calendar')->parameters(['cronograma' => 'evento']);
+    // Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
+    Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
     Route::get('/faseall', [EventoController::class,"allF"]);
 
     // Route::get('/pruebacal/{idobra}', CalendarIndex::class)->name('pruebacal');

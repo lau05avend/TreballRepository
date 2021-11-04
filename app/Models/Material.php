@@ -18,6 +18,7 @@ class Material extends Model
         'created_at',
     ];
 
+
      // relacion uno a muchos inversa
      public function Color(){
         return $this->belongsTo(Color::class);

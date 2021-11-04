@@ -7,9 +7,11 @@ use App\Models\Cliente;
 use App\Models\Obra;
 use App\Models\TipoObra;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class Edit extends Component
 {
@@ -44,7 +46,7 @@ class Edit extends Component
             'obra.DetalleCondicionPiso' => 'Nullable',
             'obra.DatosAdicionales' => 'Nullable',
             'obra.DatosAdicionales' => 'Nullable',
-            'image.*' => 'Nullable|image'
+            'image.*' => ['Nullable','mimes:jpeg,png,gif,svg', 'max:10024']
         ];
     }
     public function validationAttributes (){
@@ -56,6 +58,7 @@ class Edit extends Component
             'CiudadObra'=> 'Ciudad Obra',
             'TipoMaterialSuelo' => 'Tipo de obra',
             'tipo_obra_id' => 'Tipo de Material Suelo',
+            'image.*' => 'La imagen'
         ];
     }
 
@@ -76,37 +79,50 @@ class Edit extends Component
 
     public function update(){
         $this->validate();
-        // $obra->Images()->update(['archivo'=>'holaa'])};
         $this->obra->save();
+        // $obra->Images()->update(['archivo'=>'holaa'])};
 
         if(count($this->Usuarios)){
             $this->obra->Usuarios()->sync($this->Usuarios);
+            $this->obra->touch();  //update only update_at campo
         }else{
             $this->obra->Usuarios()->detach();
+            $this->obra->touch();
         }
 
         if($this->image){
             if($this->obra->Images()->get()->isEmpty()){
                 foreach ($this->image as $image) {
                     $imagen = $image->store('obras','public');
+                    // $imagen = $image->storeAs('obras',$image->getClientOriginalName(),'public');
                     $this->obra->Images()->create(['archivo'=>$imagen]);
                 }
             }else{
+                foreach ($this->obra->Images()->get() as $imageO) {
+                    if (Storage::disk('public')->exists($imageO->archivo)) {
+                        unlink(storage_path('app/public/'.$imageO->archivo));
+                        $this->emit('a','siii');
+                    }else{
+                        $this->emit('a','noooo');
+                    }
+                }
                 $this->obra->Images()->delete();
                 foreach ($this->image as $image) {
                     $imagen = $image->store('obras','public');
                     $this->obra->Images()->create(['archivo'=>$imagen]);
                 }
             }
+            $this->obra->touch();
         }
 
-
-        // $obra = $this->obra;
         // $img = [new App\Models\Image(['archivo'=>'heyy']),new App\Models\Image(['archivo'=>'hola'])]
         // $obra->Images()->saveMany($img)
         // $this->obra->Images()->update(['archivo'=>$imagen]);
 
+
         session()->flash('message', 'Obra actualizada satisfactoriamente.');
+        // return redirect()->to('/obras')
         return redirect()->route('obra.index');
+        // ->with('message',__('Obra actualizada eghb.'));
     }
 }

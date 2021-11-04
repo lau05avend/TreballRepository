@@ -12,12 +12,12 @@
             @endif
         </div>
 
-        <div class="row justify-content-center pl-2">
-            <div>
-                {{-- @include('livewire.obra.create')
+        <div class="row justify-content-center pl-2 position-relative">
+            {{-- <div>
+                @include('livewire.obra.create')
                 @include('livewire.obra.show')
-                @include('livewire.obra.edit') --}}
-            </div>
+                @include('livewire.obra.edit')
+            </div> --}}
             <div class="card">
                 <p class="title-o text-5xl pb-4">Obras</p>
                 <div class="flex-wrap mb-2 ml-4" x-data="{
@@ -56,8 +56,8 @@
                     </a>
                 </div>
             </div>
-            @if (session('message'))
-                <div id="success" class="advise alert alert-success w-auto flex flex-row shadow-2xl bg-green-500 pl-20 items-center alert-dismissible fade show" role="alert">
+            @if (session()->has('message'))
+                <div id="success" class="position-absolute advise alert alert-success w-auto flex flex-row shadow-2xl bg-green-500 pl-20 items-center alert-dismissible fade show" role="alert">
                     <div class="alert-icon flex items-center bg-green-100 border-2 border-green-500 justify-center h-8 w-8 flex-shrink-0 rounded-full">
                         <span class="text-green-500">
                             <svg fill="currentColor" viewBox="0 0 20 20" class="h-6 w-6">
@@ -116,6 +116,7 @@
 
 
 @section('scripts')
+    @include('sweetalert::alert')
     <script src="{{ asset('js/script-obra.js'); }}"></script>
 @endsection
 

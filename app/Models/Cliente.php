@@ -23,4 +23,8 @@ class Cliente extends Model
     public function Novedades(){
         return $this->hasMany(Novedad::class);
     }
+
+    public function User(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

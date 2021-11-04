@@ -29,11 +29,11 @@
                     <div class="form-group">
                         <label for="tiponov">Tipo Novedad:</label>
                         <select class="inpt form-select" wire:model="novedad.tipo_novedad_id" name="tipo_novedad_id" id="tiponov">
-                            <option value="">Seleccione</option>
-                            @forelse ($Tiponov as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreTipoN }}</option>
+                            <option value="">Seleccione su opcion</option>
+                            @forelse($Tiponov as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
                             @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
+                                <option value="">Ups! No hay disponibles. </option>
                             @endforelse
                         </select>
                         @error('novedad.tipo_novedad_id')<span class="error text-danger">{{ $message }}</span> @enderror
@@ -47,43 +47,17 @@
 
                     <div class="form-group">
                         <label for="Activity">Actividad:</label>
+                        <x-select2 class="form-control" id="actividad_id" modalTipo="EditNovedad" name="novedad.actividad_id" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
                         <select class="inpt form-select" name="actividad_id" wire:model="novedad.actividad_id" id="Activity">
                             <option value="">Seleccione</option>
-                            @forelse ($Act as $act)
-                                <option value="{{ $act->id }}">{{ $act->title }}</option>
+                            @forelse($Act as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
                             @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
+                                <option value="">Ups! No hay disponibles. </option>
                             @endforelse
                         </select>
                         @error('novedad.actividad_id') <span class="error text-danger">{{ $message }}</span>@enderror
                     </div>
-
-                    <div class="form-group">
-                        <label for="Usu">Empleado:</label>
-                        <select class="inpt form-select" wire:model="novedad.empleado_id" name="empleado_id" id="Usu">
-                            <option value="">Seleccione</option>
-                            @forelse ($Usua as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreCompleto }}</option>
-                            @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
-                            @endforelse
-                        </select>
-                        @error('novedad.empleado_id') <span class="error text-danger">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Cl">Cliente:</label>
-                        <select class="inpt form-select" wire:model="novedad.cliente_id" name="cliente_id" id="Cl">
-                            <option value="">Seleccione</option>
-                            @forelse ($Client as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreCC }}</option>
-                            @empty
-                                <option value="">Ups! Selecciona algun cliente para continuar </option>
-                            @endforelse
-                        </select>
-                        @error('novedad.cliente_id') <span class="error text-danger">{{ $message }}</span>@enderror
-                    </div>
-
 
                     <button type="submit" class="btn btn-primary close-modal">Save</button>
                 </form>

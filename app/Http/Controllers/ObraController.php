@@ -29,6 +29,7 @@ class ObraController extends Controller
 
     public function edit(Obra $obra)
     {
+        $this->authorize('AginadoUser', $obra);
         return view('funcionalidades.obra.edit', [
             'obra' => $obra,
         ]);
@@ -36,8 +37,8 @@ class ObraController extends Controller
 
     public function update($request, Obra $obra)
     {
-        $obra->update($request->validated());
-        return redirect()->route('obra.index')->with('status',__('Obra actualizada correctamente.'));
+        // $obra->update($request->validated());
+        // return redirect()->route('obra.index')->with('status',__('Obra actualizada correctamente.'));
     }
 
     public function destroy(Obra $obra)

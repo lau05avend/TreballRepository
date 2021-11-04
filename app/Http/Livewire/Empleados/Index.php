@@ -160,6 +160,7 @@ class Index extends Component
 
     public function update(){
         $this->validate();
+        $this->empleado->contrasena = Hash::make($this->empleado->contrasena);
         $this->empleado->save();
         $this->cerrarmodal('#EditEmpleado');
         // $this->openModal = false;

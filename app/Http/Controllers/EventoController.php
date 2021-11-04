@@ -7,25 +7,30 @@ use App\Models\EstadoActividad;
 use App\Models\Evento;
 use App\Models\FaseTarea;
 use App\Models\Obra;
+use App\Http\Requests\CronogramaRequestSave;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EventoController extends Controller
 {
-    public function index()
+    public function index($obra)
     {
         $estadoA = EstadoActividad::get()->sortBy('id');
         $faseT = FaseTarea::get()->sortBy('id');
-        $obra = Obra::all();
+        $obrass = Obra::all();
         return view('funcionalidades.calendar.index',[
             'estadoA' => $estadoA,
             'faseT' => $faseT,
-            'obra' => $obra
+            'obrasdisp' => $obrass,
+            'idobr' => $obra
         ]);
     }
 
-    public function allA()
+    public function allA($obra)
     {
-        $evento = Actividad::all();
+        // $evento = Actividad::all();
+        $obra = Obra::find($obra);
+        $evento = $obra->Actividades()->get();
         return response()->json($evento);
     }
     public function allF()
@@ -39,23 +44,12 @@ class EventoController extends Controller
         return response()->json($evento);
     }
 
-    public function create()
-    {
+    public function create(){
     }
 
-    public function store(Request $request)
+    public function store($obra, CronogramaRequestSave $request)
     {
-        // $request->validate([
-        //     'title' => 'required',
-        //     'description' => 'required',
-        //     'start' => 'required',
-        //     'end' => 'required',
-        //     'estado_actividad_id' => 'required',
-        //     'fase_tarea_id' => 'required',
-        //     'obra_id' => 'required'
-        // ]);
-        // Evento::create($request->only('title','description','start','end'));
-        Actividad::updateOrCreate(['id' => $request->id],[
+        $actividad = Actividad::updateOrCreate(['id' => $request->id],[
             'title' => $request->title,
             'DescripcionActividad' => $request->description,
             'estado_actividad_id' => $request->estado_actividad_id,
@@ -65,15 +59,19 @@ class EventoController extends Controller
             'end' => $request->end,
             'estado_actividad_id' => $request->estado_actividad_id,
             'fase_tarea_id' => $request->fase_tarea_id,
-            'obra_id' => $request->obra_id
+            // 'obra_id' => $request->obra_id,
+            'obra_id' => $obra,
         ]);
+        return $actividad;
     }
 
-    public function edit(Actividad $evento)
+    public function edit($obra, Actividad $evento)
     {
         $evento->start = date('Y-m-d\TH:i', strtotime($evento->start));
         $evento->end = date('Y-m-d\TH:i', strtotime($evento->end));
-        return response()->json($evento);
+        if ($evento->obra_id == $obra) {
+            return response()->json($evento);
+        }
     }
 
     public function update(Request $request, Actividad $evento)

@@ -23,8 +23,8 @@ class Create extends Component
     public function render()
     {
         $tipo_obra = TipoObra::get();
-        $cliente = Cliente::get();
-        $ciudad = City::get();
+        $cliente = Cliente::where('isActive','Active')->pluck('NombreCC','id')->toArray();
+        $ciudad = City::pluck('ciudad','id')->toArray();
         $empleados = Usuario::all()->sortBy('id');
         return view('livewire.obras.create',[
             'ciudad' => $ciudad,

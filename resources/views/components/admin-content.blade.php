@@ -73,7 +73,10 @@
             </li>
             <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt={{ Auth::user()->name }} src={{ Auth::user()->profile_photo_url }} class="user-img-radious-style"> <span class="d-sm-none d-lg-inline-block"></span></a>
                 <div class="dropdown-menu dropdown-menu-right pullDown">
-                    <div class="dropdown-title"> {{ Auth::user()->name }}</div>
+                    <div class="dropdown-title">
+                        <span>{{ Auth::user()->name }}</span><br>
+                        <span>{{ Auth::user()->getRoleNames()[0] }}</span>
+                    </div>
                     <a href={{ route('profile.show') }} class="dropdown-item has-icon"> <i class="far
                                             fa-user"></i> Perfil
                     </a> <a href="timeline.html" class="dropdown-item has-icon"> <i class="fas fa-bolt"></i>
@@ -109,7 +112,7 @@
                     <a class="dropdown" href="{{route('obra.index')}}"><i class="fas fa-project-diagram -ml-1"></i><span>Obras</span></a>
                 </li>
                 <li class="{{request()->routeIs('calendar.*')?'active':'nonee' }}">
-                    <a class="dropdown" href="{{route('calendar.index')}}"><i class="far fa-calendar-minus -ml-1"></i><span>Cronograma</span></a>
+                    <a class="dropdown" href="{{route('calendar.index',1)}}"><i class="far fa-calendar-minus -ml-1"></i><span>Cronograma</span></a>
                 </li>
                 <li class="{{request()->routeIs('novedad') ?'active':'nonee'}}" >
                     <a class="dropdown" href="{{route('novedad')}}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>Novedades</span></a>

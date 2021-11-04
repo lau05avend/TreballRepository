@@ -11,44 +11,45 @@
                 <div class="modal-body">
                     <form class="px-14 pb-5" wire:submit.prevent="store()">
                         <div class="form-group">
-                            <label for="NombreObra"></label>
+                            <label for="NombreObra">Nombre de Obra:</label>
                             <input wire:model="obra.NombreObra" type="text" class="form-control" id="NombreObra"
                                 placeholder="Nombre Obra">@error('obra.NombreObra') <span
                                 class="error text-danger">{{ $message }}</span> @enderror
-                        </div><br>
+                        </div>
                         <div class="form-group">
                             <label for="city_id">Ciudad Obra:</label>
-                            <select class="form-select" wire:model="obra.city_id" class="inpt" name="city_id" id="city_id">
+                            <x-select2 class="form-con" id="city_id" stylee="width: 728px;" name="obra.city_id" modalTipo="CreateObra" wire:model="obra.city_id" :options="$ciudad"></x-select2>
+                            {{-- <select class="form-select" wire:model="obra.city_id" class="inpt" name="city_id" id="city_id">
                                 <option value="">Seleccione</option>
-                                @forelse ($ciudad as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->ciudad }}</option>
+                                @forelse ($ciudad as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
                                 @empty
                                 <option value="">Ups! Registra clientes para continuar</option>
                                 @endforelse
-                            </select>
+                            </select> --}}
                             @error('obra.city_id')<span class="error text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="form-group">
-                            <label for="DireccionObra"></label>
+                            <label for="DireccionObra">Dirección de Obra:</label>
                             <input wire:model="obra.DireccionObra" type="text" class="form-control" id="DireccionObra"
                                 placeholder="Direccion Obra">
                                 @error('obra.DireccionObra')<span
                                 class="error text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="form-group">
-                            <label for="MedidaArea"></label>
+                            <label for="MedidaArea">Medida del Área Terreno:</label>
                             <input wire:model="obra.MedidaArea" type="text" class="form-control" id="MedidaArea"
                                 placeholder="Medida Area">@error('obra.MedidaArea') <span
                                 class="error text-danger">{{ $message }}</span> @enderror
                         </div><br>
                         <div class="form-group">
-                            <label for="MedidaPerimetro"></label>
+                            <label for="MedidaPerimetro">Medida del Perímetro Terreno:</label>
                             <input wire:model="obra.MedidaPerimetro" type="text" class="form-control" id="MedidaPerimetro"
                                 placeholder="Medida Perimetro">@error('obra.MedidaPerimetro') <span
                                 class="error text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="form-group">
-                            <label for="CondicionDesnivel"></label>
+                            <label for="CondicionDesnivel">Condición Desnivel del Suelo:</label>
                             <input wire:model="obra.CondicionDesnivel" type="text" class="form-control" id="CondicionDesnivel"
                                 placeholder="Condicion Desnivel (%)">@error('obra.CondicionDesnivel') <span
                                 class="error text-danger">{{ $message }}</span> @enderror
@@ -56,7 +57,7 @@
                         <div class="form-group">
                             <label for="matsu">Tipo Material Suelo:</label>
                             <label for="TipoMaterialSuelo"></label>
-                            <select wire:model="obra.TipoMaterialSuelo" class="form-select" name="TipoMaterialSuelo" class="inpt" id="matsu">
+                            <select wire:model="obra.TipoMaterialSuelo" class="form-control" name="TipoMaterialSuelo" class="inpt" id="matsu">
                                 <option value="">Seleccione</option>
                                 <option value="Cemento">Cemento</option>
                                 <option value="Asfalto">Asfalto</option>
@@ -87,14 +88,15 @@
                         </div><br>
                         <div class="form-group">
                             <label for="cliente_id">Cliente</label>
-                            <select class="form-control" wire:model="obra.cliente_id" name="cliente_id" id="cliente_id">
+                            <x-select2 class="form-con" id="cliente_id" stylee="width: 728px;" name="obra.cliente_id" modalTipo="CreateObra" wire:model="obra.cliente_id" :options="$cliente"></x-select2>
+                            {{-- <select class="form-control" wire:model="obra.cliente_id" name="cliente_id" id="cliente_id">
                                 <option value="">Seleccione</option>
-                                @forelse ($cliente as $cl)
-                                    <option value="{{ $cl->id }}">{{ $cl->NombreCC }}</option>
+                                @forelse ($cliente as $key=>$value)
+                                    <option value="{{ $key }}">{{ $value }}</option>
                                 @empty
                                     <option value="">Ups! Registra clientes para continuar</option>
                                 @endforelse
-                            </select>
+                            </select> --}}
                             @error('obra.cliente_id') <span class="error text-danger">{{ $message }}</span>@enderror
                         </div><br>
                         <div class="form-group mb-5">

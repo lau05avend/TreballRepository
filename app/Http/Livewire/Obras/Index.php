@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Http\Livewire\WithSorting;
 use App\Models\Obra;
 use App\Models\Image;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class Index extends Component
 {
@@ -44,6 +45,7 @@ class Index extends Component
 
     public function render()
     {
+        Alert::success('Success Title', 'Success Message');
         $obras = Obra::latest('updated_at')
             ->when($this->filterState != 'Inactive' && $this->filterState != '', function($query){
                 return $query->where('obras.isActive','Active')
