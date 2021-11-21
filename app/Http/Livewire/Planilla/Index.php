@@ -4,17 +4,25 @@ namespace App\Http\Livewire\Planilla;
 
 use App\Http\Livewire\WithSorting;
 use App\Models\Planilla;
+use App\Models\User;
 use App\Models\Usuario;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Permission;
 
 class Index extends Component
 {
     use WithPagination;
     use WithSorting;
+    use AuthorizesRequests;
 
     public Planilla $planilla;
+    public User $userA;
+    public $prub;
     public $search;
     public $perPage = '10';
     protected $queryString = ['search' => ['except' => ''], 'filterPlanilla' => ['except' => 'Active']];
@@ -29,25 +37,38 @@ class Index extends Component
     }
 
     public function mount(){
+        $this->userA = Auth::user();
+        // $this->prub = 'a';
     }
 
     public function render()
     {
-        $usuarios = Usuario::get();
-        $planillas = Planilla::latest('updated_at')
+        if ($this->authorize('AccessPl', Planilla::class) && Gate::denies('AllPl', Planilla::class)) {
+            $planillas = $this->userA->Planillas()
+            ->where(function($query){
+                $query->orWhere('EstadoPlanilla','LIKE','%'.$this->search.'%');
+            })
+            ->paginate($this->perPage);
+        }
+        else if($this->authorize('AllPl', Planilla::class)){
+            $planillas = Planilla::latest('updated_at')
+            ->select(['empleados.id as idE','empleados.NombreCompleto','planillas.*'])
+            ->leftJoin('empleados', 'empleados.id', '=', 'empleado_id')
             ->when($this->filterPlanilla, function($query){
                 $query->where('isActive', $this->filterPlanilla);
             })
-            // ->select(['clientes.id as idCl','clientes.NombreCC','obras.*','cities.id as idCity', 'cities.ciudad'])
-            // ->leftJoin('clientes', 'clientes.id', '=', 'cliente_id')
-            // ->leftJoin('cities', 'cities.id', '=', 'city_id')
             ->where(function($query){
                 $query->orWhere('ArchivoPlanilla','LIKE', '%'.$this->search.'%');
-                $query->orWhere('isActive','like','%'.$this->search.'%');
-                // ->orWhere('cities.ciudad','like','%'.$this->search.'%')
-                // ->orWhere('NombreObra','like','%'.$this->search.'%');
+                $query->orWhere('EstadoPlanilla','LIKE','%'.$this->search.'%');
+                $query->orWhere('empleados.NombreCompleto','LIKE', '%'.$this->search.'%');
             })
             ->paginate($this->perPage);
+        }
+        // if($this->userA->hasPermissionTo(Permission::find(1)->id)){}
+        //$this->userA->getRoleNames()[0]
+
+        // $this->userA->can('planilla_access');
+        $usuarios = Usuario::get();
         return view('livewire.Planilla.index', [
             'planillas' => $planillas,
             'usuario' => $usuarios
@@ -57,6 +78,7 @@ class Index extends Component
     /* -------------------------------- CREAR  ------------------------------------- */
 
     public function create(){
+        $this->authorize('CreatePl', Planilla::class);
         $this->planilla = new Planilla();
         $this->abrirmodal('#CreatePlanilla');
     }
@@ -84,6 +106,7 @@ class Index extends Component
     }
 
     public function store(){
+        $this->authorize('CreatePl', Planilla::class);
         $this->validate();
         $this->planilla->save();
         $this->cerrarmodal('#CreatePlanilla');
@@ -93,11 +116,13 @@ class Index extends Component
     /* -------------------------------- EDIT  ------------------------------------- */
 
     public function edit($id){
+        $this->authorize('UpdatePl', Planilla::class);
         $this->abrirmodal('#EditPlanilla');
         $this->planilla = Planilla::find($id);
     }
 
     public function update(){
+        $this->authorize('UpdatePl', Planilla::class);
         $this->validate();
         $this->planilla->save();
         $this->cerrarmodal('#EditPlanilla');
@@ -107,17 +132,20 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('DeletePl', Planilla::class);
         $this->openDelete = true;
         $this->idC = Planilla::find($id);
         $this->abrirmodal('#deleteConfirm');
     }
     public function deleteConfirm($id){
+        $this->authorize('DeletePl', Planilla::class);
         Planilla::find($id)->update(['isActive'=>'Inactive']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idC->id.' eliminado satisfactoriamente.');
     }
 
     public function activeConfirm($id){
+        $this->authorize('DeletePl', Planilla::class);
         Planilla::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idC->id.' activado satisfactoriamente.');

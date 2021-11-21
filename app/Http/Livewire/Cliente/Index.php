@@ -3,27 +3,41 @@
 namespace App\Http\Livewire\Cliente;
 
 use App\Http\Livewire\WithSorting;
+use App\Mail\RegristrarUsuarios;
 use App\Models\Cliente;
 use App\Models\TipoCliente;
 use App\Models\TipoIdentificacion;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail as FacadesMail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\WithPagination;
+use livewire\mail;
+use livewire\MessageReceived;
+
 
 class Index extends Component
 {
     use WithPagination;   //para paginacion
     use WithSorting;     //para ordenar por titulo
-
+    use AuthorizesRequests;
     public Cliente $cliente;
     public $search;
     public $perPage = '10';
+    public $con;
+    public User $userA;
     protected $queryString = [
         'search' => ['except' => ''],
         'filterCliente' => ['except' => 'Active']
     ];
     public $openDelete = false, $idC , $filterCliente = 'Active';
+    public $caracteres = 'abcdefghijklmnopqestuvxyzABCDEFGHIJKLMNOPQRSTUBWXYZ0123456789%$#&/+-[]*~|?¡¿;´';
+    public $longitud = 10;
 
     public function updatingSearch(){   //search dinamico, necesario
         $this->resetPage();
@@ -37,6 +51,44 @@ class Index extends Component
     {
         $this->validateOnly($propertyName);
     }
+
+    public function mount(){
+        $this->cliente = new Cliente();
+        $this->sortBy = 'updated_at';
+        $this->sortDirection = 'desc';
+        $this->userA = Auth::user();
+        // $this->con = Crypt::decryptString($this->userA->cargo()->get()->pluck('contrasena')[0]);
+        // $this->con = Crypt::decryptString('$2y$10$fojWoXIX0cE3n6/fp2.P4eGrFzyO701sTsqWyfjlxJ/elIgDZBY12');
+    }
+
+    public function render()
+    {
+        $this->authorize('accessClie');
+        $tipoc = TipoCliente::get();
+        $tipoi = TipoIdentificacion::get();
+        $clientes = Cliente::
+            when($this->filterCliente, function($query){
+                $query->where('isActive', $this->filterCliente);
+            })
+            ->select(['tipo_identificacions.id as idTI', 'tipo_identificacions.TipoIdentificacion','clientes.*'])
+            ->leftJoin('tipo_identificacions', 'tipo_identificacions.id', '=', 'tipo_identificacion_id')
+            ->where(function($query){    // para search
+                $query->orWhere('tipo_identificacions.TipoIdentificacion','like','%'.$this->search.'%')
+                ->orWhere('NombreCC','like','%'.$this->search.'%')
+                ->orWhere('CorreoCliente','like','%'.$this->search.'%');
+            })
+            ->orderBy($this->sortBy, $this->sortDirection)
+            ->paginate($this->perPage);   //paginar registros personalizados
+        return view('livewire.cliente.index',[
+            'clientes' => $clientes,
+            'tipoc' => $tipoc,
+            'tipoi'=> $tipoi
+        ]);
+   }
+
+   /*  */
+
+   /* -------------------------------- CREAR  ------------------------------------- */
 
     public function rules(){
         return [
@@ -60,54 +112,32 @@ class Index extends Component
             'CorreoCliente' => 'Correo electronico',
             'tipo_identificacion_id' => 'Tipo Identificación',
             'tipo_cliente_id' => 'Tipo Cliente',
-            'ContrasenaC' => 'Contraseña'
+            // 'ContrasenaC' => 'Contraseña'
         ];
     }
 
-    public function mount(){
-        $this->cliente = new Cliente();
-        $this->sortBy = 'updated_at';
-        $this->sortDirection = 'desc';
-    }
-
-    public function render()
-    {
-        $tipoc = TipoCliente::get();
-        $tipoi = TipoIdentificacion::get();
-        $clientes = Cliente::
-            when($this->filterCliente, function($query){
-                $query->where('isActive', $this->filterCliente);
-            })
-            ->select(['tipo_identificacions.id as idTI', 'tipo_identificacions.TipoIdentificacion','clientes.*'])
-            ->leftJoin('tipo_identificacions', 'tipo_identificacions.id', '=', 'tipo_identificacion_id')
-            ->where(function($query){    // para search
-                $query->orWhere('tipo_identificacions.TipoIdentificacion','like','%'.$this->search.'%')
-                ->orWhere('NombreCC','like','%'.$this->search.'%')
-                ->orWhere('CorreoCliente','like','%'.$this->search.'%');
-            })
-            ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perPage);   //paginar registros personalizados
-        return view('livewire.cliente.index',[
-            'clientes' => $clientes,
-            'tipoc' => $tipoc,
-            'tipoi'=> $tipoi
-        ]);
-   }
-
-   /* -------------------------------- CREAR  ------------------------------------- */
-
     public function create(){
+        $this->authorize('createClie');
         $this->cliente = new Cliente();
         $this->abrirmodal('#CreateCliente');
     }
 
     public function store(){
         $this->validate();
+
+        // $this->cliente->ContrasenaC = Hash::make(substr(str_shuffle($this->caracteres), 0, $this->longitud));
         $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
         $this->cliente->save();
+        event(new Registered($this->cliente));
         $this->cerrarmodal('#CreateCliente');
         session()->flash('message', 'Cliente creado satisfactoriamente.');
+
+
+
+
     }
+
+
 
     /* -------------------------------- EDIT  ------------------------------------- */
 
@@ -118,6 +148,8 @@ class Index extends Component
     }
 
     public function update(){
+
+        $this->authorize('editClie');
         $this->validate();
         $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
         if(!isset($this->cliente->fotoL)){
@@ -131,6 +163,7 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('deleteClie');
         $this->openDelete = true;
         $this->idC = Cliente::find($id);
         $this->abrirmodal('#deleteConfirm');
@@ -142,6 +175,7 @@ class Index extends Component
     }
 
     public function activeConfirm($id){
+        $this->authorize('activeClie');
         Cliente::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idC->id.' activado satisfactoriamente.');

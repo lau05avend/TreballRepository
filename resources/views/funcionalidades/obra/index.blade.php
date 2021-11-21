@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title','Obra | Registrar')
+    @section('title','Obras')
     @section('css')
     <link rel="stylesheet" href="{{ asset('css/styles-obras.css'); }}">
     @endsection

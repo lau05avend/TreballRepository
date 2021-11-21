@@ -6,6 +6,7 @@ use App\Http\Livewire\WithSorting;
 use App\Models\Color;
 use App\Models\Material as ModelsMaterial;
 use App\Models\TipoMaterial;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,12 +14,16 @@ class Index extends Component
 {
     use WithPagination;   // para paginacion
     use WithSorting;
+    use AuthorizesRequests;
 
     public ModelsMaterial $material;  //modelo para gestionar mat
 
     public $search;//datatable
-    public $perPage = '6';
-    protected $queryString = ['search' => ['except' => '']];  //urfli filtro
+    public $perPage;
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'filterState' => ['except' => 'Active']
+    ];  //urfli filtro
     public $TipoMaterial, $color, $idM, $filterState, $openDelete = false, $openModal=false;
 
     public function updatingSearch(){
@@ -35,6 +40,7 @@ class Index extends Component
 
     public function mount(){
         $this->sortBy = 'id';
+        $this->perPage = '5';
         $this->sortDirection = 'desc';
         $this->material = new ModelsMaterial();
         $this->filterState = 'Active';
@@ -42,8 +48,9 @@ class Index extends Component
 
     public function render()   //renderiza el componente/
     {
-        $this->TipoMaterial = TipoMaterial::all();
-        $this->color = Color::all();
+        $this->authorize('accessMa');
+        $this->TipoMaterial = TipoMaterial::pluck('NombreTipoM','id')->toArray();
+        $this->color = Color::pluck('Ncolor','id')->toArray();
         $materiales = ModelsMaterial::
             select(['colors.id as idC','colors.Ncolor','materials.*','tipo_material_id as idTipoM', 'tipo_materials.NombreTipoM'])
             ->leftJoin('colors', 'colors.id', '=', 'color_id')

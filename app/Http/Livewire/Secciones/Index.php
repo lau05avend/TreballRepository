@@ -9,13 +9,14 @@ use App\Models\seccion;
 use App\Models\Usuario;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
     use WithPagination;
     use WithSorting;
-
+    use AuthorizesRequests;
     public Seccion $seccion;
     public $search;
     public $perPage = '10';
@@ -38,6 +39,7 @@ class Index extends Component
 
     public function render()
     {
+        $this->authorize('accessSeccion');
         $diseno = Diseno::get();
         $color = Color::get();
         $seccioness = seccion::
@@ -67,6 +69,7 @@ class Index extends Component
     /* -------------------------------- CREAR  ------------------------------------- */
 
     public function create(){
+        $this->authorize('createSeccion');
         $this->seccion = new seccion();
         $this->openModal = true;
         $this->abrirmodal('#CreateSecciones');
@@ -106,12 +109,14 @@ class Index extends Component
     /* -------------------------------- EDIT  ------------------------------------- */
 
     public function edit($id){
+        $this->authorize('seccion_edit');
         $this->openModal = true;
         $this->seccion = seccion::find($id);
         $this->abrirmodal('#EditSecciones');
     }
 
     public function update(){
+        $this->authorize('seccion_edit');
         $this->validate();
         $this->seccion->save();
         $this->cerrarmodal('#EditSecciones');
@@ -121,17 +126,20 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('seccion_delete');
         $this->openDelete = true;
         $this->idS = seccion::find($id);
         $this->abrirmodal('#deleteConfirm');
     }
     public function deleteConfirm($id){
+        $this->authorize('seccion_delete');
         seccion::find($id)->update(['isActive'=>'Inactive']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idS->id.' eliminado satisfactoriamente.');
     }
 
     public function activeConfirm($id){
+        $this->authorize('seccion_active');
         seccion::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idS->id.' activado satisfactoriamente.');

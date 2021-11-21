@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Notifications;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +12,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -68,6 +69,21 @@ class User extends Authenticatable
         }else if($this->RolExterno == 'cliente'){
             return $this->hasOne(Cliente::class,'user_id');
         }
+    }
+
+    // has many through
+    public function Planillas()
+    {
+        return $this->hasManyThrough(Planilla::class,Usuario::class, 'user_id','empleado_id');
+    }
+    public function Obras()
+    {
+        return $this->cargo()
+            ->join('obra_usuario','empleado_id','=','empleados.id')
+            ->leftJoin('obras','obras.id','=','obra_usuario.obra_id')
+            ->select('obras.*');
+
+        // return $this->hasManyThrough('obra_usuario',Usuario::class, 'user_id','empleado_id');
     }
 
     // public function cliente(){

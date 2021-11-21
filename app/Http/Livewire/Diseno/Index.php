@@ -3,10 +3,13 @@
 namespace App\Http\Livewire\Diseno;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use App\Http\Livewire\WithSorting;
 use App\Models\Diseno;
 use App\Models\Obra;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\WithFileUploads;
 
 class Index extends Component
@@ -14,6 +17,7 @@ class Index extends Component
     use WithPagination;
     use WithSorting;
     use WithFileUploads;
+    use AuthorizesRequests;
 
     public $search;
     public $perPage = '5';
@@ -22,6 +26,7 @@ class Index extends Component
         'filterStateIn' => ['except' => 'Active']
     ];
     public Diseno $diseno;
+    public User $userA;
     public $image = null;
     public $idD, $filterStateIn =  'Active';
     public $openModal = false, $openDelete = false;
@@ -40,11 +45,14 @@ class Index extends Component
     public function mount(){
         $this->sortBy = 'id';
         $this->sortDirection = 'desc';
+        $this->userA = Auth::user();
         // $this->material = new ModelsMaterial();
     }
 
     public function render()
     {
+        $this->authorize('AllDis');
+        
         $IdObra = Obra::get();
         $disenos = Diseno::latest('updated_at')
             ->when($this->filterStateIn, function($query){
@@ -76,6 +84,7 @@ class Index extends Component
     //SHOW ============================================================================
 
     public function show($id){
+        // $this->authorize('showSeccion');
         $this->tipoM = 'show';
         $this->openModal = true;
         $this->abrirmodal('#showModel');
@@ -87,6 +96,7 @@ class Index extends Component
     //DELETE ============================================================================
 
     public function delete($diseno){   // modal de confirmacion de eliminacion
+        // $this->authorize('deleteDs');
         $this->openDelete = true;
         $this->idD = Diseno::find($diseno);
         // $this->cerrarmodal('#showModel');
@@ -100,6 +110,7 @@ class Index extends Component
     }
 
     public function activeConfirm($obra){
+        // $this->authorize('seccion_active');
         Diseno::find($obra)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$obra.' activado satisfactoriamente.');
@@ -109,6 +120,7 @@ class Index extends Component
     //EDITAR ============================================================================
 
     public function edit($id){
+        // $this->authorize('updateDs');
         // $this->tipoM = 'edit';
         $this->openModal = true;
         $this->diseno = Diseno::find($id);
@@ -116,6 +128,7 @@ class Index extends Component
     }
 
     public function update(){
+        // $this->authorize('updateDs');
         $this->validate();
         $imagen = $this->image->store('disenos','public');
         $this->diseno->ImagenPlano = $imagen;
@@ -128,6 +141,7 @@ class Index extends Component
     //CREAR ============================================================================
 
     public function create(){
+        // $this->authorize('createDs');
         // $this->tipoM = 'create';
         $this->openModal = true;
         $this->diseno = new Diseno();

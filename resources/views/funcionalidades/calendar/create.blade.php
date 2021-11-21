@@ -37,8 +37,8 @@
                         <span class="error text-danger" id="endMessage"></span>
                     </div><br>
                     <div class="form-group">
-                        <label for="estad">Estado de Actividad</label>
-                        <select name="estado_actividad_id" class="form-select" id="estado_actividad_id">
+                        <label for="estad">Estado de Actividad</label><br>
+                        <select name="estado_actividad_id" class="form-control form-select" id="estado_actividad_id">
                             <option value="">Seleccione</option>
                             @foreach ($estadoA as $e)
                             <option value="{{ $e->id }}">{{ $e->NombreEstado }}</option>
@@ -47,8 +47,8 @@
                         <span class="error text-danger" id="estado_actividad_idMessage"></span>
                     </div>
                     <div class="form-group">
-                        <label for="fase_t">Fase de Actividad</label>
-                        <select name="fase_tarea_id" class="form-select" id="fase_tarea_id">
+                        <label for="fase_t">Fase de Actividad</label><br>
+                        <select name="fase_tarea_id" class="form-control form-select" id="fase_tarea_id">
                             <option value="">Seleccione</option>
                             @forelse ($faseT as $f)
                             <option value="{{ $f->id }}">{{ $f->NombreFase }}</option>
@@ -59,8 +59,8 @@
                         <span class="error text-danger" id="fase_tarea_idMessage"></span>
                     </div>
                     <div class="form-group">
-                        <label for="obra_id">Obra: </label>
-                        <select name="obra_id" class="form-select" id="obra_id">
+                        <label for="obra_id">Obra: </label><br>
+                        <select name="obra_id" class="form-control form-select" id="obra_id">
                             <option value="">Seleccione</option>
                             @forelse ($obrasdisp as $ob)
                             <option value="{{ $ob->id }}">{{ $ob->NombreObra }}</option>

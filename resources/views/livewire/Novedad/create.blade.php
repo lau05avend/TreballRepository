@@ -47,7 +47,7 @@
 
                     <div class="form-group">
                         <label for="Activity">Actividad:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="actividad_id" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="actividad_idReg" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
                         <select class="inpt form-select" name="actividad_id" wire:model="novedad.actividad_id" id="Activity">
                             <option value="">Seleccione fijo</option>
                             @forelse($Act as $key => $value)

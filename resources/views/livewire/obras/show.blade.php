@@ -65,14 +65,16 @@
                         <br><br>
                    </div>
                </div>
-               <div class="justify-center flex-wrap flex mt-12">
-                   <a type="button" href="{{ route('obra.edit', $obra?$obra->id:'' ) }}"  id="fdionm" class="bg-yellow-300 rounded-lg py-2 mr-8 px-4 text-gray-50 w-28 text-md hover:text-white font-semibold close-modal">EDITAR</a>
-                   @if ($obra->isActive == 'Active')
-                   <button type="button" wire:click="delete({{$obra}})" id="fdionm" class="bg-red-500 rounded-lg py-2 px-4 text-gray-50 w-28 text-md font-semibold close-modal">ELIMINAR</button>
-                   @else
-                   <button type="button" wire:click="delete({{$obra}})" id="fdionm" class="bg-red-500 rounded-lg py-2 px-4 text-gray-50 w-28 text-md font-semibold close-modal">ACTIVAR</button>
-                   @endif
-               </div>
+               @canany(['obra_edit','obra_delete'])
+                <div class="justify-center flex-wrap flex mt-12">
+                    <a type="button" href="{{ route('obra.edit', $obra?$obra->id:'' ) }}"  id="fdionm" class="bg-yellow-300 rounded-lg py-2 mr-8 px-4 text-gray-50 w-28 text-md hover:text-white font-semibold close-modal">EDITAR</a>
+                    @if ($obra->isActive == 'Active')
+                    <button type="button" wire:click="delete({{$obra}})" id="fdionm" class="bg-red-500 rounded-lg py-2 px-4 text-gray-50 w-28 text-md font-semibold close-modal">ELIMINAR</button>
+                    @else
+                    <button type="button" wire:click="delete({{$obra}})" id="fdionm" class="bg-red-500 rounded-lg py-2 px-4 text-gray-50 w-28 text-md font-semibold close-modal">ACTIVAR</button>
+                    @endif
+                </div>
+               @endcanany
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-btn" wire:click.prevent="cerrarmodal('#showModel')" >Close</button>
@@ -80,24 +82,26 @@
         </div>
     </div>
 </div>
-@if ($openModal)
-        <x-delete>
-            <x-slot name="title">{{$obra->isActive == 'Active'?'Eliminar':'Activar '}} Obra</x-slot>
-            <x-slot name="body">
-                @if ($obra->isActive == 'Active')
-                    <p>¿Esta seguro que desea eliminar el registro {{ $obra->id }} ?</p>
-                @else
-                    <p>¿Esta seguro que desea activar el registro {{ $obra->id }} ?</p>
-                @endif
-            </x-slot>
-            <x-slot name="method">
-                @if ($obra->isActive=='Active')
-                <button type="button" class="btn btn-danger close-modal" wire:click.prevent="deleteConfirm({{$obra->id}})" >Yes, Delete</button>
-                @else
-                <button type="button" class="btn btn-danger close-modal" wire:click.prevent="activeConfirm({{$obra->id}})" >Yes, Activar</button>
-                @endif
-            </x-slot>
+@can('obra_delete')
+    @if ($openModal)
+    <x-delete>
+        <x-slot name="title">{{$obra->isActive == 'Active'?'Eliminar':'Activar '}} Obra</x-slot>
+        <x-slot name="body">
+            @if ($obra->isActive == 'Active')
+                <p>¿Esta seguro que desea eliminar el registro {{ $obra->id }} ?</p>
+            @else
+                <p>¿Esta seguro que desea activar el registro {{ $obra->id }} ?</p>
+            @endif
+        </x-slot>
+        <x-slot name="method">
+            @if ($obra->isActive=='Active')
+            <button type="button" class="btn btn-danger close-modal" wire:click.prevent="deleteConfirm({{$obra->id}})" >Yes, Delete</button>
+            @else
+            <button type="button" class="btn btn-danger close-modal" wire:click.prevent="activeConfirm({{$obra->id}})" >Yes, Activar</button>
+            @endif
+        </x-slot>
 
-        </x-delete>
-@endif
+    </x-delete>
+    @endif
+@endcan
 

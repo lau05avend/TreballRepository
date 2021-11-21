@@ -55,19 +55,3 @@ class Obra extends Model
 
 }
 
-/*
-para probar los registros registrados en la bd, se usa:
-1. php artisan tinker
-2. use app\models\Obra
-3.   //para consultar alguna obra
-
-4. $obra->Actividades;  //para acceder a todas las actividades de esa determinada obra.
-
-
-SENTENCIAS CHEVRES ejs
-- $user->posts()->where('active', 1)->get();
--$comment = Post::find(1)->comments()
-                    ->where('title', 'foo')
-                    ->first();
-
-*/

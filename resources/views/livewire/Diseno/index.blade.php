@@ -33,6 +33,7 @@
 
         <div class="row justify-content-center pl-2 form">
                 <h1 class="title-o text-5xl mb-5 text-center mt-3">Diseno</h1>
+            {{ Auth::user()->getPermissionsViaRoles() }}
             @if (session('message'))
                 <div id="success" class="position-absolute top-24 right-5 advise alert alert-success w-auto flex flex-row shadow-2xl bg-green-500 pl-20 items-center alert-dismissible fade show" role="alert">
                     <div class="alert-icon flex items-center bg-green-100 border-2 border-green-500 justify-center h-8 w-8 flex-shrink-0 rounded-full">
@@ -72,7 +73,9 @@
                         <label for="search" class="mr-2">Buscar: </label>
                         <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
                     </div>
+                    @can('diseno_create')
                     <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                    @endcan
                 </div>
                 <div class="div-tab overflow-x-auto">
                     <table class=" table table-striped table-hover">
@@ -96,11 +99,17 @@
                                 <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
                                 <td><img src="{{$l->FotoL }}" alt="" class="imagenusuario" width="80%" height="80%"></td>
                                 @if ($l->isActive == 'Active')
+                                @can('diseno_delete')
                                     <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button>
+                                    @endcan
+                                    @can('diseno_edit')
                                     <button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
-                                    
+                                    @endcan
+
                                 @else
+
                                     <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
+
                                 @endif
                             </tr>
                             {{-- @livewire('diseno.edit', ['diseno'=>$l]) --}}

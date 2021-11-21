@@ -9,7 +9,7 @@
         {{-- {{ $attributes['modalTipo'] }} --}}
         <select class="select2 form-control" data-placeholder="{{ __('Seleccione su opción') }}" {{ $attributes }}>
             @if(!isset($attributes['multiple']))
-                <option>Seleccione</option>
+                <option value="null">Seleccione</option>
             @endif
             @foreach($options as $key => $value)
                 <option value="{{ $key }}">{{ $value }}</option>
@@ -45,10 +45,14 @@
         function initSelect () {
             initButtons()
             el.select2({
-                dropdownParent: $('#{{ $attributes['modalTipo'] }}'),
+                // theme: "bootstrap-5",
+                // containerCssClass:  $('#{{ $attributes['modalTipo'] }}'),
+                // dropdownCssClass: $('#{{ $attributes['id'] }}'),
+                dropdownParent: $('#{{ $attributes['modalTipo'] }}').parent(),
                 placeholder: '{{ __('Seleccione su opción') }}',
-                allowClear: !el.attr('required'),
-                
+                // allowClear: !el.attr('required'),
+                allowClear: false
+
             })
         }
 
@@ -60,7 +64,7 @@
 
         el.on('change', function (e) {
             let data = $(this).select2("val")
-            if (data === "") {
+            if (data === "null") {
                 data = null
             }
             @this.set('{{ $attributes['wire:model'] }}', data)

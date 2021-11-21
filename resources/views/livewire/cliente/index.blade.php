@@ -55,17 +55,20 @@
                     </label>
                 </div>
                 @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
-                <div class="float-left pl-6">
-                    <livewire:excel-export model="Cliente" format="csv" />
-                    <livewire:excel-export model="Cliente" format="xlsx" />
-                    <livewire:excel-export model="Cliente" format="pdf" />
-                </div>
+                    <div class="float-left pl-6">
+                        <livewire:excel-export model="Cliente" format="csv" />
+                        <livewire:excel-export model="Cliente" format="xlsx" />
+                        <livewire:excel-export model="Cliente" format="pdf" />
+                    </div>
                 @endif
+
                 <div class="float-right">
                     <label for="search" class="mr-2">Buscar: </label>
                     <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
                 </div>
-                <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                @can('cliente_create')
+                    <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                @endcan
             </div>
             <div class="div-tab overflow-x-auto">
                 <table class=" table table-striped table-hover">
@@ -82,7 +85,9 @@
                             <th>Creado en @include('components.table.sort', ['field' => 'created_at'])</th>
                             <th>Actualizado en  @include('components.table.sort', ['field' => 'updated_at'])</th>
                             <th>Foto </th>
+                            @canany(['obra_edit','obra_delete'])
                             <th colspan="2">Actions</th>
+                            @endcanany
                         </tr>
                     </thead>
                     <tbody id="bodyC">
@@ -101,10 +106,16 @@
                             <td><img src="{{$l->FotoL }}" alt="" class="imagenusuario" width="80%" height="80%"></td>
 
                             @if ($l->isActive == 'Active')
-                                <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
-                                <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
+                            @can('cliente_edit')
+                                    <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
+                                @endcan
+                                @can('cliente_delete')
+                                    <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
+                                @endcan
                             @else
-                                <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                @can('cliente_active')
+                                    <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                @endcan
                             @endif
                         </tr>
                         @empty

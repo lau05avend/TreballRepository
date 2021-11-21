@@ -8,6 +8,7 @@ use App\Models\EstadoCivil;
 use App\Models\Rol;
 use App\Models\TipoIdentificacion;
 use App\Models\Usuario;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -17,6 +18,8 @@ class Index extends Component
 {
     use WithPagination;
     use WithSorting;
+    use AuthorizesRequests;
+
     public $search;
     public Usuario $empleado;
 
@@ -39,6 +42,8 @@ class Index extends Component
 
     public function render()
     {
+        $this->authorize('AllEm');
+
         $estadocivil = EstadoCivil::get();
         $rol = Rol::get();
         $ciudad = City::get();
@@ -92,6 +97,7 @@ class Index extends Component
     /* -------------------------------- CREAR  ------------------------------------- */
 
     public function create(){
+        $this->authorize('createEm');
         $this->openModal = true;
         $this->empleado = new Usuario();
         $this->abrirmodal('#CreateEmpleado');
@@ -153,6 +159,7 @@ class Index extends Component
     /* -------------------------------- EDIT  ------------------------------------- */
 
     public function edit($id){
+        $this->authorize('updateEm');
         $this->openModal = true;
         $this->abrirmodal('#EditEmpleado');
         $this->empleado = Usuario::find($id);
@@ -171,6 +178,7 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('deleteEm');
         $this->openDelete = true;
         $this->idE = Usuario::find($id);
         $this->abrirmodal('#deleteConfirm');

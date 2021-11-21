@@ -7,12 +7,17 @@ use Livewire\WithPagination;
 use App\Http\Livewire\WithSorting;
 use App\Models\Obra;
 use App\Models\Image;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class Index extends Component
 {
     use WithPagination;
     use WithSorting;
+    use AuthorizesRequests;
 
     public $search;
     public $perPage = '5';
@@ -21,14 +26,14 @@ class Index extends Component
         'filterState' => ['except' => '']
     ];
     public Obra $obra;
+    public User $userA;
     public $users, $idO, $filterState, $filterStateIn;
     public $openModal = false;
 
     public function updatingSearch(){
         $this->resetPage();
     }
-    public function updatingPerPage()
-    {
+    public function updatingPerPage(){
         $this->resetPage();
     }
     public function updateFilterState(){
@@ -40,13 +45,30 @@ class Index extends Component
         $this->sortDirection = 'desc';
         $this->filterState = '';
         $this->filterStateIn = '';
+        $this->userA = Auth::user();
         // $this->material = new ModelsMaterial();
     }
 
     public function render()
     {
-        Alert::success('Success Title', 'Success Message');
-        $obras = Obra::latest('updated_at')
+        if ($this->authorize('AccessObra', Obra::class) && Gate::denies('AllObra', Obra::class)) {
+
+            $obras = Obra::select(['obras.*','clientes.id as idCl','clientes.NombreCC','cities.id as idCity', 'cities.ciudad'])
+            ->leftJoin('obra_usuario','obras.id','=','obra_id')
+            ->leftJoin('clientes', 'clientes.id', '=', 'cliente_id')
+            ->leftJoin('cities', 'cities.id', '=', 'obras.city_id')
+            ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
+            ->where(function($query){
+                $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%');
+                $query->where('obras.isActive','=', 'Active');
+                $query->orWhere('clientes.NombreCC','like','%'.$this->search.'%')
+                ->orWhere('cities.ciudad','like','%'.$this->search.'%')
+                ->orWhere('NombreObra','like','%'.$this->search.'%');
+            })
+            ->paginate($this->perPage);
+        }
+        else if($this->authorize('AllObra', Obra::class)){
+            $obras = Obra::latest('updated_at')
             ->when($this->filterState != 'Inactive' && $this->filterState != '', function($query){
                 return $query->where('obras.isActive','Active')
                     ->where('EstadoObra', $this->filterState);
@@ -69,8 +91,11 @@ class Index extends Component
                 ->orWhere('NombreObra','like','%'.$this->search.'%');
             })
             ->paginate($this->perPage);
+        }
+
+
         return view('livewire.obras.index', [
-            'obras' => $obras
+            'obras' => $obras,
         ]);
     }
 

@@ -1,10 +1,18 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/styles-general.css'); }}">
+<style>
+    table.table thead .sorting:before, table.table thead .sorting:after, table.table thead .sorting_asc:before,
+    table.table thead .sorting_asc:after, table.table thead .sorting_desc:before, table.table thead .sorting_desc:after,
+    table.table thead .sorting_asc_disabled:before, table.table thead .sorting_asc_disabled:after,
+    table.table thead .sorting_desc_disabled:before, table.table thead .sorting_desc_disabled:after{
+        top: 1.3em;
+    }
+</style>
 @endsection
 
 <div>
-    <div class="shadow-2xl pt-8 px-5 bg-white">
+    <div class="cardCustom">
 
         <!--========== CONTENT ==========-->
         @if (session('message'))
@@ -34,6 +42,8 @@
         <div class="form">
 
             <h1 class="text-center mt-3" style="color: black;">Material</h1><br>
+            {{ config('auth.defaults.guard') }}
+            <i class="bx bx-loader bx-spin font-size-16 align-middle mr-2"></i>
             <div class="position-relative clear-both mt-6 pb-4">
                 <div class="inline-block w-full">
                     <div class="float-left pl-6">
@@ -67,49 +77,57 @@
                         <input id="search" name="search" type="text" wire:model="search"
                             class="h-8 border-gray-500 w-68 rounded">
                     </div>
-                    <button class="buttonN" wire:click="create">NUEVO</button><br>
+                    <button class="buttonN" wire:click="create">
+                        <span>NUEVO</span>
+                        <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
+                    </button><br>
                 </div>
-                <div class="div-tab overflow-x-auto">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Id @include('components.table.sort', ['field' => 'id'])</th>
-                                <th>Descripcion Material  @include('components.table.sort', ['field' => 'DescripcionMat'])</th>
-                                <th>color @include('components.table.sort', ['field' => 'Ncolor'])</th>
-                                <th>tipo material @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
-                                <th>Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
-                                <th>Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                <th colspan="2">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyC">
-                            @forelse ($materiales as $l)
-                            <tr>
-                                <td>{{ $l->id }}</td>
-                                <td>{{ $l->DescripcionMat }}</td>
-                                <td>{{ $l->Color?$l->Color->Ncolor:'-'}}</td>
-                                <td>{{ $l->TipoMaterial->NombreTipoM}}</td>
-                                <td>{{ $l->created_at? $l->created_at : '' }}</td>
-                                <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
+                <div class="table-responsive">
+                    <div class="div-tab">
+                        <table class="table datatable table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: end;width: 60px;">Id @include('components.table.sort', ['field' => 'id'])</th>
+                                    <th style="width: 210px;">Descripcion Material  @include('components.table.sort', ['field' => 'DescripcionMat'])</th>
+                                    <th style="width: 90px;">Color @include('components.table.sort', ['field' => 'Ncolor'])</th>
+                                    <th style="width: 135px;">Tipo Material @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
+                                    <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
+                                    <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
+                                    <th style="width: 102px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyC">
+                                @forelse ($materiales as $l)
+                                <tr>
+                                    <td style="text-align:center;">{{ $l->id }}</td>
+                                    <td>{{ $l->DescripcionMat }}</td>
+                                    <td>{{ $l->Color?$l->Color->Ncolor:'-'}}</td>
+                                    <td>{{ $l->TipoMaterial->NombreTipoM}}</td>
+                                    <td>{{ $l->created_at? $l->created_at : '' }}</td>
+                                    <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
 
-                                @if ($l->isActive == 'Active')
-                                    <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
-                                    <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
-                                @else
-                                    <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                @endif
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay
-                                    resultados para la búsqueda {{ $search }}.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                <div style="color: black;">
-                    {{ $materiales->links() }}
+                                    @if ($l->isActive == 'Active')
+                                        <td class="actions">
+                                            <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                            <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                            <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                        </td>
+                                    @else
+                                        <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                    @endif
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay
+                                        resultados para la búsqueda {{ $search }}.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="color: black;">
+                        {{ $materiales->links('components.custom-pagination-links') }}
+                    </div>
                 </div>
             </div>
 

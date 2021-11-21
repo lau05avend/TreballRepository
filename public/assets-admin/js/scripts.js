@@ -170,6 +170,7 @@ $(function () {
     } else {
       body.removeClass("search-show search-gone");
       if (body.hasClass("sidebar-mini")) {
+
         toggle_sidebar_mini(false);
       } else {
         toggle_sidebar_mini(true);

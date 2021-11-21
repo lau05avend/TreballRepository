@@ -60,7 +60,9 @@
                     <label for="search" class="mr-2">Buscar: </label>
                     <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
                 </div>
+                @can('seccion_create')
                 <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                @endcan
             </div>
             <div class="div-tab overflow-x-auto">
                 <table class=" table table-striped table-hover">
@@ -88,11 +90,17 @@
                             <td>{{ $l->created_at?date('d-m-Y h:i:s A', strtotime($l->created_at )) : '-' }}</td>
                             <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
                             @if ($l->isActive == 'Active')
+                            @can('seccion_edit')
                                 <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
+                                @endcan
+                                @can('seccion_delete')
                                 <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
-                            @else
+                                @endcan
+                                @else
+                            @can('seccion_active')
                                 <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
-                            @endif
+                            @endcan
+                                @endif
                         </tr>
                         @empty
                         <tr>

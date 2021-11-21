@@ -34,7 +34,8 @@
 
     <div class="form">
 
-        <h1 class="text-center mt-3">Planilla</h1><br>
+        <h1 class="text-center mt-3">Planillas de Afiliación</h1><br>
+        {{-- {{ Auth::user()->Planillas()->get() }} --}}
         <div class="position-relative clear-both mt-6 pb-4">
             <div class="inline-block w-full">
                 <div class="float-left pl-6">
@@ -47,14 +48,16 @@
                         </select>
                     registros</label>
                 </div>
-                <div class="float-left pl-6">
-                    <label for="filterPlanilla">Estado
-                        <select name="filterPlanilla" id="filterPlanilla" wire:model="filterPlanilla" class="py-0.5 focus:ring-0 focus:border-gray-600">
-                            <option value="Active">Activos</option>
-                            <option value="Inactive">Eliminado</option>
-                        </select>
-                    </label>
-                </div>
+                @can('planilla_active')
+                    <div class="float-left pl-6">
+                        <label for="filterPlanilla">Estado
+                            <select name="filterPlanilla" id="filterPlanilla" wire:model="filterPlanilla" class="py-0.5 focus:ring-0 focus:border-gray-600">
+                                <option value="Active">Activos</option>
+                                <option value="Inactive">Eliminado</option>
+                            </select>
+                        </label>
+                    </div>
+                @endcan
                 @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
                     <div class="float-left pl-6">
                         <livewire:excel-export model="Planilla" format="csv" />
@@ -66,7 +69,9 @@
                     <label for="search" class="mr-2">Buscar: </label>
                     <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
                 </div>
-                <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                @can('planilla_create')
+                    <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                @endcan
             </div>
             <div class="div-tab overflow-x-auto">
                 <table class=" table table-striped table-hover">
@@ -76,6 +81,7 @@
                         <th>ArchivoPlanilla</th>
                         <th>FechaExpiracion</th>
                         <th>EstadoPlanilla </th>
+                        <th>Empleado</th>
                         <th>created_at</th>
                         <th>updated_at</th>
                         {{-- <th>isActive</th> --}}
@@ -89,13 +95,20 @@
                             <td>{{ $l->ArchivoPlanilla }}</td>
                             <td>{{ $l->FechaExpiracion }}</td>
                             <td>{{ $l->EstadoPlanilla }}</td>
+                            <td>{{ $l->Empleado->NombreCompleto }}</td>
                             <td>{{ $l->created_at?date('d-m-Y h:i:s A', strtotime($l->created_at )) : '-' }}</td>
                             <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
                             @if ($l->isActive == 'Active')
-                                <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
-                                <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
+                                @can('planilla_edit')
+                                    <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button></td>
+                                @endcan
+                                @can('planilla_delete')
+                                    <td><button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
+                                @endcan
                             @else
-                                <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                @can('planilla_active')
+                                    <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                @endcan
                             @endif
                         </tr>
                         @empty
@@ -107,7 +120,7 @@
                 </table>
             </div>
             <div>
-                {{ $planillas->links() }}
+                {{-- {{ $planillas->links() }} --}}
             </div>
         </div>
     </div>

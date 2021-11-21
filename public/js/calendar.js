@@ -1,6 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
 
-    
+$(document).ready(function() {
+
+});
+
+document.addEventListener('DOMContentLoaded', function() {
 
     function getData(url){
         var xhReq = new XMLHttpRequest();
@@ -33,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initialView: 'timeGridWeek',
         resourceAreaHeaderContent: 'Fase',
         nowIndicator: true,
-        aspectRatio: 1.8,
+        // aspectRatio: 1.6,
         expandRows: true,
         scrollTime :  "07:00:00",
         scrollTimeReset: false,
@@ -45,9 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         views:{
             dayGridMonth:{
                 dayHeaderFormat:{ weekday: 'long'},
-            },
-            timeGridWeek:{
-                titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
+
             },
             timeGridDay:{
                 titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 slotDuration: '00:30:00',
                 slotLabelInterval: {minutes: 30},
                 eventMaxStack: true,
+                aspectRatio: 1.9,
             }
         },
         businessHours: {
@@ -83,11 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }, */
 
         // allDayText: '',
-        // contentHeight: 'auto',
         displayEventTime: false,
         navLinks: true,
         editable: true,
         selectable: true,
+        // eventLimit: true,
+        // eventLimitText: "Something",
         dayMaxEvents: true,  // allow "more" link when too many events
         eventTimeFormat: { // like '14:30:00'
             hour: 'numeric',
@@ -147,14 +150,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // method: 'GET',
                 color: 'rgb(169 208 144)',
                 borderColor: 'rgb(112 177 68)',
-                textColor: 'black' // a non-ajax option
+                textColor: 'black', // a non-ajax option
             }
         ],
         selectMirror: true,
         select: function(start,end){
             form.reset();
+            console.log(moment(Date.now()).format('YYYY-MM-DDTHH:mm:ss'));
             // var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0, 16)
-            form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
+            // form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
+            form.start.value = moment(Date.now()).format('YYYY-MM-DD');
             form.end.value = moment(start.endStr).format('YYYY-MM-DDTHH:mm:ss');
             form.obra_id.value = numObra;
             if(start.resource){
@@ -207,6 +212,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     $("#btnSave").on('click',function(){
         const datos = new FormData(form);
+        console.log(datos);
+        console.log(form.start.value);
+        if(form.start.value >= moment(Date.now()).format('YYYY-MM-DD')){
+            console.log('funciona')
+        }
+        else{
+            console.log('idk');
+        }sfsf
         axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
             (respuesta) => {
                 console.log(respuesta)
@@ -247,6 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     $("#btnEliminar").on('click',function(){
         const datos = new FormData(form);
+        console.log(datos);
         axios.post(URLp+'/obras/'+numObra+'/cronograma'+datos.id+"/delete").then(    //acceder a una url
             (repuesta) => {
                 calendar.refetchEvents();  // actualizar el calendario

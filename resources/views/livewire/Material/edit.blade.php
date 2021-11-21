@@ -10,11 +10,12 @@
             <div class="modal-body">
                 <form class="px-14 pb-5" wire:submit.prevent="update()">
                     <div class="form-group">
-                        <label for="tipo_material_id">Tipo de Material:</label>
+                        <label for="tipo_material_idAct">Tipo de Material:</label>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idAct" name="material.tipo_material_id" modalTipo="EditMaterial" wire:model="material.tipo_material_id" :options="$TipoMaterial"></x-select2>
                         <select class="form-select" wire:model="material.tipo_material_id" class="inpt" name="tipo_material_id" id="tipo_material_id">
                             <option value="">Seleccione</option>
-                            @forelse ($TipoMaterial as $tipoM)
-                            <option value="{{ $tipoM->id }}">{{ $tipoM->NombreTipoM }}</option>
+                            @forelse ($TipoMaterial as $key=>$value)
+                            <option value="{{ $key }}">{{ $value }}</option>
                             @empty
                             <option value="">Ups! Registra clientes para continuar</option>
                             @endforelse
@@ -22,17 +23,18 @@
                         @error('material.tipo_material_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div><br>
                     <div class="form-group">
-                        <label for="color_id">Color del Material:</label>
+                        <label for="color_idAct">Color del Material:</label>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="color_idAct" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
                         <select class="form-select" wire:model="material.color_id" class="inpt" name="color_id" id="color_id">
                             <option value="">Seleccione</option>
-                            @forelse ($color as $cl)
-                            <option value="{{ $cl->id }}">{{ $cl->Ncolor }}</option>
+                            @forelse ($color as $key=>$value)
+                            <option value="{{ $key }}">{{ $value }}</option>
                             @empty
                             <option value="">Ups! Registra clientes para continuar</option>
                             @endforelse
                         </select>
                         @error('material.color_id')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div><br>
+                    </div>
                     <div class="form-group">
                         <label for="DescripcionMat">Descripción del Material: </label>
                         <textarea wire:model="material.DescripcionMat" id="DescripcionMat" class="form-control" name="material.DescripcionMat" rows="3"></textarea>

@@ -2,34 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SaveObraFormRequest;
-use App\Models\Cliente;
 use App\Models\Obra;
-use App\Models\TipoObra;
-use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ObraController extends Controller
 {
     public function index()
     {
+        $this->authorize('AccessObra', Obra::class);
         return view('funcionalidades.obra.index');
     }
 
     public function create()
     {
+        $this->authorize('CreateObra', Obra::class);
         return view('funcionalidades.obra.create');
     }
 
     public function store($request)
     {
+        $this->authorize('CreateObra', Obra::class);
         Obra::create($request->validated());
         return redirect()->route('funcionalidades.obra.index')->with('status',__('Obra creado correctamente.'));
     }
 
     public function edit(Obra $obra)
     {
-        $this->authorize('AginadoUser', $obra);
+        $this->authorize('UpdateObra', $obra);
         return view('funcionalidades.obra.edit', [
             'obra' => $obra,
         ]);
@@ -43,12 +43,14 @@ class ObraController extends Controller
 
     public function destroy(Obra $obra)
     {
+        $this->authorize('DeleteObra', $obra);
         $obra->delete();
         return redirect()->route('obra.index')->with('status',__('Obra eliminada correctamente.'));
     }
 
     public function show(Obra $obra)
     {
+        $this->authorize('ShowObra', $obra);
         $usuarios = $obra->Usuarios()->get()->sortBy('id');
         return view('funcionalidades.obra.show');
         // return view('livewire.obra.obra', [

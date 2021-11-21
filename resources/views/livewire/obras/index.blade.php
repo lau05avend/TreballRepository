@@ -1,6 +1,3 @@
-{{-- @section('css')
-<link rel="stylesheet" href="{{ asset('css/styles-obras.css'); }}">
-@endsection --}}
 
 <div class="-mt-5">
     <div class="container-fluid px-0 -pr-2">
@@ -26,10 +23,12 @@
                                                 inactiveClasses: 'text-gray-500 border-green-500'
                                             }">
                     <div class="butt-status w-90 bg-white text-center justify-between flex flex-wrap ml-5 mt-1">
-                        <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 1"
-                            :class="checked === 1 ? activeClasses : inactiveClasses">Todas
-                            <input type="radio" class="hidden" name="filterState" value="" wire:model="filterState" id="filterState" checked>
-                        </label>
+                        @can('obra_all')
+                            <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 1"
+                                :class="checked === 1 ? activeClasses : inactiveClasses">Todas
+                                <input type="radio" class="hidden" name="filterState" value="" wire:model="filterState" id="filterState" checked>
+                            </label>
+                        @endcan
                         <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 2"
                             :class="checked === 2 ? activeClasses : inactiveClasses" x-transition:enter-start.opacity>Sin Iniciar
                             <input type="radio" class="hidden" name="filterState" value="Sin Iniciar" wire:model="filterState" id="filterState">
@@ -38,22 +37,28 @@
                             :class="checked === 3 ? activeClasses : inactiveClasses">En proceso
                             <input type="radio" class="hidden" name="filterState" value="Activa" wire:model="filterState" id="filterState">
                         </label>
-                        <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 4"
-                            :class="checked === 4 ? activeClasses : inactiveClasses">Terminada
-                            <input type="radio" class="hidden" name="filterState" value="Terminada" wire:model="filterState" id="filterState">
-                        </label>
-                        <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 5"
-                            :class="checked === 5 ? activeClasses : inactiveClasses">Cancelada
-                            <input type="radio" class="hidden" name="filterState" value="Cancelada" wire:model="filterState" id="filterState">
-                        </label>
-                        <label id="estadoObra" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 6"
-                            :class="checked === 6 ? activeClasses : inactiveClasses">Eliminadas
-                            <input type="radio" class="hidden" name="filterState" value="Inactive" wire:model="filterState" id="estadoObra">
-                        </label>
+                        @can('ObraTerminadaCancelada', App\Models\Obra::class)
+                            <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 4"
+                                :class="checked === 4 ? activeClasses : inactiveClasses">Terminada
+                                <input type="radio" class="hidden" name="filterState" value="Terminada" wire:model="filterState" id="filterState">
+                            </label>
+                            <label id="filterState" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 5"
+                                :class="checked === 5 ? activeClasses : inactiveClasses">Cancelada
+                                <input type="radio" class="hidden" name="filterState" value="Cancelada" wire:model="filterState" id="filterState">
+                            </label>
+                        @endcan
+                        @can('ActiveObra')
+                            <label id="estadoObra" class="cursor-pointer py-2 px-3 mx-1 border-b-4" @click="checked = 6"
+                                :class="checked === 6 ? activeClasses : inactiveClasses">Eliminadas
+                                <input type="radio" class="hidden" name="filterState" value="Inactive" wire:model="filterState" id="estadoObra">
+                            </label>
+                        @endcan
                     </div>
-                    <a class="float-right mr-3 btn btn-dark " href="{{ route('obra.create') }}" id="addobra">
-                        <i class="fa fa-plus"></i> Agregar Obra
-                    </a>
+                    @can('obra_create')
+                        <a class="float-right mr-3 btn btn-dark " href="{{ route('obra.create') }}" id="addobra">
+                            <i class="fa fa-plus"></i> Agregar Obra
+                        </a>
+                    @endcan
                 </div>
             </div>
             @if (session()->has('message'))

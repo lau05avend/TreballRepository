@@ -11,27 +11,12 @@
                 <form class="px-14 pb-5" wire:submit.prevent="store()">
                     <div class="form-group">
                         <label for="tipo_material_id">Tipo de Material:</label>
-                        <select class="form-select" wire:model="material.tipo_material_id" class="inpt" name="tipo_material_id" id="tipo_material_id">
-                            <option value="">Seleccione</option>
-                            @forelse ($TipoMaterial as $tipoM)
-                            <option value="{{ $tipoM->id }}">{{ $tipoM->NombreTipoM }}</option>
-                            @empty
-                            <option value="">Ups! Registra clientes para continuar</option>
-                            @endforelse
-                        </select>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idReg" name="material.tipo_material_id" modalTipo="CreateMaterial" wire:model="material.tipo_material_id" :options="$TipoMaterial"></x-select2>
                         @error('material.tipo_material_id')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div><br>
+                    </div>
                     <div class="form-group">
-                        <label for="color_id">Color del Material:</label>
-                        <x-select2 class="form-control" id="color_id" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
-                        <select class="form-select" wire:model="material.color_id" class="inpt" name="color_id" id="color_id">
-                            <option value="">Seleccione</option>
-                            @forelse ($color as $cl)
-                            <option value="{{ $cl->id }}">{{ $cl->Ncolor }}</option>
-                            @empty
-                            <option value="">Ups! Registra clientes para continuar</option>
-                            @endforelse
-                        </select>
+                        <label for="color_idReg">Color del Material:</label>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="color_idReg" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
                         @error('material.color_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div><br>
                     <div class="form-group">

@@ -34,7 +34,7 @@ class Usuario extends Model
         return $this->hasMany(Novedad::class, 'novedad_id');
      }
      public function Planillas(){
-        return $this->hasMany(Planilla::class);
+        return $this->hasMany(Planilla::class, 'empleado_id');
      }
 
     //relacion muchos a muchos

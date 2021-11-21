@@ -5,26 +5,28 @@
 
     @section('css')
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/main.min.css">
-        <style>
-            .fc .fc-daygrid-day.fc-day-today{
-                background-color: #23968930;
-            }
-
-            .fc .fc-col-header-cell-cushion{
-                color: #5b65ad;
-            }
-
-        </style>
+        <link rel="stylesheet" href="{{ asset('css/styles-calendar.css') }}">
     @endsection
 
-    <div class="">
-        <h1 class="display-6 text-gray-900 mb-16 text-center mt-0">Cronograma de Actividades</h1>
-        <div class="mb-9 position-relative">
-            <div id="loading">
-                <span>CARGANDO...</span>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
+          <li class="breadcrumb-item"><a href="#"><i class="far fa-file"></i> Library</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list"></i> Data</li>
+        </ol>
+    </nav>
+    <div class="card p">
+        <div class="card-header">
+            <span class="text-4xl w-full text-gray-900 mb-10 text-center mt-4">Cronograma de Actividades</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-9 position-relative">
+                <div id="loading">
+                    <span>CARGANDO...</span>
+                </div>
+                <button class="btn btn-outline-dark position-absolute -top-14 right-8" data-toggle="tooltip" data-placement="top" title="Tooltip idk on top" id="newActividad">NUEVO</button>
+                <div id="calendar"></div>
             </div>
-            <button class="btn btn-outline-dark position-absolute -top-14 right-8" id="newActividad">NUEVO</button>
-            <div id="calendar"></div>
         </div>
         <div>
             @include('funcionalidades.calendar.create')

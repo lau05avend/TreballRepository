@@ -10,8 +10,8 @@ class Planilla extends Model
     use HasFactory;
     protected $guarded = [];//desproteger los campos por defecto
 
-    public function planilla(){
-        return $this->belongsTo(Planilla::class);
+    public function Empleado(){
+        return $this->belongsTo(Usuario::class, 'empleado_id');
     }
 
 }
