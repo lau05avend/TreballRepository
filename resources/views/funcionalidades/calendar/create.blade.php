@@ -1,4 +1,4 @@
-<div class="modal fade" id="evento" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+<div wire:ignore.self class="modal fade" id="CreateEvento" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 680px;">
         <div class="modal-content">
             <div class="modal-header">

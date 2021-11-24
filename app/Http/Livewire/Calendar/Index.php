@@ -6,23 +6,33 @@ use App\Models\Actividad;
 use App\Models\EstadoActividad;
 use App\Models\FaseTarea;
 use App\Models\Obra;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class Index extends Component
 {
+    use AuthorizesRequests;
+
     public $eventos = '', $evento = '';
-    public $obra;
+    public $obra_;
+    public $respuestaC, $respuestaE;
     // protected $listeners = ['create'];
     public Actividad $actividad;
+    public User $user;
 
-    public function mount($idobra){
-        $this->obra = Obra::find($idobra);
-        // $this->actividad = new Actividad();
+    public function mount($obra){
+        $this->obra_ = Obra::find($obra);
+        $this->userA = Auth::user();
+        $this->respuestaC = $this->userA->can('calendario_create')? true : false;
+        $this->respuestaE = $this->userA->can('calendario_edit')? true : false;
     }
 
     public function render()
     {
-        $eventos = $this->obra->Actividades()->get();
+        $eventos = $this->obra_->Actividades()->get();
         // $eventos = Actividad::select('id','title','start')->get();
         $this->eventos = json_encode($eventos);
 
@@ -33,8 +43,12 @@ class Index extends Component
         return view('livewire.calendar.index',[
             'estadoA' => $estadoA,
             'faseT' => $faseT,
-            'obras' => $obras
+            'obrasdisp' => $obras
         ]);
+    }
+
+    public function neh(){
+        $this->emit('refreshCalendar');
     }
 
     /* --------------------------------  SHOW  ------------------------------------- */
@@ -64,14 +78,31 @@ class Index extends Component
     }
 
     public function create(){
-        $this->emit('console');
-        // $this->obra = Obra::find(15);
+        if($this->userA->can('calendario_create')){
+            $this->respuestaC = true;
+            $this->actividad = new Actividad();
+            // $this->abrirmodal('#CreateEvento');
+        }
+        else if($this->userA->can('calendario_create')){
+            $this->respuestaC = false;
+        }
     }
 
     public function store(){
         $this->validate();
         $this->actividad->save();
         session()->flash('message', 'Actividad creada satisfactoriamente.');
+    }
+
+    /* --------------------------------  EDIT  ------------------------------------- */
+
+    public function edit(){
+        if($this->userA->can('calendario_edit')){
+            $this->respuestaE = true;
+            // $this->abrirmodal('#CreateEvento');
+        }else if(!$this->userA->can('calendario_edit')){
+            $this->respuestaE = false;
+        }
     }
 
 
@@ -90,6 +121,15 @@ class Index extends Component
     //   $eventdata = Actividad::find($event['id']);
     //   $eventdata->start = $event['start'];
     //   $eventdata->save();
+    }
+
+    /* -------------------------------- MODAL  ------------------------------------- */
+
+    public function abrirmodal($Nmodal){
+        $this->emit('openModal', $Nmodal);
+    }
+    public function cerrarmodal($Nmodal){
+        $this->emit('closeModal', $Nmodal);
     }
 
 }

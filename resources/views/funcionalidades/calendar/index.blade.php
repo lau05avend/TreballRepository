@@ -8,7 +8,9 @@
         <link rel="stylesheet" href="{{ asset('css/styles-calendar.css') }}">
     @endsection
 
-    <nav aria-label="breadcrumb">
+    @livewire('calendar.index',[$idobr])
+
+    {{-- <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
           <li class="breadcrumb-item"><a href="#"><i class="far fa-file"></i> Library</a></li>
@@ -30,9 +32,9 @@
         </div>
         <div>
             @include('funcionalidades.calendar.create')
-            {{-- @include('funcionalidades.calendar.edit') --}}
+            @include('funcionalidades.calendar.edit')
         </div>
-    </div>
+    </div> --}}
 
     @push('jss')
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/main.min.js"></script>
@@ -45,7 +47,7 @@
             var numObra = {!! json_encode($idobr) !!}
         </script>
         @include('sweetalert::alert')
-        <script src="{{ asset('js/calendar.js') }}" defer></script>
+        {{-- <script src="{{ asset('js/calendar.js') }}" defer></script> --}}
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     @endpush

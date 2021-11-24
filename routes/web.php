@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ObraController;
 use App\Http\Livewire\Calendar\Index as CalendarIndex;
@@ -47,8 +48,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
     Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
     Route::get('/faseall', [EventoController::class,"allF"]);
-
-    // Route::get('/pruebacal/{idobra}', CalendarIndex::class)->name('pruebacal');
+    Route::get('/secciones', SeccionesIndex::class)->name('secciones');
+    
+    Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
 
 });
 

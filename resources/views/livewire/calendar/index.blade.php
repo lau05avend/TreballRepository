@@ -5,100 +5,249 @@
 @endsection
 
 <div>
-    <div>
-        @include('livewire.calendar.create')
+    @can('CreateCalendar')
+        <div>
+            @include('funcionalidades.calendar.create')
+        </div>
+    @endcan
+
+    <div class="card p">
+        <div class="card-header">
+            <span class="text-4xl w-full text-gray-900 mb-10 text-center mt-4">Cronograma de Actividades</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-9 position-relative" wire:ignore>
+                <div id="loading">
+                    <span>CARGANDO...</span>
+                </div>
+                <button class="btn btn-outline-dark position-absolute -top-14 right-8" data-toggle="tooltip" data-placement="top" title="Tooltip idk on top" id="newActividad">NUEVO</button>
+                <div id="calendar"></div>
+            </div>
+        </div>
+        <div>
+            @include('funcionalidades.calendar.create')
+            @include('funcionalidades.calendar.edit')
+        </div>
     </div>
 
-    {{-- {{ $obra }} <br /> --}}
-    <div id='calendar-container' wire:ignore>
-        <div id='calendar'></div>
-    </div>
+    <div wire:click="neh">hola</div>
 </div>
 
 @push('jss')
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/main.min.js"></script>
-    {{-- <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.js'></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/locales-all.js"></script>
-
     <script>
-        document.addEventListener('livewire:load', function() {
-            // var Draggable = FullCalendar.Draggable;
-            var calendarEl = document.getElementById('calendar');
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            var createPermissions = false;
+
+            function getData(url){
+                var xhReq = new XMLHttpRequest();
+                xhReq.open("GET", url, false);
+                xhReq.send(null);
+                return JSON.parse(xhReq.responseText);
+            }
+            var attr = [];
+
+            // ========================= PERMISIONS ============================
+
+            function openCreate() {
+                @this.create()
+                if(@this.respuestaC){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            function openEdit() {
+                @this.edit()
+                if(@this.respuestaE){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            // ========================= MODAL ============================
+
+            $("#close").on('click',function(){
+                $('#CreateEvento').modal("hide");
+            });
+            $("#newActividad").on('click',function(){
+                console.log(openCreate())
+                if(openCreate()){
+                    form.reset();
+                    $('#CreateEvento').modal("show");
+                }
+            });
+
+            // ========================= CALENDARIO ============================
+
             let form = document.getElementById("form-act");
-            var checkbox = document.getElementById('drop-remove');
-
-            var data =   @this.eventos;    //datos desde lw controller
-            console.log(data);
-
-            // CALENDARIO
+            var calendarEl = document.getElementById('calendar');
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                locale:"es",
+
                 schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+                locale:"es",
                 headerToolbar:{
                     left: 'prev,next today',
                     center: 'title',
                     right:
                     'dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimelineWeek'
                 },
-                aspectRatio: 1.8,
-                expandRows: true,
-
-                editable: true,
-                selectable: true,
-                dayMaxEvents: true, // allow "more" link when too many events
-                // displayEventTime: false,
-                eventTimeFormat: { // like '14:30:00'
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    // second: '2-digit',
-                    hour12: true
-                },
-
-                navLinks: true, // can click day/week names to navigate views
                 buttonText: {
                     resourceTimelineWeek:'Actividades'
                 },
+                initialView: 'timeGridWeek',
+                resourceAreaHeaderContent: 'Fase',
+                nowIndicator: true,
+                // aspectRatio: 1.6,
+                expandRows: true,
+                scrollTime :  "07:00:00",
+                scrollTimeReset: false,
+                slotMinTime: '06:00:00',
+                slotMaxTime: '20:30:00',
+                slotDuration: '00:30:00',
+                slotLabelInterval: 30,
+                eventMaxStack: 2,
+                views:{
+                    dayGridMonth:{
+                        dayHeaderFormat:{ weekday: 'long'},
 
+                    },
+                    timeGridDay:{
+                        titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
+                    },
+                    timeGrid: {
+                        dayMaxEventRows: 3 // adjust to 6 only for timeGridWeek/timeGridDay
+                    },
+                    listWeek:{
+                        displayEventTime: true,
+                    },
+                    resourceTimelineWeek: {
+                        slotDuration: '00:30:00',
+                        slotLabelInterval: {minutes: 30},
+                        eventMaxStack: true,
+                        aspectRatio: 1.9,
+                        nowIndicator: true,
+                    }
+                },
+                businessHours: {
+                    daysOfWeek: [1, 2, 3, 4, 5, 6], // Monday - Friday
+                    startTime: '07:00',
+                    endTime: '19:00'
+                },
+                /*validRange:
+                    function(currentDate) {
+                    // Generate a new date for manipulating in the next step
+                    var startDate = new Date(currentDate.valueOf());
+                    var endDate = new Date(currentDate.valueOf());
+
+                    // Adjust the start & end dates, respectively
+                    startDate.setDate(startDate.getDate() - 1); // One day in the past
+                    endDate.setDate(endDate.getDate() + 2); // Two days into the future
+
+                    return { start: startDate, end: endDate };
+                }, */
+
+                // allDayText: '',
+                displayEventTime: false,
+                navLinks: true,
+                editable: true,
+                selectable: true,
+                selectAllow: function(selectInfo){
+                    console.log(openCreate())
+                    return openCreate();
+                },
+                eventAllow: function(dropInfo, draggedEvent){
+                    // console.log(openEdit())
+                    console.log(dropInfo)
+                    console.log(draggedEvent)
+                    return openEdit();
+                },
+                dayMaxEvents: true,  // allow "more" link when too many events
+                eventTimeFormat: { // like '14:30:00'
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    meridiem: 'short',
+                    omitZeroMinute: true,
+                    // second: '2-digit',
+                    meridiem: false,
+                    hour12: true,
+                },
+                slotLabelFormat:{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                    },//se visualizara de esta manera 01:00 AM en la columna de horas
+                droppable: false, // this allows things to be dropped onto the calendar
+
+                resources: getData(URLp+'/faseall').map(({ id:id, NombreFase:title, DescripcionFase: description }) => ({
+                    id,title,description})
+                ),
                 eventSources: [
                     {
-                        events: JSON.parse(data),
-                        // method: 'GET',  //para sacar los eventos de url
+                        events:
+                        function (info, successCallback, failureCallback) {
+                            $.ajax({
+                                url: URLp+'/calendarall/'+numObra,
+                                type: 'GET',
+                                success: function (response) {
+                                    var events = [];
+                                    console.log(response);
+                                    if (response.length > 0) {
+                                        $.each(response, function (i, v) {
+                                            events.push({
+                                                id: v.id,title: v.title,start: v.start,end: v.end,resourceId: v.fase_tarea_id,estado_actividad_id: v.estado_actividad_id,obra_id: v.obra_id
+                                            });
+                                        });
+                                    } else {
+                                        console.log('No hay actividades aún.')
+                                    }
+                                    return successCallback(events);
+                                },
+                                error: function (error) {
+                                    console.log(error);
+                                }
+                            })},
                         color: 'rgb(169 208 144)',
                         borderColor: 'rgb(112 177 68)',
-                        textColor: 'black' // a non-ajax option
+                        textColor: 'black', // a non-ajax option
                     }
                 ],
+                selectMirror: true,
+                select: function(start,end){
+                    // if(createPermissions){
+                        form.reset();
+                        // var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0, 16)
+                        form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
+                        form.end.value = moment(start.endStr).format('YYYY-MM-DDTHH:mm:ss');
+                        form.obra_id.value = numObra;
+                        if(start.resource){
+                            form.fase_tarea_id.value = start.resource.id
+                        }
+                        $('#CreateEvento').modal("show");
+                    // }
 
-                dateClick: function(info){
-
-                    // window.livewire.emit('create');
-                    form.reset();
-
-                    var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0,16)
-                    form.start.value = date;
-                    form.end.value = date;
-
-                    $('#evento').modal("show");
+                //   console.log(start);
                 },
 
-                eventClick: function (info){
+
+                eventClick:function (info){
                     var evento = info.event;
-                    // console.log(URLp)
-                    axios.get(URLp+"/calendar/"+evento.id+"/edit").then(    //acceder a una url
-                    // $('#evento').modal("show");
-                    // axios.get(@this.getEvent(evento.id)).then(
-                    (repuesta) => {
-                        // console.log(respuesta)
-                        $('#evento').modal("show");
+                    // console.log(evento)
+                    axios.get(URLp+'/obras/'+numObra+'/cronograma/'+evento.id+"/edit").then((repuesta) => {  //acceder a una url
                         form.id.value = repuesta.data.id;
                         form.title.value = repuesta.data.title;
                         form.description.value = repuesta.data.DescripcionActividad;
                         form.start.value = repuesta.data.start;
                         form.end.value = repuesta.data.end;
-                        form.estado_actividad_id.value = repuesta.data.estado_actividad_id,
-                        form.fase_tarea_id.value = repuesta.data.fase_tarea_id,
-                        form.obra_id.value = repuesta.data.obra_id
+                        form.estado_actividad_id.value = repuesta.data.estado_actividad_id;
+                        form.fase_tarea_id.value = repuesta.data.fase_tarea_id;
+                        form.obra_id.value = repuesta.data.obra_id;
+                        $('#CreateEvento').modal("show");
                     }). catch(
                     error => {
                         if(error.response){
@@ -107,66 +256,130 @@
                     });
                 },
 
-        //     dateClick(info)  {
-        //        var title = prompt('Enter Event Title');
-        //        var date = new Date(info.dateStr + 'T00:00:00');
-        //        if(title != null && title != ''){
-        //          calendar.addEvent({
-        //             title: title,
-        //             start: date,
-        //             allDay: true
-        //           });
-        //          var eventAdd = {title: title,start: date};
-        //          @this.addevent(eventAdd);
-        //          alert('Great. Now, update your database...');
-        //        }else{
-        //         alert('Event Title Is Required');
-        //        }
-        //     },
-        //     droppable: true, // this allows things to be dropped onto the calendar
-        //     drop: function(info) {
-        //         // is the "remove after drop" checkbox checked?
-        //         if (checkbox.checked) {
-        //         // if so, remove the element from the "Draggable Events" list
-        //         info.draggedEl.parentNode.removeChild(info.draggedEl);
-        //         }
-        //     },
-        //     eventDrop: info => @this.eventDrop(info.event, info.oldEvent),
-        //     loading: function(isLoading) {
-        //             if (!isLoading) {
-        //                 // Reset custom events
-        //                 this.getEvents().forEach(function(e){
-        //                     if (e.source === null) {
-        //                         e.remove();
-        //                     }
-        //                 });
-        //             }
-        //         }
+                // ========================= OTHER CALENDARIO ============================
+                loading: function(bool) {
+                    if (bool)
+                        $('#loading').show();
+                    else
+                        $('#loading').hide();
+                },
+                eventDrop: function(event, delta) {
+                    // console.log(event)
+                    // console.log(event.title)
+                    // console.log(event.event.title + ' was moved ' + event.delta + ' days\n' + '(should probably update your database)');
+                    // console.log(event.delta)
+                },
             });
+
+
+            //funciones de eventos
+
+            // ========================= CREAR CALENDARIO ============================
+
+            $("#btnSave").on('click',function(){
+                const datos = new FormData(form);
+                console.log(datos);
+                console.log(form.start.value);
+                if(form.start.value >= moment(Date.now()).format('YYYY-MM-DD')){
+                    console.log('funciona')
+                }
+                else{
+                    console.log('idk');
+                }
+                axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
+                    (respuesta) => {
+                        console.log(respuesta)
+                        calendar.refetchEvents();  // actualizar el calendario
+                        $('#CreateEvento').modal("hide");
+                        Swal.fire({
+                            title: 'Bien!',
+                            text: 'Actividad guardada satisfactoriamente.',
+                            icon: 'success',
+                            confirmButtonText: 'Ok'
+                        })
+                        // $("#calendar").fullCalendar('renderEvents', { id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id});
+                }). catch(
+                    error => {
+                        if(error.response){
+                            $.each(error.response.data.errors, function name(attribute,message) {
+                                // if($('#'+attribute)){
+
+                                // }
+                                // else{
+                                    $('#'+attribute+'Message').html(message[0]);
+                                // }
+                                attr.push('#'+attribute);
+                            })
+                            console.log(attr)
+                            console.log(error.response.data.errors);
+                        }
+                    }
+                )
+            });
+            $(attr).each(function(atrr){
+                $(atrr).on('blur', function(){
+                    // if($(this).val().trim() != "") {
+                    //     $('#'+attr+'Message').text() = '';
+                    // }
+                    alert(this)
+                })
+            })
+
+            // ========================= ELIMINAR CALENDARIO ============================
+
+            $("#btnEliminar").on('click',function(){
+                const datos = new FormData(form);
+                console.log(datos);
+                axios.post(URLp+'/obras/'+numObra+'/cronograma'+datos.id+"/delete").then(    //acceder a una url
+                    (repuesta) => {
+                        calendar.refetchEvents();  // actualizar el calendario
+                        $('#CreateEvento').modal("hide");
+                }). catch(
+                    error => {
+                        if(error.response){
+                            console.log(error.response.data);
+                        }
+                    }
+                )
+            });
+
+            // ========================= ACTUALIZAR CALENDARIO ============================
+
+            $("#btnUpdate").on('click',function(){
+                var evento = info.event;
+                axios.get(URLp+"/calendar/"+evento.id+"/edit").then(    //acceder a una url
+                (repuesta) => {
+                    $('#CreateEvento').modal("show");
+                    form.id.value = repuesta.data.id;
+                    form.title.value = repuesta.data.title;
+                    form.description.value = repuesta.data.description;
+                    form.start.value = repuesta.data.start;
+                    form.end.value = repuesta.data.end;
+                    form.estado_actividad_id.value = repuesta.data.estado_actividad_id,
+                    form.fase_tarea_id.value = repuesta.data.fase_tarea_id,
+                    form.obra_id.value = repuesta.data.obra_id
+                }). catch(
+                error => {
+                    if(error.response){
+                        console.log(error.response.data);
+                    }
+                });
+            });
+
+
+            // ========================= RENDERIZAR CALENDARIO ============================
+
             calendar.render();
+            calendar.refetchEvents();
+
             @this.on(`refreshCalendar`, () => {
-                calendar.refetchEvents()
+                calendar.refetchEvents();
             });
+
+
         });
 
 
-        //functions
-        $("#btnSave").on('click',function(){
-        const datos = new FormData(form);
-        console.log(datos);
-        axios.post(URLp+"/calendar/", datos).then(    //acceder a una url
-            (repuesta) => {
-                // calendar.refetchEvents();  // actualizar el calendario
-                $('#evento').modal("hide");
-                $("#calendar").fullCalendar('renderEvents', { id:id, title:title, fase_tarea_id: resourceId, start:start, end:end, fase_tarea_id: fase_tarea_id, estado_actividad_id: estado_actividad_id, obra_id:obra_id});
-        }). catch(
-            error => {
-                if(error.response){
-                    console.log(error.response.data);
-                }
-            }
-        )
-    });
-
     </script>
+    {{-- <script src="{{ asset('js/calendar.js') }}" defer></script> --}}
 @endpush

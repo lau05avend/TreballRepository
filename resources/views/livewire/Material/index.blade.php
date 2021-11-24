@@ -1,4 +1,4 @@
-
+@section('title', 'Materiales | Treball')
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/styles-general.css'); }}">
 <style>
@@ -42,7 +42,6 @@
         <div class="form">
 
             <h1 class="text-center mt-3" style="color: black;">Material</h1><br>
-            {{ config('auth.defaults.guard') }}
             <i class="bx bx-loader bx-spin font-size-16 align-middle mr-2"></i>
             <div class="position-relative clear-both mt-6 pb-4">
                 <div class="inline-block w-full">
@@ -82,6 +81,12 @@
                         <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
                     </button><br>
                 </div>
+                <form wire:submit.prevent="import()" enctype="multipart/form-data">
+                    @csrf
+                    <i wire:loading class="fas fa-spinner fa-spin"></i> Import
+                    <input type="file" wire:modal="import" type="button" class="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed" wire:loading.attr="disabled" /><br />
+                    <input type="submit" value="Yes">
+                </form>
                 <div class="table-responsive">
                     <div class="div-tab">
                         <table class="table datatable table-hover">

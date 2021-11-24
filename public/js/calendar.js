@@ -1,9 +1,6 @@
-
-$(document).ready(function() {
-
-});
-
 document.addEventListener('DOMContentLoaded', function() {
+
+    var createPermissions = false;
 
     function getData(url){
         var xhReq = new XMLHttpRequest();
@@ -64,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 slotLabelInterval: {minutes: 30},
                 eventMaxStack: true,
                 aspectRatio: 1.9,
+                nowIndicator: true,
             }
         },
         businessHours: {
@@ -155,20 +153,21 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         selectMirror: true,
         select: function(start,end){
-            form.reset();
-            console.log(moment(Date.now()).format('YYYY-MM-DDTHH:mm:ss'));
-            // var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0, 16)
-            // form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
-            form.start.value = moment(Date.now()).format('YYYY-MM-DD');
-            form.end.value = moment(start.endStr).format('YYYY-MM-DDTHH:mm:ss');
-            form.obra_id.value = numObra;
-            if(start.resource){
-                form.fase_tarea_id.value = start.resource.id
-            }
-            $('#evento').modal("show");
+            // if(createPermissions){
+                form.reset();
+                // var date = new Date(Date.parse(info.dateStr)).toISOString().slice(0, 16)
+                form.start.value = moment(start.startStr).format('YYYY-MM-DDTHH:mm:ss');
+                form.end.value = moment(start.endStr).format('YYYY-MM-DDTHH:mm:ss');
+                form.obra_id.value = numObra;
+                if(start.resource){
+                    form.fase_tarea_id.value = start.resource.id
+                }
+                $('#evento').modal("show");
+            // }
 
         //   console.log(start);
         },
+
 
         eventClick:function (info){
             var evento = info.event;
@@ -190,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         },
-
 
         //parra probaaar
         loading: function(bool) {
@@ -219,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else{
             console.log('idk');
-        }sfsf
+        }
         axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
             (respuesta) => {
                 console.log(respuesta)
@@ -304,5 +302,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
     calendar.refetchEvents();
+
+    RenderLivewire = (isRender)=>{
+        calendar.refetchEvents();
+    }
+
+
 
 });

@@ -1,7 +1,7 @@
 "use strict";
 
 $(function () {
-    chart1();
+    // chart1();
     chart2();
     chart3();
     chart4();
@@ -115,8 +115,8 @@ function chart1() {
     };
 
     var chart = new ApexCharts(document.querySelector("#chart1"), options);
-
     chart.render();
+
 }
 
 function chart2() {
@@ -195,7 +195,7 @@ function chart2() {
 
 function chart3() {
     var options = {
-        chart: {
+        chart: {  // ajustes de estilos grafico
             height: 250,
             type: 'line',
             zoom: {
@@ -238,7 +238,7 @@ function chart3() {
             }
         },
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug'
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Julio', 'Ago'
             ],
             labels: {
                 style: {

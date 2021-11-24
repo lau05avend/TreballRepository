@@ -3,12 +3,15 @@
 namespace App\Http\Livewire\Materiales;
 
 use App\Http\Livewire\WithSorting;
+use App\Imports\MaterialImport;
 use App\Models\Color;
 use App\Models\Material as ModelsMaterial;
 use App\Models\TipoMaterial;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use Illuminate\Http\Request;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends Component
 {
@@ -25,6 +28,7 @@ class Index extends Component
         'filterState' => ['except' => 'Active']
     ];  //urfli filtro
     public $TipoMaterial, $color, $idM, $filterState, $openDelete = false, $openModal=false;
+    public $import;
 
     public function updatingSearch(){
         $this->resetPage(); //search por page
@@ -48,7 +52,7 @@ class Index extends Component
 
     public function render()   //renderiza el componente/
     {
-        $this->authorize('accessMa');
+        $this->authorize('accessMa', Material::class);
         $this->TipoMaterial = TipoMaterial::pluck('NombreTipoM','id')->toArray();
         $this->color = Color::pluck('Ncolor','id')->toArray();
         $materiales = ModelsMaterial::
@@ -144,6 +148,14 @@ class Index extends Component
     }
     public function cerrarmodal($Nmodal){
         $this->emit('closeModal', $Nmodal);
+    }
+
+    public function import(Request $request)
+    {
+        $file = $this->import;
+        Excel::import(new MaterialImport, $request->file('file')->store('temp'));
+
+        return redirect('/')->with('message', 'All good!');
     }
 
 }
