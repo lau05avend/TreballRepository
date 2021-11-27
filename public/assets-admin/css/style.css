@@ -2033,7 +2033,7 @@ select.form-control:not([size]):not([multiple]),
     height: 42px;
 }
 textarea.form-control {
-    height: auto;
+    height: auto !important;
     /* height: 64px !important; */
 }
 .custom-control {
@@ -3143,6 +3143,9 @@ select.form-control:not([size]):not([multiple]) {
 .table td,
 .table:not(.table-bordered) th {
     border-top: none;
+}
+.table td{
+    vertical-align: middle !important;
 }
 /* .table:not(.table-sm):not(.table-md):not(.dataTable) td,
 .table:not(.table-sm):not(.table-md):not(.dataTable) th {
@@ -10133,4 +10136,18 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 #livewire-error iframe{
     background-color: rgb(255 255 255) !important;
 }
+
+.row>* {
+    padding-left: 6px !important;
+}
+
+/* table.table thead .sorting:before, table.table thead .sorting:after, table.table thead .sorting_asc:before,
+    table.table thead .sorting_asc:after, table.table thead .sorting_desc:before, table.table thead .sorting_desc:after,
+    table.table thead .sorting_asc_disabled:before, table.table thead .sorting_asc_disabled:after,
+    table.table thead .sorting_desc_disabled:before, table.table thead .sorting_desc_disabled:after{
+        top: 1.3em !important;
+} */
+
+
+
 

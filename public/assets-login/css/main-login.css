@@ -265,7 +265,9 @@ iframe {
   background: transparent;
   padding: 0 7px 0 43px;
 }
-
+.input100:focus {
+    --tw-ring-color: transparent !important;
+}
 
 /*---------------------------------------------*/
 .focus-input100 {

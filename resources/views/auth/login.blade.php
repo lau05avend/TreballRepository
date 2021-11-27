@@ -29,7 +29,7 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="assets-login/css/util.css">
     <link rel="stylesheet" type="text/css" href="assets-login/css/main-login.css">
-    
+
     <!--===============================================================================================-->
 </head>
 
@@ -82,7 +82,7 @@
                     </div>
 
                     <div class="text-right p-t-8 p-b-31">
-                        <a href="#">
+                        <a href="{{ route('password.request') }}">
                             ¿Has olvidado tu contraseña?
                         </a>
                     </div>

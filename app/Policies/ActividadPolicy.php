@@ -6,58 +6,61 @@ use App\Models\Actividad;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CalendarPolicy
+class ActividadPolicy
 {
     use HandlesAuthorization;
 
     /**
-     * Create a new policy instance.
+     * Determine whether the user can view any models.
      *
-     * @return void
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function __construct()
-    {
-        //
-    }
 
-    public function AccessCalendar(User $user){
-        dd('aaaaaaa');
+    public function AccessActividad(User $user){
         if($user->can('calendario_access')){
             return true;
         }
     }
-    public function CreateCalendar(User $user){
+    public function CreateActividad(User $user){
         if($user->can('calendario_create')){
             return true;
         }
     }
-    public function AllCalendar(User $user){
+    public function AllActividad(User $user){
         if($user->can('calendario_all')){
             return true;
         }
     }
-    public function ShowCalendar(User $user){
+    public function ShowActividad(User $user){
         if($user->can('calendario_show')){
             return true;
         }
     }
-    public function UpdateCalendar(User $user){
+    public function UpdateActividad(User $user){
         if($user->can('calendario_edit')){
             return true;
         }
     }
-    public function DeleteCalendar(User $user){
+    public function DeleteActividad(User $user){
         if($user->can('calendario_delete')){
             return true;
         }
     }
-    public function ActiveCalendar(User $user){
+    public function ActiveActividad(User $user){
         if($user->can('calendario_active')){
             return true;
         }
     }
-    public function CalendarUsuario(User $user){
+    public function CalendarActividad(User $user){
         if($user->can('calendario_usuario_save')){
+            return true;
+        }
+    }
+
+    public function RutasDesarrolladorA(User $user){
+        if($user->getRoleNames()[0] == 'Admin'){
+            dd('yeppppp');
             return true;
         }
     }

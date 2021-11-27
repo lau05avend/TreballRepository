@@ -1,3 +1,4 @@
+@if ($openModal)
 <div wire:ignore.self class="modal fade overflow-y-auto" id="showModel" data-backdrop="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog showo" role="document">
         <div class="modal-content">
@@ -60,7 +61,6 @@
                                 @endforelse
                             @else
                             @endif
-                            {{-- {{$users}} --}}
                         </ul>
                         <br><br>
                    </div>
@@ -82,6 +82,8 @@
         </div>
     </div>
 </div>
+@endif
+
 @can('obra_delete')
     @if ($openModal)
     <x-delete>
@@ -104,4 +106,13 @@
     </x-delete>
     @endif
 @endcan
+
+@push('jss')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#showModel').modal('show');
+        // $('#showModel').show();
+    });
+</script>
+@endpush
 

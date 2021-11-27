@@ -4,6 +4,7 @@
 
 @section('title', 'Diseño')
 
+{{ Breadcrumbs::render('Disenos') }}
 <div class="shadow-2xl pt-8 px-5 bg-white">
     <div class="container-fluid px-0 -pr-2">
         <!--========== CONTENT ==========-->

@@ -8,16 +8,11 @@
         <link rel="stylesheet" href="{{ asset('css/styles-calendar.css') }}">
     @endsection
 
-    @livewire('calendar.index',[$idobr])
+    {{ Breadcrumbs::render('calendario', $idobr) }}
 
-    {{-- <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#"><i class="fas fa-tachometer-alt"></i> Home</a></li>
-          <li class="breadcrumb-item"><a href="#"><i class="far fa-file"></i> Library</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list"></i> Data</li>
-        </ol>
-    </nav>
-    <div class="card p">
+    @livewire('calendar.index',[$idobr->id])
+
+    {{-- <div class="card p">
         <div class="card-header">
             <span class="text-4xl w-full text-gray-900 mb-10 text-center mt-4">Cronograma de Actividades</span>
         </div>
@@ -44,7 +39,7 @@
         {{-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script> --}}
         <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
         <script>
-            var numObra = {!! json_encode($idobr) !!}
+            var numObra = {!! json_encode($idobr->id) !!}
         </script>
         @include('sweetalert::alert')
         {{-- <script src="{{ asset('js/calendar.js') }}" defer></script> --}}

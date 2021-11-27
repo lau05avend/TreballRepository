@@ -27,10 +27,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/admin', function () {
-    return view('admin.menu');
-});
-
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('admin.menu');
 })->name('dashboard');
@@ -46,11 +42,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/secciones', SeccionesIndex::class)->name('secciones');
     Route::resource('obras.cronograma', EventoController::class)->names('calendar')->parameters(['cronograma' => 'evento']);
     // Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
+    Route::get('/secciones', SeccionesIndex::class)->name('secciones');
+
+    // Rutas Desarrollador
+    Route::get('/obrasss/{op?}', [ObraController::class, 'showBread'])->name('obraB');
     Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
     Route::get('/faseall', [EventoController::class,"allF"]);
-    Route::get('/secciones', SeccionesIndex::class)->name('secciones');
-    
-    Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
+
+    // Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
 
 });
 

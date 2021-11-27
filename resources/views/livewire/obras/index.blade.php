@@ -1,4 +1,5 @@
 
+
 <div class="-mt-5">
     <div class="container-fluid px-0 -pr-2">
         <!--========== CONTENT ==========-->
@@ -9,6 +10,7 @@
             @endif
         </div>
 
+        {{ Breadcrumbs::render('obrasG') }}
         <div class="row justify-content-center pl-2 position-relative">
             {{-- <div>
                 @include('livewire.obra.create')
@@ -100,8 +102,13 @@
                                     <small class="mt-2 font-semibold">Modificada {{ $ob->updated_at?$ob->updated_at->diffForHumans():'---' }}</small>
                                 </div>
                                 <div class="title_info">
-                                    <br><button wire:click="show({{$ob->id}})" id="detail"
-                                        class="text-white text-md font-semibold bg-green-400 py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-500 transform-gpu hover:scale-110 ">DETALLE</button>
+                                    <br><button
+                                    wire:click="show({{$ob->id}})"
+                                    id="detail"
+                                        class="text-white text-md font-semibold bg-green-400 py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-500 transform-gpu hover:scale-110 ">
+                                        {{-- <a href="{{ route('obra.show', $ob) }}">DETALLE</a> --}}
+                                        DETALLE
+                                    </button>
                                 </div>
                             </div>
                         @empty
@@ -119,6 +126,17 @@
     </div>
 </div>
 
+@push('jss')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Livewire.emit('emit_to_parent')
+            @this.on('foo', () => {
+                alert('ddf')
+                @this.show(12)
+            });
+        });
+    </script>
+@endpush
 
 @section('scripts')
     @include('sweetalert::alert')

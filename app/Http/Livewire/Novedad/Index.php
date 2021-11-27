@@ -10,6 +10,7 @@ use App\Models\Novedad;
 use App\Models\TipoNovedad;
 use App\Models\User;
 use App\Models\Usuario;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class Index extends Component
 {
     use WithPagination;   // para paginacion
     use WithSorting;
+    use AuthorizesRequests;
 
     public $search;
     public $perPage = '10';
@@ -54,9 +56,13 @@ class Index extends Component
 
     public function render()
     {
+        $this->authorize('accessNovedad', Novedad::class);
+
         // $TipoNov=TipoNovedad::all()->sortBy('id');
         $TipoNov=TipoNovedad::pluck('NombreTipoN','id')->toArray();
-        $Acti=Actividad::pluck('title','id')->toArray();
+        $Acti=Actividad::select('actividads.*','obras.EstadoObra')->leftJoin('obras','obras.id','=','obra_id')
+                        ->whereNotIn('EstadoObra',['Cancelada','Terminada'])->orderBy('title','asc')
+                        ->pluck('title','id')->toArray();
         $Usu=Usuario::all()->sortBy('id');
         $Cli=Cliente::all()->sortBy('id');
 
@@ -64,10 +70,12 @@ class Index extends Component
             ->when($this->filterState, function($query){
                 $query->where('novedads.isActive', $this->filterState);
             })
-            ->select(['actividads.id as idA','novedads.*','empleados.id as idE', 'clientes.id as idC'])
+            ->select(['actividads.id as idA','novedads.*','empleados.id as idE', 'clientes.id as idC', 'obras.cliente_id as clientObra', 'obras.EstadoObra'])
                 ->leftJoin('actividads', 'actividads.id', '=', 'actividad_id')
                 ->leftJoin('clientes', 'clientes.id', '=', 'cliente_id')
                 ->leftJoin('empleados', 'empleados.id', '=', 'empleado_id') //multitabla
+                ->Join('obras', 'obras.id', '=', 'actividads.obra_id')
+            ->whereNotIn('obras.EstadoObra',['Cancelada','Terminada'])
             ->where(function($query){
                 $query->orWhere('AsuntoNovedad','like','%'.$this->search.'%')
                 ->orWhere('DescripcionN','like','%'.$this->search.'%')
@@ -89,6 +97,8 @@ class Index extends Component
     /* -------------------------------- SHOW  ------------------------------------- */
 
     public function show($id){
+        $this->authorize('ShowNovedad', Novedad::class);
+
         $this->abrirmodal('#showModel');
         $nv = Novedad::findOrFail($id);
         $this->novedad = $nv;
@@ -99,6 +109,8 @@ class Index extends Component
 
     public function create()
     {
+        $this->authorize('createNovedad', Novedad::class);
+
         $this->tipoM = 'create';
         $this->openModal = true;
         $this->abrirmodal('#CreateNovedad');
@@ -133,6 +145,8 @@ class Index extends Component
     }
 
     public function store(){
+        $this->authorize('createNovedad', Novedad::class);
+
         $this->validate();
         if ($this->userA->RolExterno == 'empleado') {
             $this->novedad->empleado_id = $this->userA->cargo()->get()->pluck('id')[0];
@@ -148,6 +162,8 @@ class Index extends Component
 
     public function edit($id)
     {
+        $this->authorize('updateTimeNovedad', Novedad::class);
+
         $this->openModal = true;
         $this->tipoM = 'edit';
         $this->abrirmodal('#EditNovedad');
@@ -155,6 +171,9 @@ class Index extends Component
     }
 
     public function update(){
+        $this->authorize('updateTimeNovedad', Novedad::class);
+
+
         $this->validate();
         $this->novedad->save();
         $this->cerrarmodal('#EditNovedad');
@@ -165,17 +184,23 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('deleteNovedad', Novedad::class);
+
         $this->openDelete = true;
         $this->idN = Novedad::find($id);
         $this->abrirmodal('#deleteConfirm');
     }
     public function deleteConfirm($id){
+        $this->authorize('deleteNovedad', Novedad::class);
+
         Novedad::find($id)->update(['isActive'=>'Inactive']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idN->id.' eliminado satisfactoriamente.');
     }
 
     public function activeConfirm($id){
+        $this->authorize('NovedadActiv', Novedad::class);
+
         Novedad::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idN->id.' activado satisfactoriamente.');

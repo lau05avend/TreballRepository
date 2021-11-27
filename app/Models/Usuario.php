@@ -39,7 +39,7 @@ class Usuario extends Model
 
     //relacion muchos a muchos
     public function Actividades(){
-        return $this->belongsToMany(Actividad::class)->withTimestamps();
+        return $this->belongsToMany(Actividad::class, 'actividad_usuario', 'empleado_id', 'actividad_id', 'id', 'id')->withTimestamps();
     }
 
     public function Obras(){

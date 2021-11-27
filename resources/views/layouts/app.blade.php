@@ -35,8 +35,6 @@
         @livewireStyles
         @yield('css')
 
-        <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script type="text/javascript">
             var URLp = {!! json_encode(url('/')) !!}
@@ -61,11 +59,9 @@
         {{-- LIBRERIAS JS --}}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-        @stack('jss')
-
         @livewireScripts
-        <script type="text/javascript">
 
+        <script type="text/javascript">
             window.livewire.on('a', (a) => {
                 alert(a);
             });
@@ -78,10 +74,6 @@
             window.livewire.on('closeShow', () => {
                 $('#showModel').modal('hide');
             });
-
-            window.addEventListener('name-updated', event => {
-                alert('Name updated to: ' + event.detail.newName);
-            })
 
         </script>
 
@@ -102,7 +94,13 @@
 
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" />
+
+        <!-- Scripts -->
+        <script src="{{ mix('js/app.js') }}" defer></script>
+
         @yield('js')
+        @stack('jss')
+
 
     </body>
 </html>

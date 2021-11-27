@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -72,18 +73,19 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // has many through
-    public function Planillas()
-    {
+    public function Planillas(){
         return $this->hasManyThrough(Planilla::class,Usuario::class, 'user_id','empleado_id');
     }
+    public function ObrasC(){
+        return $this->hasManyThrough(Obra::class,Cliente::class, 'user_id','cliente_id');
+    }
+
     public function Obras()
     {
         return $this->cargo()
             ->join('obra_usuario','empleado_id','=','empleados.id')
             ->leftJoin('obras','obras.id','=','obra_usuario.obra_id')
             ->select('obras.*');
-
-        // return $this->hasManyThrough('obra_usuario',Usuario::class, 'user_id','empleado_id');
     }
 
     // public function cliente(){

@@ -156,6 +156,7 @@ select, input{
 
 .table:not(.table-sm) thead th{
     position: relative;
+    vertical-align: text-bottom;
 }
 
 /* table.table thead .sorting:before {
@@ -208,6 +209,7 @@ table.dataTable thead>tr>th {
     width: 68px;
     padding-right: 2px;
 }
+
 
 
 

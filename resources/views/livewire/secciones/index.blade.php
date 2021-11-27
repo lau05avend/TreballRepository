@@ -4,6 +4,7 @@
 
 @section('title', 'Planilla')
 
+{{ Breadcrumbs::render('Secciones') }}
 <div class="shadow-2xl pt-8 px-5 mb-4 bg-white">
 
     <!--========== CONTENT ==========-->

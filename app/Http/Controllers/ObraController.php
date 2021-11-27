@@ -14,6 +14,18 @@ class ObraController extends Controller
         return view('funcionalidades.obra.index');
     }
 
+    public function showBread($op = 0)
+    {
+        $this->authorize('AccessObra', Obra::class);
+        if($op != 0 && $op > 0){
+            return redirect()->route('obra.index')->with('openShow',[true,$op]);
+        }
+        else if($op == 0){
+            return redirect()->route('clientes');
+        }
+            // return dd($op);
+    }
+
     public function create()
     {
         $this->authorize('CreateObra', Obra::class);
@@ -48,11 +60,16 @@ class ObraController extends Controller
         return redirect()->route('obra.index')->with('status',__('Obra eliminada correctamente.'));
     }
 
-    public function show(Obra $obra)
+    public function show(Obra $obra, $openModal = true)
     {
         $this->authorize('ShowObra', $obra);
-        $usuarios = $obra->Usuarios()->get()->sortBy('id');
-        return view('funcionalidades.obra.show');
+        $users = $obra->Usuarios()->get()->sortBy('id');
+
+        return view('funcionalidades.obra.show', [
+            'obra' => $obra,
+            'users' => $users,
+            'openModal' => $openModal
+        ]);
         // return view('livewire.obra.obra', [
         //     'obra' => $obra
         // ]);  //para usar con livewire

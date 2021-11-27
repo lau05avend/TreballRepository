@@ -3,9 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class EmpleadoPolicy
+class UsuarioPolicy
 {
     use HandlesAuthorization;
 
@@ -19,7 +20,7 @@ class EmpleadoPolicy
         //
     }
 
-    public function createEm(User $user){
+    public function createEmpleado(User $user){
         if ($user->can('empleado_create')) {
             return true;
         }
@@ -34,7 +35,7 @@ class EmpleadoPolicy
             return true;
         }
     }
-    public function deleteEm(User $user){
+    public function deleteEmpleado(User $user){
         if ($user->can('empleado_delete')) {
             return true;
         }
@@ -54,8 +55,5 @@ class EmpleadoPolicy
             return true;
         }
     }
-
-
-
 
 }

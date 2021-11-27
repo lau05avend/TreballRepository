@@ -3,21 +3,6 @@
 @endsection
 <div class="container-fluid position-relative">
 
-    <div class="position-absolute">
-    <div id="success" class="advise alert alert-success w-auto flex flex-row shadow-2xl bg-green-500 pl-20 items-center alert-dismissible fade show" role="alert">
-        <div class="alert-icon flex items-center bg-green-100 border-2 border-green-500 justify-center h-8 w-8 flex-shrink-0 rounded-full">
-            <span class="text-green-500">
-                <svg fill="currentColor" viewBox="0 0 20 20" class="h-6 w-6">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
-                    </path>
-                </svg>
-            </span>
-        </div>
-        <p id="messag" class="ml-5 items-center text-lg mb-0 text-green-50"> {{ session('message') }}</p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    </div>
-
     <div class="" id="EditObra" >
         <div class="modal-dialog showo" role="document">
             <div class="modal-content">

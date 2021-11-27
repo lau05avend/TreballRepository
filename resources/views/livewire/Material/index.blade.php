@@ -12,6 +12,7 @@
 @endsection
 
 <div>
+    {{ Breadcrumbs::render('Materiales') }}
     <div class="cardCustom">
 
         <!--========== CONTENT ==========-->
@@ -98,7 +99,7 @@
                                     <th style="width: 135px;">Tipo Material @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
                                     <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
                                     <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                    <th style="width: 102px;"></th>
+                                    <th style="width: 102px;">Opciones</th>
                                 </tr>
                             </thead>
                             <tbody id="bodyC">

@@ -4,6 +4,7 @@
 
 @section('title', 'Clientes')
 
+{{ Breadcrumbs::render('Clientes') }}
 <div class="shadow-2xl pt-8 px-5 mb-4 bg-white">
 
     <!--========== CONTENT ==========-->

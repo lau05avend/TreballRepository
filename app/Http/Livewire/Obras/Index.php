@@ -21,6 +21,7 @@ class Index extends Component
 
     public $search;
     public $perPage = '5';
+    protected $listeners = ["emit_to_parent" => 'openShowModal'];
     protected $queryString = [
         'search' => ['except' => ''],
         'filterState' => ['except' => '']
@@ -40,32 +41,56 @@ class Index extends Component
         $this->perPage = '';
     }
 
+
+    public function verifyShow()
+    {
+        if(session()->has('openShow')){
+            // dd(session('openShow')[1]);
+            $this->show(session('openShow')[1] );
+        }
+    }
+
+    public function emit_to_parent()
+    {
+            $this->emit("foo");
+    }
+
     public function mount(){
+        $this->verifyShow();
         $this->sortBy = 'id';
         $this->sortDirection = 'desc';
         $this->filterState = '';
         $this->filterStateIn = '';
         $this->userA = Auth::user();
-        // $this->material = new ModelsMaterial();
     }
 
     public function render()
     {
         if ($this->authorize('AccessObra', Obra::class) && Gate::denies('AllObra', Obra::class)) {
-
-            $obras = Obra::select(['obras.*','clientes.id as idCl','clientes.NombreCC','cities.id as idCity', 'cities.ciudad'])
-            ->leftJoin('obra_usuario','obras.id','=','obra_id')
-            ->leftJoin('clientes', 'clientes.id', '=', 'cliente_id')
-            ->leftJoin('cities', 'cities.id', '=', 'obras.city_id')
-            ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
-            ->where(function($query){
-                $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%');
-                $query->where('obras.isActive','=', 'Active');
-                $query->orWhere('clientes.NombreCC','like','%'.$this->search.'%')
-                ->orWhere('cities.ciudad','like','%'.$this->search.'%')
-                ->orWhere('NombreObra','like','%'.$this->search.'%');
-            })
-            ->paginate($this->perPage);
+            if($this->userA->getRoleNames()[0] != 'Cliente') {
+                $obras = Obra::select(['obras.*','clientes.id as idCl','clientes.NombreCC','cities.id as idCity', 'cities.ciudad'])
+                    ->leftJoin('obra_usuario','obras.id','=','obra_id')
+                    ->leftJoin('clientes', 'clientes.id', '=', 'cliente_id')
+                    ->leftJoin('cities', 'cities.id', '=', 'obras.city_id')
+                    ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
+                    ->where(function($query){
+                        $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%');
+                        $query->where('obras.isActive','=', 'Active');
+                        $query->orWhere('clientes.NombreCC','like','%'.$this->search.'%')
+                        ->orWhere('cities.ciudad','like','%'.$this->search.'%')
+                        ->orWhere('NombreObra','like','%'.$this->search.'%');
+                    })
+                    ->paginate($this->perPage);
+            }
+            else if($this->userA->getRoleNames()[0] == 'Cliente') {
+                $obras = $this->userA->ObrasC()
+                        ->where(function($query){
+                            $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%');
+                            $query->where('obras.isActive','=', 'Active');
+                            $query->orWhere('NombreObra','like','%'.$this->search.'%');
+                        })
+                        ->paginate($this->perPage);
+            }
         }
         else if($this->authorize('AllObra', Obra::class)){
             $obras = Obra::latest('updated_at')

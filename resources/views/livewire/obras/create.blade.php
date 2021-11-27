@@ -1,6 +1,7 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/styles-obras.css'); }}">
 @endsection
+{{ Breadcrumbs::render('obra/create') }}
 <div class="container-fluid">
     <div class="" id="CreateObra" >
         <div class="modal-dialog showo" role="document">
