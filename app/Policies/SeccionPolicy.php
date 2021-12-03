@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\seccion;
 use App\Models\User;
-use App\Models\Usuario;
+use App\Models\seccion;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class SeccionesPolicy
+class SeccionPolicy
 {
     use HandlesAuthorization;
 
@@ -51,5 +50,5 @@ class SeccionesPolicy
             return true;
         }
     }
-
+    
 }

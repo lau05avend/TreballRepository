@@ -6,7 +6,7 @@
 
 <div>
     {{ Breadcrumbs::render('Secciones') }}
-    <div class="shadow-2xl pt-8 px-5 mb-4 bg-white">
+    <div class="cardCustom">
 
         <!--========== CONTENT ==========-->
         @if (session('message'))
@@ -30,15 +30,19 @@
 
         <div class="position-absolute">
             @if ($openModal)
-                @include('livewire.secciones.create')
-                @include('livewire.secciones.edit')
+                @can('seccion_create')
+                    @include('livewire.secciones.create')
+                @endcan
+                @can('seccion_edit')
+                    @include('livewire.secciones.edit')
+                @endcan
             @endif
         </div>
 
         <div class="form">
 
             <h1 class="text-center mt-3">Secciones</h1>
-            <div class="position-relative clear-both mt-6 pb-4">
+            <div class="position-relative clear-both mt-14 pb-4">
                 <div class="inline-block w-full">
                     <div class="float-left pl-6">
                         <label for="filter_length">Mostrar
@@ -50,21 +54,32 @@
                             </select>
                         registros</label>
                     </div>
-                    <div class="float-left pl-6">
-                        <label for="filterSecciones">Estado
-                            <select name="filterSecciones" id="filterSecciones" wire:model="filterSecciones" class="py-0.5 focus:ring-0 focus:border-gray-600">
-                                <option value="Active">Activos</option>
-                                <option value="Inactive">Eliminado</option>
-                            </select>
-                        </label>
-                    </div>
+                    @can('seccion_active')
+                        <div class="float-left pl-6">
+                            <label for="filterSecciones">Estado
+                                <select name="filterSecciones" id="filterSecciones" wire:model="filterSecciones" class="py-0.5 focus:ring-0 focus:border-gray-600">
+                                    <option value="Active">Activos</option>
+                                    <option value="Inactive">Eliminado</option>
+                                </select>
+                            </label>
+                        </div>
+                    @endcan
                     <div class="float-right">
                         <label for="search" class="mr-2">Buscar: </label>
                         <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
                     </div>
                     @can('seccion_create')
-                    <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                        <button class="buttonN" wire:click="create()">
+                            <span>NUEVO</span>
+                            <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
+                        </button><br>
                     @endcan
+                </div>
+                <div class="selectType mb-3" wire:ignore>
+                    <div class="pr-4" style="width: 300px; text-align: center;">
+                        <label for="selectTipo">Seleccione un diseño:</label>
+                        <x-select2 class="inpt form-control" style="width:201px;" id="searchObra" name="searchObra" :options="$diseno"></x-select2>
+                    </div>
                 </div>
                 <div class="table-responsive">
                         <div class="div-tab">
@@ -93,23 +108,25 @@
                                 <td>{{ $l->created_at?date('d-m-Y h:i:s A', strtotime($l->created_at )) : '-' }}</td>
                                 <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
 
-                                @canany(['seccion_edit','seccion_delete','seccion_active'])
-                                            @if ($l->isActive == 'Active')
-                                                <td class="actions">
-                                                    <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
-                                                    @can('seccion_edit')
-                                                        <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
-                                                    @endcan
-                                                    @can('seccion_delete')
-                                                        <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
-                                                    @endcan
-                                                </td>
-                                            @else
-                                                @can('seccion_active')
-                                                    <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                                @endcan
-                                            @endif
-                                        @endcanany
+                                @canany(['seccion_edit','seccion_delete','seccion_show'])
+                                    @if ($l->isActive == 'Active')
+                                        <td class="actions">
+                                            @can('seccion_show')
+                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                            @endcan
+                                            @can('seccion_edit')
+                                                <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                            @endcan
+                                            @can('seccion_delete')
+                                                <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                            @endcan
+                                        </td>
+                                    @else
+                                        @can('seccion_active')
+                                            <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                        @endcan
+                                    @endif
+                                @endcanany
                             </tr>
                             @empty
                             <tr>
@@ -126,6 +143,7 @@
                 </div>
             </div>
         </div>
+        @can('seccion_delete')
         @if ($openDelete)
             <x-delete>
                 <x-slot name="title">{{$idS->isActive == 'Active'?'Eliminar':'Activar '}} hola</x-slot>
@@ -145,5 +163,7 @@
                 </x-slot>
             </x-delete>
         @endif
+
+        @endcan
     </div>
 </div>
