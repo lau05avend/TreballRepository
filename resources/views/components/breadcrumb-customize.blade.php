@@ -1,6 +1,6 @@
 @if (count($breadcrumbs))
 
-    <nav aria-label="breadcrumb" style="margin-top: -1.5%;">
+    <nav aria-label="breadcrumb" wire:ignore style="margin-top: -1.5%;">
         <ol class="breadcrumb" style="justify-content: flex-end;">
             @foreach ($breadcrumbs as $breadcrumb)
                 @if ($breadcrumb->url && !$loop->last)

@@ -8,9 +8,10 @@
         <link rel="stylesheet" href="{{ asset('css/styles-calendar.css') }}">
     @endsection
 
-    {{ Breadcrumbs::render('calendario', $idobr) }}
-
-    @livewire('calendar.index',[$idobr->id])
+    <div>
+        {{ Breadcrumbs::render('calendario', $idobr) }}
+        @livewire('calendar.index',[$idobr->id])
+    </div>
 
     {{-- <div class="card p">
         <div class="card-header">
@@ -40,11 +41,13 @@
         <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
         <script>
             var numObra = {!! json_encode($idobr->id) !!}
+            var obraModal = {!! json_encode($obraModal) !!}
+
         </script>
         @include('sweetalert::alert')
+
         {{-- <script src="{{ asset('js/calendar.js') }}" defer></script> --}}
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     @endpush
 
 

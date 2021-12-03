@@ -15,7 +15,7 @@
                         @error('image')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
                     {{-- <label class="custom-file-label" for="customFile"> --}}
-                        @if (isset($image))
+                        {{-- @if (isset($image))
                           <div class="m-2 mx-4 inline-block">
                             <img src="{{ $image->temporaryUrl() }}" class="img mt-2 w-32 rounded"><br>
                             <label>{{ $image->getClientOriginalName() }}</label>
@@ -26,7 +26,7 @@
                             </div>
                         @else
                             <p>Elegir Imagen</p>
-                        @endif
+                        @endif --}}
                     {{-- </label> --}}
                     <br>
                     <div class="form-group">
@@ -37,14 +37,8 @@
                     </div>
                     <div class="form-group">
                         <label for="obra">Obra:</label><br>
-                        <select name="obra" wire:model="diseno.obra_id" class="form-select" id="obra">
-                            <option value="">Seleccione</option>
-                            @forelse ($obra as $o)
-                                <option value="{{ $o->id }}">{{ $o->NombreObra }}</option>
-                            @empty
-                                <option value="">NO HAY OBRAS</option>
-                            @endforelse
-                        </select><br>
+                        {{-- <x-select2 class="inpt form-control" style="width:;" id="diseno.obra_id" name="diseno.obra_id" modalTipo="EditDiseno" wire:model="diseno.obra_id" :options="$obra"></x-select2> --}}
+                        <br>
                         @error('diseno.obra_id') <span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
 

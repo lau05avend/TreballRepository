@@ -7,9 +7,11 @@ use App\Imports\MaterialImport;
 use App\Models\Color;
 use App\Models\Material as ModelsMaterial;
 use App\Models\TipoMaterial;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -20,6 +22,7 @@ class Index extends Component
     use AuthorizesRequests;
 
     public ModelsMaterial $material;  //modelo para gestionar mat
+    public User $userA;
 
     public $search;//datatable
     public $perPage;
@@ -48,11 +51,12 @@ class Index extends Component
         $this->sortDirection = 'desc';
         $this->material = new ModelsMaterial();
         $this->filterState = 'Active';
+        $this->userA = Auth::user();
     }
 
     public function render()   //renderiza el componente/
     {
-        $this->authorize('accessMa', Material::class);
+        // $this->authorize('accessMaterial', Material::class);
         $this->TipoMaterial = TipoMaterial::pluck('NombreTipoM','id')->toArray();
         $this->color = Color::pluck('Ncolor','id')->toArray();
         $materiales = ModelsMaterial::
@@ -61,7 +65,9 @@ class Index extends Component
             ->leftJoin('tipo_materials', 'tipo_materials.id', '=', 'tipo_material_id') //multitabla
             // ->where('colors.Ncolor','negro')
             ->when($this->filterState, function($query){
-                $query->where('materials.isActive', $this->filterState);
+                if($this->userA->can('material_active')){
+                    $query->where('materials.isActive', $this->filterState);
+                }
             })
             ->where(function($query){
                 $query->orWhere('materials.DescripcionMat','like','%'.$this->search.'%')
@@ -81,6 +87,7 @@ class Index extends Component
 
 
     public function create(){
+        $this->authorize('createMaterial', Material::class);
         $this->abrirmodal('#CreateMaterial');
         $this->material = new ModelsMaterial();
     }
@@ -100,6 +107,7 @@ class Index extends Component
     }
 
     public function store(){
+        $this->authorize('createMaterial', Material::class);
         $this->validate();
         $this->material->save();   //guarda el registro
         // $newMaterial = $this->validate();
@@ -111,11 +119,13 @@ class Index extends Component
     /* -------------------------------- EDIT  ------------------------------------- */
 
     public function edit($id){
+        $this->authorize('updateMaterial', Material::class);
         $this->abrirmodal('#EditMaterial');
         $this->material = ModelsMaterial::find($id);
     }
 
     public function update(){  // update bd
+        $this->authorize('updateMaterial', Material::class);
         $this->validate();
         $this->material->save();
         $this->cerrarmodal('#EditMaterial');
@@ -125,17 +135,20 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
+        $this->authorize('deleteMaterial', Material::class);
         $this->openDelete = true;
         $this->idM = ModelsMaterial::find($id);
         $this->abrirmodal('#deleteConfirm');
     }
     public function deleteConfirm($id){
+        $this->authorize('deleteMaterial', Material::class);
         ModelsMaterial::find($id)->update(['isActive'=>'Inactive']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idM->id.' eliminado satisfactoriamente.');
     }
 
     public function activeConfirm($id){
+        $this->authorize('MaterialActive', Material::class);
         ModelsMaterial::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idM->id.' activado satisfactoriamente.');

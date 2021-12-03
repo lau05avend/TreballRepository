@@ -2,6 +2,7 @@
     @section('css')
         <link rel="stylesheet" type="text/css" href="assets-login/fonts/iconic/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" type="text/css" href="assets-login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href={{asset('assets-admin/css/app.min.css')}}>
     <!--===============================================================================================-->
 
         <link rel="stylesheet" type="text/css" href="{{ asset('assets-login/css/util.css') }}">
@@ -57,6 +58,7 @@
                     <br>
                     <div class="text-right p-t-8 p-b-31">
                         <a href="{{ route('login') }}">
+                            <i class="fas fa-arrow-alt-circle-left"></i>
                             Iniciar sesión
                         </a>
                     </div>

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\CronogramaController;
+use App\Http\Controllers\DropzoneController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ObraController;
+use App\Http\Controllers\PDFController;
 use App\Http\Livewire\Calendar\Index as CalendarIndex;
 use App\Http\Livewire\Cliente\Index;
 use App\Http\Livewire\Diseno\Index as DisenoIndex;
@@ -46,8 +48,19 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // Rutas Desarrollador
     Route::get('/obrasss/{op?}', [ObraController::class, 'showBread'])->name('obraB');
+    Route::get('/calendar/{obra?}', [EventoController::class, 'showCalendarObra'])->name('obraCalendar');
     Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
     Route::get('/faseall', [EventoController::class,"allF"]);
+    Route::post('/dropzone', [DropzoneController::class,"store_dropzone"])->name('dropzone');
+
+    Route::get('/markAsRead', function(){
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
+    })->name('markAsRead');
+
+    Route::get('/visualizar/{archivoplanilla}', [PDFController::class,'viewPlanillaPDF'])->name('viewplanilla');
+
+    Route::get('pdf', [PDFController::class,'pdf'])->name('pdf');
 
     // Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
 

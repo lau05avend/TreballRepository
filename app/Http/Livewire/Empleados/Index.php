@@ -9,6 +9,7 @@ use App\Models\Rol;
 use App\Models\TipoIdentificacion;
 use App\Models\User;
 use App\Models\Usuario;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -28,7 +29,7 @@ class Index extends Component
     public User $userA;
 
     public $perPage;
-    public $openDelete = false, $openModal = false, $idE , $filterEmpleado = 'Active', $obraCoord;
+    public $openDelete = false, $openModal = false,$openShow = false, $idE , $filterEmpleado = 'Active', $obraCoord;
     protected $queryString = [
         'search' => ['except' => ''],
         'filterEmpleado' => ['except' => 'Active'],
@@ -124,6 +125,9 @@ class Index extends Component
     }
     public function cerrarmodal($Nmodal){
         $this->emit('closeModal', $Nmodal);
+        if($this->openShow){
+            $this->openShow = false;
+        }
     }
 
     /* -------------------------------- CREAR  ------------------------------------- */
@@ -138,6 +142,11 @@ class Index extends Component
     public function updated($propertyName)    //validaciones real-time
     {
         $this->validateOnly($propertyName);
+    }
+
+    public function hydrate()
+    {
+        $this->resetValidation();
     }
 
     public function rules(){
@@ -185,8 +194,10 @@ class Index extends Component
         $this->empleado->contrasena = Hash::make($this->empleado->contrasena);
         $this->empleado->save();
         $this->cerrarmodal('#CreateEmpleado');
-        // $this->openModal = false;
         session()->flash('message', 'Empleado creado satisfactoriamente.');
+
+        $newEmpleado = Usuario::where('NombreCompleto',$this->empleado->NombreCompleto)->get()->first();
+        event(new Registered($user = $newEmpleado->User()->get()->first() ));
     }
 
     /* -------------------------------- SHOW  ------------------------------------- */
@@ -194,7 +205,7 @@ class Index extends Component
     public function show($idE){
         $this->authorize('EmpleadoShow', Usuario::class);
 
-        $this->openModal = true;
+        $this->openShow = true;
         $this->abrirmodal('#ShowEmpleado');
         $empleado = Usuario::findOrFail($idE);
         $this->empleado = $empleado;

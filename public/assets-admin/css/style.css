@@ -10148,6 +10148,9 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
         top: 1.3em !important;
 } */
 
+input[type=date]:read-only {
+    background: #e7e5e5;
+}
 
 
 

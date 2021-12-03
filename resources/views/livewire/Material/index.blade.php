@@ -36,8 +36,12 @@
         @endif
 
         <div class="position-absolute">
-            @include('livewire.Material.create')
-            @include('livewire.Material.edit')
+            @can('createMaterial')
+                @include('livewire.Material.create')
+            @endcan
+            @can('updateMaterial')
+                @include('livewire.Material.edit')
+            @endcan
         </div>
 
         <div class="form">
@@ -57,37 +61,34 @@
                             </select>
                             registros</label>
                     </div>
-                    <div class="float-left pl-6">
-                        <label for="filterState">Estado
-                            <select name="filterState" id="filterState" wire:model="filterState" class="py-0.5 focus:ring-0 focus:border-gray-600">
-                                <option value="Active">Activos</option>
-                                <option value="Inactive">Eliminado</option>
-                            </select>
-                        </label>
-                    </div>
+                    @can('MaterialActive')
+                        <div class="float-left pl-6">
+                            <label for="filterState">Estado
+                                <select name="filterState" id="filterState" wire:model="filterState" class="py-0.5 focus:ring-0 focus:border-gray-600">
+                                    <option value="Active">Activos</option>
+                                    <option value="Inactive">Eliminado</option>
+                                </select>
+                            </label>
+                        </div>
+                    @endcan
                     @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
-                    <div class="float-left pl-2">
-                        <livewire:excel-export model="Material" format="csv" />
-                        <livewire:excel-export model="Material" format="xlsx" />
-                        <livewire:excel-export model="Material" format="pdf" />
-                    </div>
+                        <div class="float-left ml-3">
+                            <livewire:excel-export model="Material" format="csv,pdf,xlsx" />
+                        </div>
                     @endif
                     <div class="float-right">
                         <label for="search" class="mr-2">Buscar: </label>
                         <input id="search" name="search" type="text" wire:model="search"
                             class="h-8 border-gray-500 w-68 rounded">
                     </div>
-                    <button class="buttonN" wire:click="create">
-                        <span>NUEVO</span>
-                        <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
-                    </button><br>
+                    @can('createMaterial')
+                        <button class="buttonN" wire:click="create">
+                            <span>NUEVO</span>
+                            <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
+                        </button><br>
+                    @endcan
+
                 </div>
-                <form wire:submit.prevent="import()" enctype="multipart/form-data">
-                    @csrf
-                    <i wire:loading class="fas fa-spinner fa-spin"></i> Import
-                    <input type="file" wire:modal="import" type="button" class="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed" wire:loading.attr="disabled" /><br />
-                    <input type="submit" value="Yes">
-                </form>
                 <div class="table-responsive">
                     <div class="div-tab">
                         <table class="table datatable table-hover">
@@ -99,7 +100,9 @@
                                     <th style="width: 135px;">Tipo Material @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
                                     <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
                                     <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                    <th style="width: 102px;">Opciones</th>
+                                    @canany(['updateMaterial','deleteMaterial','material_active'])
+                                        <th style="width: 102px;">Opciones</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody id="bodyC">
@@ -112,15 +115,23 @@
                                     <td>{{ $l->created_at? $l->created_at : '' }}</td>
                                     <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
 
-                                    @if ($l->isActive == 'Active')
-                                        <td class="actions">
-                                            <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
-                                            <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
-                                            <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
-                                        </td>
-                                    @else
-                                        <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                    @endif
+                                    @canany(['updateMaterial','deleteMaterial','material_active'])
+                                        @if ($l->isActive == 'Active')
+                                            <td class="actions">
+                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                                @can('updateMaterial')
+                                                    <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                                @endcan
+                                                @can('deleteMaterial')
+                                                    <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                                @endcan
+                                            </td>
+                                        @else
+                                            @can('MaterialActive')
+                                                <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                            @endcan
+                                        @endif
+                                    @endcanany
                                 </tr>
                                 @empty
                                 <tr>
@@ -139,25 +150,27 @@
 
         </div>
     </div>
-    @if ($openDelete)
-        <x-delete>
-            <x-slot name="title">{{$idM->isActive == 'Active'?'Eliminar':'Activar '}} Cliente</x-slot>
-            <x-slot name="body">
-                @if ($idM->isActive == 'Active')
-                    <p>¿Esta seguro que desea eliminar el registro {{ $idM->id }} ?</p>
-                @else
-                    <p>¿Esta seguro que desea activar el registro {{ $idM->id }} ?</p>
-                @endif
-            </x-slot>
-            <x-slot name="method">
-                @if ($idM->isActive=='Active')
-                <button type="button" class="btn btn-danger close-modal" wire:click.prevent="deleteConfirm({{$idM->id}})" >Yes, Delete</button>
-                @else
-                <button type="button" class="btn btn-danger close-modal" wire:click.prevent="activeConfirm({{$idM->id}})" >Yes, Activar</button>
-                @endif
-            </x-slot>
-        </x-delete>
-    @endif
+    @can('deleteMaterial')
+        @if ($openDelete)
+            <x-delete>
+                <x-slot name="title">{{$idM->isActive == 'Active'?'Eliminar':'Activar '}} Cliente</x-slot>
+                <x-slot name="body">
+                    @if ($idM->isActive == 'Active')
+                        <p>¿Esta seguro que desea eliminar el registro {{ $idM->id }} ?</p>
+                    @else
+                        <p>¿Esta seguro que desea activar el registro {{ $idM->id }} ?</p>
+                    @endif
+                </x-slot>
+                <x-slot name="method">
+                    @if ($idM->isActive=='Active')
+                    <button type="button" class="btn btn-danger close-modal" wire:click.prevent="deleteConfirm({{$idM->id}})" >Yes, Delete</button>
+                    @else
+                    <button type="button" class="btn btn-danger close-modal" wire:click.prevent="activeConfirm({{$idM->id}})" >Yes, Activar</button>
+                    @endif
+                </x-slot>
+            </x-delete>
+        @endif
+    @endcan
 </div>
 
 

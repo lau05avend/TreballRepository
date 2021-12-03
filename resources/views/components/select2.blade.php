@@ -1,5 +1,5 @@
-<div>
-    <div wire:ignore style="max-width: 100%;" >
+
+<div wire:ignore style="max-width: 100%;" >
         @if(isset($attributes['multiple']))
             <div id="{{ $attributes['id'] }}-btn-container" class="mb-3">
                 <button type="button" class="btn btn-info btn-sm select-all-button">Seleccionar Todos</button>
@@ -15,7 +15,6 @@
                 <option value="{{ $key }}">{{ $value }}</option>
             @endforeach
         </select>
-    </div>
 </div>
 
 @push('jss')
@@ -26,7 +25,6 @@
         // });
 
     document.addEventListener("livewire:load", () => {
-        console.log('aaaaa');
         let el = $('#{{ $attributes['id'] }}')
         let buttonsId = '#{{ $attributes['id'] }}-btn-container'
 
@@ -67,8 +65,12 @@
             if (data === "null") {
                 data = null
             }
-            @this.set('{{ $attributes['wire:model'] }}', data)
 
+            console.log('{{ $attributes['wire:model'] }}');
+            if('{{ $attributes['wire:model'] }}' != ""){
+                console.log('yep')
+                @this.set('{{ $attributes['wire:model'] }}', data)
+            }
         });
     });
 </script>

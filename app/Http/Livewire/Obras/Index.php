@@ -75,7 +75,6 @@ class Index extends Component
                     ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
                     ->where(function($query){
                         $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%');
-                        $query->where('obras.isActive','=', 'Active');
                         $query->orWhere('clientes.NombreCC','like','%'.$this->search.'%')
                         ->orWhere('cities.ciudad','like','%'.$this->search.'%')
                         ->orWhere('NombreObra','like','%'.$this->search.'%');

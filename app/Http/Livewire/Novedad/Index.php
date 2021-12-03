@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Novedad;
 
+use App\Events\NovedadEvent;
 use App\Exports\UsersExport;
 use App\Http\Livewire\WithSorting;
 use App\Models\Actividad;
@@ -154,6 +155,7 @@ class Index extends Component
             $this->novedad->cliente_id = $this->userA->cargo()->get()->pluck('id')[0];
         }
         $this->novedad->save();
+        event(new NovedadEvent($this->novedad));
         $this->cerrarmodal('#CreateNovedad');
         session()->flash('message', 'Novedad satisfactoriamente creada.');
     }

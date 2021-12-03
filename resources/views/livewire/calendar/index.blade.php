@@ -1,42 +1,65 @@
 @section('css')
-<style>
-</style>
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.css' rel='stylesheet' />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.css' rel='stylesheet' />
+
 @endsection
 
 <div>
-    @can('CreateCalendar')
+    <div>
         <div>
-            @include('funcionalidades.calendar.create')
+            @can('calendario_create')
+                @include('funcionalidades.calendar.create')
+            @endcan
+            @include('livewire.calendar.modalAsk')
         </div>
-    @endcan
 
-    <div class="card p">
-        <div class="card-header">
-            <span class="text-4xl w-full text-gray-900 mb-10 text-center mt-4">Cronograma de Actividades</span>
+        <div class="float-left" style="margin-top: -62px;">
+            <button type="button" class="btn btn-outline-dark" id="OpenSelectO" data-toggle="tooltip" data-placement="right" title="Consultar otra obra">
+                <i class="fas fa-random" style="font-size: 13px !important;"></i>
+                <span class="text-sm">Cambiar obra</span>
+            </button>
         </div>
-        <div class="card-body">
-            <div class="mb-9 position-relative" wire:ignore>
-                <div id="loading">
-                    <span>CARGANDO...</span>
+        <div class="card p">
+            <div class="card-header justify-center">
+                <div class="mt-4 mb-9 text-center">
+                    <span class="text-4xl w-full text-gray-900 mt-4">Cronograma de Actividades</span><br>
+                    <span class="text-2xl w-full text-gray-900 mb-10 mt-2">{{ $obra_->NombreObra }}</span>
                 </div>
-                <button class="btn btn-outline-dark position-absolute -top-14 right-8" data-toggle="tooltip" data-placement="top" title="Tooltip idk on top" id="newActividad">NUEVO</button>
-                <div id="calendar"></div>
+            </div>
+            <div class="card-body">
+                {{-- <div style="width:350px;">
+                    <x-select2 class="inpt form-control" id="selectObra" wire:ignore name="selectObra" :options="$obrasdisp"></x-select2>
+                </div> --}}
+                <div class="mb-9 position-relative" wire:ignore>
+                    <div id="loading">
+                        <span>CARGANDO...</span>
+                    </div>
+
+                    @can('CreateActividad',[App\Models\Actividad::class,$obra_->id ] )
+                        <button class="btn btn-outline-dark position-absolute -top-14 right-0" id="newActividad">
+                            <span class="text-base">Agregar Actividad</span>
+                            <i class="ion-android-add-circle" style="font-size:19px; margin-left:4px"></i>
+                        </button>
+                    @endcan
+
+                    <div id="calendar"></div>
+                </div>
             </div>
         </div>
-        <div>
-            @include('funcionalidades.calendar.create')
-            @include('funcionalidades.calendar.edit')
-        </div>
-    </div>
 
-    <div wire:click="neh">hola</div>
+    </div>
 </div>
 
 @push('jss')
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
+
+            $('#OpenSelectO').on('click', function(){
+                $('#staticBackdrop').modal('show');
+            })
+
+            if(obraModal != null){
+                $('#staticBackdrop').modal('show');
+            }
 
             var createPermissions = false;
 
@@ -162,7 +185,6 @@
                     return openCreate();
                 },
                 eventAllow: function(dropInfo, draggedEvent){
-                    // console.log(openEdit())
                     console.log(dropInfo)
                     console.log(draggedEvent)
                     return openEdit();
@@ -289,6 +311,8 @@
                 axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
                     (respuesta) => {
                         console.log(respuesta)
+                        Livewire.emit('postAdded', respuesta.data);
+                        console.log(respuesta.data.created_at)
                         calendar.refetchEvents();  // actualizar el calendario
                         $('#CreateEvento').modal("hide");
                         Swal.fire({

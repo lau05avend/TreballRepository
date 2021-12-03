@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\ActividadEvent;
+use App\Events\NovedadEvent;
+use App\Events\ObraEvent;
+use App\Listeners\NovedadListener;
+use App\Listeners\ObraListener;
+use App\Listeners\ActividadListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +24,15 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        ObraEvent::class => [
+            ObraListener::class,
+        ],
+        NovedadEvent::class => [
+            NovedadListener::class
+        ],
+        ActividadEvent::class => [
+            ActividadListener::class
+        ]
     ];
 
     /**

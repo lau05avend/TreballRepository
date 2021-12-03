@@ -9,11 +9,14 @@
     <title>Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href={{ asset('assets-admin/img/logo-icon.svg')}} />
 
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="assets-login/vendor/bootstrap/css/bootstrap.min.css">
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="assets-login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href={{asset('assets-admin/css/app.min.css')}}>
+
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="assets-login/fonts/iconic/css/material-design-iconic-font.min.css">
     <!--===============================================================================================-->
@@ -50,13 +53,20 @@
                         Iniciar Sesión
                     </span>
 
+                    @if (session('status'))
+                    <div class="mb-4 text-sm font-medium text-red-600">
+                        {{ session('status') }}
+                    </div>
+                    @endif
                     <x-jet-validation-errors class="mb-4 text-red-600" /><br>
 
                     <div class="wrap-input100 validate-input m-b-23" data-validate="Campo obligatorio.">
 
                         <x-jet-label for="email" value="{{ __('Correo electrónico') }}" />
                         <x-jet-input id="email" class="input100" type="email" name="email" :value="old('email')"  autofocus />
-                        <span class="focus-input100" data-symbol="&#xf206;"></span>
+
+                        <span class="focus-input100" data-symbol="&#xf206;">
+
                         {{-- @error('email')<span class="error text-danger">{{ $message }}</span> @enderror --}}
 
                         <!-- <span class="label-input100">Correo electrónico</span>
@@ -67,6 +77,7 @@
                     <div class="wrap-input100 validate-input" data-validate="Campo obligatorio.">
 
                         <x-jet-label for="password" value="{{ __('Contraseña') }}" />
+                        <span class="icon-eye" style="position: absolute;right: 0;top: 50px;"><i id="eye" class="fas fa-eye-slash"></i></span>
                         <x-jet-input id="password" class="input100" type="password" name="password" autocomplete="current-password" />
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
 
@@ -118,6 +129,27 @@
     <script src="assets-login/vendor/countdowntime/countdowntime.js"></script>
     <!--===============================================================================================-->
     <script src="assets-login/js/main-login.js"></script>
+
+    <script>
+        const iconEye = document.querySelector(".icon-eye");
+
+        iconEye.addEventListener("click", function () {
+            const icon = this.querySelector("#eye");
+
+            if(document.getElementById('password').type === "password"){
+                console.log(document.getElementById('password').value);
+                document.getElementById('password').type = "text";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+
+            } else {
+                document.getElementById('password').type = "password";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        });
+
+    </script>
 
 </body>
 

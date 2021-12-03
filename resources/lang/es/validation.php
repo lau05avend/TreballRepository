@@ -164,6 +164,7 @@ return [
         'terms'                 => 'términos',
         'time'                  => 'hora',
         'title'                 => 'título',
+        'today'                 => 'hoy',
         'username'              => 'usuario',
         'year'                  => 'año',
     ],

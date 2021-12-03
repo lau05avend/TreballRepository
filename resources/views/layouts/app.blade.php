@@ -18,6 +18,7 @@
         <!-- Librerias Select2 -->
         {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="{{ asset('assets-admin/bundles/dropzonejs/dropzone.css'); }}" rel="stylesheet">
 
         {{-- Styles --> --}}
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -47,9 +48,8 @@
         <div class="loader"></div>
         <div id="app">
             <div class="main-wrapper main-wrapper-1">
-                {{-- @livewire('navigation-menu') --}}
-                    {{-- {{ $header }} --}}
-                <x-admin-content></x-admin-content>
+                {{-- <x-admin-content></x-admin-content> --}}
+                @livewire('admin.admin-content')
                 <div class="main-content mb-12">
                     {{ $slot }}
                 </div>
@@ -89,10 +89,12 @@
         <script src={{ asset('assets-admin/js/custom.js')}}></script>
 
         <!-- Libreria Estilos -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
         {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" defer></script> --}}
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="{{asset('assets-admin/bundles/dropzonejs/min/dropzone.min.js')}}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" />
 
         <!-- Scripts -->

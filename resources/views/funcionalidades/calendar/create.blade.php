@@ -62,8 +62,8 @@
                         <label for="obra_id">Obra: </label><br>
                         <select name="obra_id" class="form-control form-select" id="obra_id">
                             <option value="">Seleccione</option>
-                            @forelse ($obrasdisp as $ob)
-                            <option value="{{ $ob->id }}">{{ $ob->NombreObra }}</option>
+                            @forelse ($obrasdisp as $key => $value)
+                            <option value="{{ $key }}">{{ $value }}</option>
                             @empty
                             <option value="">No hay obras disponibles</option>
                             @endforelse

@@ -2,12 +2,16 @@
 
 namespace App\Http\Livewire\Obras;
 
+use App\Events\ObraEvent;
 use App\Models\City;
 use App\Models\Cliente;
 use App\Models\Image;
 use App\Models\Obra;
 use App\Models\TipoObra;
+use App\Models\User;
 use App\Models\Usuario;
+use App\Notifications\ObraNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -15,6 +19,7 @@ use Livewire\WithFileUploads;
 class Create extends Component
 {
     public Obra $obra;
+    public User $userA;
     public array $Usuarios = [];
     public $image = [], $identificator;
 
@@ -37,6 +42,7 @@ class Create extends Component
     public function mount(){
         $this->obra = new Obra();
         $this->identificator = rand();   //numero aleatorio
+        $this->userA = Auth::user();
     }
     public function updated($propertyName)
     {
@@ -79,6 +85,10 @@ class Create extends Component
         foreach ($this->image as $image) {   // imagenes
             $imagen = $image->store('obras','public');
             $this->obra->Images()->create(['archivo'=>$imagen]);
+        }
+
+        if(count($this->obra->Usuarios()->get()) > 0 ){
+            event(new ObraEvent($this->obra));
         }
 
         session()->flash('message', 'Obra Successfully created.');

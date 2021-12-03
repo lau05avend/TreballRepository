@@ -40,6 +40,7 @@
         </div>
         @endif
 
+
         <div class="form">
             {{-- <x-select2 class="inpt form-control" id="actividad_id" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
             <x-select2 class="inpt form-control" id="tipo_novedad_id" modalTipo="CreateNovedad" name="novedad.tipo_novedad_id" multiple wire:model="novedad.tipo_novedad_id" :options="$Tiponov"></x-select2> --}}
@@ -67,9 +68,7 @@
                     </div>
                     @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
                     <div class="float-left ml-2">
-                        <livewire:excel-export model="Novedad" format="csv" />
-                        <livewire:excel-export model="Novedad" format="xlsx" />
-                        <livewire:excel-export model="Novedad" format="pdf" />
+                        <livewire:excel-export model="Novedad" format="csv,pdf,xlsx" />
                     </div>
                     @endif
                     <div class="float-right">
@@ -80,7 +79,8 @@
                         <button class="buttonN position-absolute bg-gray-800 py-2 px-4 -top-16 right-2" wire:click="create()">NUEVO</button><br>
                     @endcan
                 </div>
-                <div class="div-tab overflow-x-auto">
+                <div class="table-responsive">
+                <div class="div-tab">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -115,18 +115,26 @@
                                 <td>{{ date_format($l->created_at, 'jS M Y') }}</td>
                                 <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
 
+                                @canany(['novedad_edit','novedad_delete','novedad_active'])
+
                                 @if ($l->isActive == 'Active')
-                                    @can('novedad_edit')
-                                        <td><button wire:click="edit({{$l->id}})" class="bg-red-400 butt hover:bg-red-300">Editar</button>
-                                    @endcan
-                                    @can('novedad_delete')
-                                        <button class="bg-yellow-200 butt hover:bg-yellow-300" wire:click="delete({{$l->id}})" >Eliminar</button></td>
-                                    @endcan
-                                @else
-                                    @can('novedad_active')
-                                        <td><button class="bg-green-500 butt hover:bg-green-400" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                    @endcan
-                                @endif
+                                            <td class="actions">
+                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                                @can('novedad_edit')
+                                                    <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                                @endcan
+                                                @can('novedad_delete')
+                                                    <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                                @endcan
+                                            </td>
+                                        @else
+                                            @can('novedad_active')
+                                                <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                            @endcan
+                                        @endif
+
+
+                                @endcanany
                             </tr>
                             @empty
                             <tr>
@@ -135,11 +143,15 @@
                             @endforelse
                         </tbody>
                     </table>
+                   </div>
                 </div>
                 <div>
-                    {{ $lista->links() }}
+                {{ $lista->links('components.custom-pagination-links') }}
                 </div>
             </div>
+            <div style="color: black;">
+
+                    </div>
 
         </div>
         @if ($openDelete)

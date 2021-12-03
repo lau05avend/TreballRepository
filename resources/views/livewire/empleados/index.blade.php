@@ -41,11 +41,13 @@
                 @can('empleado_create')
                     @include('livewire.empleados.create')
                 @endcan
-                @can('empleado_show')
-                    @include('livewire.empleados.show')
-                @endcan
                 @can('empleado_edit')
                     @include('livewire.empleados.edit')
+                @endcan
+            @endif
+            @if ($openShow)
+                @can('empleado_show')
+                    @include('livewire.empleados.show')
                 @endcan
             @endif
         </div>
@@ -78,9 +80,7 @@
                     @endcan
                     @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
                         <div class="float-left pl-6">
-                            <livewire:excel-export model="Usuario" format="csv" />
-                            <livewire:excel-export model="Usuario" format="xlsx" />
-                            <livewire:excel-export model="Usuario" format="pdf" />
+                            <livewire:excel-export model="Usuario" format="csv,pdf,xlsx" />
                         </div>
                     @endif
                     <div class="float-right">
@@ -88,7 +88,10 @@
                         <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 px-2 rounded">
                     </div>
                     @can('empleado_create')
-                        <button class="buttonN" wire:click="create()">NUEVO</button><br>
+                        <button class="buttonN" wire:click="create()">
+                            <span>NUEVO</span>
+                            <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
+                        </button><br>
                     @endcan
                 </div>
                 @if(Auth::user()->can('empleado_access',App\Models\Usuario::class) && !Auth::user()->can('empleado_all',App\Models\Usuario::class))
@@ -149,7 +152,7 @@
                                     @if ($l->EstadoUsuario == 'Active')
                                         <td class="actions ">
                                             @can('empleado_show')
-                                                <button style="margin-top: 0px;" wire:click="show({{$l->id}})" class="cursor-pointer" data-toggle="tooltip" data-placement="bottom" title="Ver"><i style="font-size:34px" class="ion-ios-eye-outline"></i></button>
+                                                <button style="margin-top: 0px;" wire:click="show({{$l->id}})" class="cursor-pointer" data-toggle="tooltip" data-placement="bottom" title="Ver detalles"><i style="font-size:34px" class="ion-ios-eye-outline"></i></button>
                                             @endcan
                                             @can('empleado_edit')
                                                 <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer" data-toggle="tooltip" data-placement="bottom" title="Editar"><i class="material-icons">create</i></button>
@@ -166,7 +169,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda {{ $search }}.</td>
+                                    <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -178,7 +181,8 @@
                 </div>
             </div>
         </div>
-        @if ($openDelete)
+        @can('empleado_active')
+            @if ($openDelete)
             <x-delete>
                 <x-slot name="title">{{$idE->EstadoUsuario == 'Active'?'Eliminar':'Activar '}} Empleado</x-slot>
                 <x-slot name="body">
@@ -196,7 +200,19 @@
                     @endif
                 </x-slot>
             </x-delete>
-        @endif
+            @endif
+        @endcan
     </div>
 </div>
+
+@push('jss')
+
+<script>
+    console.log();
+    $('#search').on('blur', function(){
+        console.log('blurrr')
+    })
+</script>
+
+@endpush
 

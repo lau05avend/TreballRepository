@@ -6,6 +6,10 @@
         <div>
             @livewire('obras.index')
         </div>
+    @section('js')
+    <script>
+
+    @endsection
 </x-app-layout>
 
 

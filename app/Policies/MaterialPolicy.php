@@ -19,22 +19,22 @@ class MaterialPolicy
         //
     }
 
-    public function createMa(User $user){
+    public function createMaterial(User $user){
         if ($user->can('material_create')) {
             return true;
         }
     }
-    public function accessMa(User $user){
+    public function accessMaterial(User $user){
         if ($user->can('material_access')) {
             return true;
         }
     }
-    public function deleteMa(User $user){
+    public function deleteMaterial(User $user){
         if ($user->can('material_delete')) {
             return true;
         }
     }
-    public function updateMa(User $user){
+    public function updateMaterial(User $user){
         if ($user->can('material_edit')) {
             return true;
         }
@@ -44,7 +44,7 @@ class MaterialPolicy
             return true;
         }
     }
-    public function MaterialActiv(User $user){
+    public function MaterialActive(User $user){
         if ($user->can('material_active')) {
             return true;
         }

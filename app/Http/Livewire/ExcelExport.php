@@ -14,14 +14,26 @@ class ExcelExport extends Component
 
     public $model;
     public $format;
+    public $formatEsp;
+
+    public function mount(){
+        $this->format = explode(",", $this->format);
+        $this->formatEsp = "pdf";
+    }
 
     public function render()
     {
         return view('livewire.excel-export');
     }
 
-    public function export()
+    public function exportFormat($format){
+        $this->formatEsp = $format;
+    }
+
+    public function export($format)
     {
+        $this->formatEsp = $format;
+
         $validatedFormat = $this->validateExportType();
 
         return (new ModelExport($this->getModel()))->download($this->filename, $validatedFormat);
@@ -29,16 +41,16 @@ class ExcelExport extends Component
 
     public function getFilenameProperty()
     {
-        return Str::snake(sprintf('export%s.%s', $this->model, $this->format));
+        return Str::snake(sprintf('export%s.%s', $this->model, $this->formatEsp));
     }
 
     public function validateExportType()
     {
         $formats = config('excel.extension_detector');
 
-        abort_if(in_array($this->format, $formats), Response::HTTP_NOT_FOUND);
+        abort_if(in_array($this->formatEsp, $formats), Response::HTTP_NOT_FOUND);
 
-        return $formats[$this->format];
+        return $formats[$this->formatEsp];
     }
 
     protected function getModel(): Model

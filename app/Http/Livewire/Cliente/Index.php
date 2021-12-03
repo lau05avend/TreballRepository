@@ -90,6 +90,11 @@ class Index extends Component
 
    /* -------------------------------- CREAR  ------------------------------------- */
 
+   public function hydrate()
+    {
+        $this->resetValidation();
+    }
+
     public function rules(){
         return [
             'cliente.NombreCC' => ['required',Rule::unique('clientes','NombreCC')->ignore($this->cliente)],
@@ -128,12 +133,11 @@ class Index extends Component
         // $this->cliente->ContrasenaC = Hash::make(substr(str_shuffle($this->caracteres), 0, $this->longitud));
         $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
         $this->cliente->save();
-        event(new Registered($this->cliente));
         $this->cerrarmodal('#CreateCliente');
         session()->flash('message', 'Cliente creado satisfactoriamente.');
 
-
-
+        $newCliente = Cliente::where('NombreCC',$this->cliente->NombreCC)->get()->first();
+        event(new Registered($user = $newCliente->User()->get()->first() ));
 
     }
 

@@ -78,6 +78,7 @@
                 </div>
             @endif
 
+            
             <div class="contOb mx-0 mt-2 block">
                     <div class="px-3 pb-4">
                         <input wire:model='search' type="text" class="form-control rounded-sm focus:border-gray-700 shadow-none" name="search" id="search" placeholder="Buscar Obra">

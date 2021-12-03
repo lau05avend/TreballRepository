@@ -1,4 +1,4 @@
-@if ($openModal)
+@if ($openShow)
 <div wire:ignore.self class="modal fade overflow-scroll" id="ShowEmpleado" data-backdrop="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="max-width: 890px;" role="document">
         <div class="modal-content">
@@ -31,33 +31,47 @@
                                         <div class="mt-3">
                                             <h4>{{ $empleado->NombreCompleto }}</h4>
                                             {{-- <p class="text-secondary mb-1">Full Stack Developer</p> --}}
-                                            <p class="font-size-sm text-gray-700">{{ $empleado->Rol->NombreRol }}</p>
-                                            <a href="mailto:{{ $empleado->CorreoUsuario }}"><button class="btn btn-outline-primary"><i class="far fa-envelope"></i> Enviar e-mail</button></a>
+                                            <p class="font-size-sm text-gray-700">{{ $empleado->Rol?$empleado->Rol->NombreRol:'' }}</p>
+                                            <a href="mailto:{{ $empleado->CorreoUsuario }}"><button class="btn btn-outline-primary bg-green-600"><i class="far fa-envelope"></i> Enviar e-mail</button></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card mt-3">
+                            <div class="mt-3">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <h6 class="mb-0 text-base"> <i></i> Disponibilidad: </h6>
+                                        <div class="float-left" style="display: flex; width: 50%;">
+                                            <i class="material-icons" style="font-size: 21px; margin-top:1.5px;">question_answer</i>
+                                            <h6 class="mb-0 ml-1 text-base"> Disponibilidad: </h6>
+                                        </div>
                                         <span class="text-gray-600">{{ $empleado->Disponibilidad }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <h6 class="mb-0 text-base"> <i></i> Ciudad: </h6>
-                                        <span class="text-gray-600">{{ $empleado->Ciudad->ciudad }}</span>
+                                        <div class="float-left" style="display: flex; width: 60%;">
+                                            <i class="material-icons" style="font-size: 21px; margin-top:1px;">place</i>
+                                            <h6 class="mb-0 ml-1 text-base"> Ciudad: </h6>
+                                        </div>
+                                        <span class="text-gray-600">{{ $empleado->Ciudad?$empleado->Ciudad->ciudad:'' }}</span>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <h6 class="mb-0 text-base"> <i></i> Edad: </h6>
+                                        <div class="float-left" style="display: flex; width: 80%;">
+                                            <i class="material-icons" style="font-size: 21px; margin-top:1px;">assignment_ind</i><h6 class="mb-0 ml-1 text-base"> Edad: </h6>
+                                        </div>
                                         <span class="text-gray-600">{{ $empleado->EdadU }}</span>
                                     </li>
                                     <li class="border-gray-600 list-group-item d-flex justify-content-between align-items-center flex-wrap" style="border-top-width: 1px !important;">
-                                        <h6 class="mb-0 text-base"> <i></i> # Obras <br> Realizadas: </h6>
-                                        <span class="text-gray-600">{{ $empleado->Obras()->get()->count() }}</span>
+                                        <div class="float-left" style="display: flex; width: 80%;">
+                                            <i class="material-icons" style="font-size: 21px; margin-top:1.5px;">done_all</i>
+                                            <h6 class="mb-0 ml-1 text-base">Obras <br> Terminadas: </h6>
+                                        </div>
+                                        <span class="text-gray-600">{{ $empleado->Obras()->where('EstadoObra','Terminada')->get()->count() }}</span>
                                     </li>
                                     <li class="border-gray-600 list-group-item d-flex justify-content-between align-items-center flex-wrap" style="border-top-width: 1px !important;">
-                                        <h6 class="mb-0 text-base"> <i></i> # Obras <br> Actuales: </h6>
-                                        <span class="text-gray-600">{{ $empleado->Obras()->get()->count() }}</span>
+                                        <div class="float-left" style="display: flex; width: 80%;">
+                                            <i class="material-icons" style="font-size: 21px; margin-top:1.5px;">equalizer</i>
+                                            <h6 class="mb-0 ml-1 text-base">Obras <br> Actuales: </h6>
+                                        </div>
+                                        <span class="text-gray-600">{{ $empleado->Obras()->whereIn('EstadoObra',['Sin Iniciar','Activa'])->get()->count() }}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -88,7 +102,7 @@
                                             <h6 class="mb-0">Tipo de Documento</h6>
                                         </div>
                                         <div class="col-sm-9 text-gray-600">
-                                            {{ $empleado->TipoIdentificacion->TipoIdentificacion }}
+                                            {{ $empleado->TipoIdentificacion?$empleado->TipoIdentificacion->TipoIdentificacion:'' }}
                                         </div>
                                     </div>
                                     <hr>
@@ -133,7 +147,7 @@
                                             <h6 class="mb-0">Estado Civil</h6>
                                         </div>
                                         <div class="col-sm-9 text-gray-600">
-                                            {{ $empleado->EstadoCivil->EstadoCivil }}
+                                            {{ $empleado->EstadoCivil?$empleado->EstadoCivil->EstadoCivil:'' }}
                                         </div>
                                     </div>
                                     <hr>

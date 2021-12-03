@@ -130,7 +130,10 @@
                         @error('empleado.contrasena')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" wire:loading.delay.longest.attr="disabled" class="btn btn-primary close-modal">
+                        <i wire:loading.delay.longest.class="fas fa-spinner fa-spin" ></i>
+                        Save
+                    </button>
                 </form>
             </div>
             <div class="modal-footer">
@@ -139,3 +142,4 @@
         </div>
     </div>
 </div>
+

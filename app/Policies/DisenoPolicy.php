@@ -19,42 +19,37 @@ class DisenoPolicy
         //
     }
 
-    public function createDs(User $user){
+    public function CreateDiseño(User $user){
         if ($user->can('diseno_create')) {
             return true;
         }
     }
-    public function DuseñoEdit(User $user){
+    public function DiseñoEdit(User $user){
         if ($user->can('diseno_edit')) {
             return true;
         }
     }
-    public function accessDis(User $user){
+    public function AccessDiseno(User $user){
         if ($user->can('diseno_access')) {
             return true;
         }
     }
-    public function ShowDs(User $user){
+    public function ShowDiseño(User $user){
         if($user->can('diseno_show')){
             return true;
         }
     }
-    public function deleteDs(User $user){
+    public function deleteDiseño(User $user){
         if ($user->can('diseno_delete')) {
             return true;
         }
     }
-    public function AcceDiseño(User $user){
-        if ($user->can('diseno_access')) {
-            return true;
-        }
-    }
-    public function AllDisño(User $user){
+    public function AllDiseno(User $user){
         if ($user->can('diseno_all')) {
             return true;
         }
     }
-    public function MDS(User $user){
+    public function MaterialDiseñoSave(User $user){
         if ($user->can('material_diseno_save')) {
             return true;
         }

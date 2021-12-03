@@ -7,6 +7,7 @@ use App\Models\EstadoActividad;
 use App\Models\FaseTarea;
 use App\Models\Obra;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -18,33 +19,77 @@ class Index extends Component
 
     public $eventos = '', $evento = '';
     public $obra_;
-    public $respuestaC, $respuestaE;
-    // protected $listeners = ['create'];
+    public $respuestaC, $respuestaE, $inputA;
+    protected $listeners = ['postAdded'];
     public Actividad $actividad;
     public User $user;
 
     public function mount($obra){
         $this->obra_ = Obra::find($obra);
         $this->userA = Auth::user();
-        $this->respuestaC = $this->userA->can('calendario_create')? true : false;
-        $this->respuestaE = $this->userA->can('calendario_edit')? true : false;
+        $this->inputA = null;
+        $this->respuestaC = $this->userA->can('CreateActividad', [Actividad::class, $obra]) ? true : false;
+        $this->respuestaE = $this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id] )? true : false;
+    }
+
+    public function defineObra(){
+        $this->validate([
+            'inputA' => 'required'
+        ],
+        [
+            'inputA.required' => 'Este campo es obligatorio.'
+        ]);
+        return redirect()->route('calendar.index',$this->inputA);
     }
 
     public function render()
     {
+        if ($this->authorize('calendario_access', Obra::class) && Gate::denies('calendario_all', Obra::class)) {
+            if($this->userA->getRoleNames()[0] != 'Cliente' && $this->userA->getRoleNames()[0] != 'Coordinador' ) {
+
+                $obras = Obra::select(['NombreObra','obras.id'])->leftJoin('obra_usuario','obras.id','=','obra_id')
+                        ->where('obra_usuario.empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
+                        ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                        ->pluck('NombreObra','id')->toArray();
+            }
+            else if($this->userA->getRoleNames()[0] == 'Coordinador'){
+                $obras =  Obra::select(['NombreObra','obras.id'])->leftJoin('obra_usuario','obras.id','=','obra_id')
+                        ->where('obra_usuario.empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
+                        ->where('obras.isActive','Active')
+                        ->pluck('NombreObra','id')->toArray();
+            }
+            else if($this->userA->getRoleNames()[0] == 'Cliente') {
+                $obras = $this->userA->Cargo()->get()->first()->Obras()
+                        ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                            ->pluck('NombreObra','id')->toArray();
+
+                $eventos = $this->obra_->Actividades()->get();
+            }
+
+        }
+        else if($this->authorize('calendario_all', Obra::class)){
+            $obras = Obra::select(['NombreObra','id'])->where('isActive','Active')
+                        ->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
+        }
         $eventos = $this->obra_->Actividades()->get();
-        // $eventos = Actividad::select('id','title','start')->get();
         $this->eventos = json_encode($eventos);
 
         $estadoA = EstadoActividad::get()->sortBy('id');
         $faseT = FaseTarea::get()->sortBy('id');
-        $obras = Obra::get()->sortBy('id');
 
         return view('livewire.calendar.index',[
             'estadoA' => $estadoA,
             'faseT' => $faseT,
             'obrasdisp' => $obras
         ]);
+    }
+
+    public function postAdded($actividad){
+        $this->actividad = Actividad::find($actividad['id']);
+        if($this->actividad->created_at ==  $this->actividad->updated_at){
+            dd('creaaaar');
+        }
+
     }
 
     public function neh(){
@@ -78,12 +123,12 @@ class Index extends Component
     }
 
     public function create(){
-        if($this->userA->can('calendario_create')){
+        if($this->userA->can('CreateActividad', [Actividad::class, $this->obra_->id]) ){
             $this->respuestaC = true;
             $this->actividad = new Actividad();
             // $this->abrirmodal('#CreateEvento');
         }
-        else if($this->userA->can('calendario_create')){
+        else if($this->userA->can('CreateActividad', [Actividad::class, $this->obra_->id]) ){
             $this->respuestaC = false;
         }
     }
@@ -97,10 +142,10 @@ class Index extends Component
     /* --------------------------------  EDIT  ------------------------------------- */
 
     public function edit(){
-        if($this->userA->can('calendario_edit')){
+        if($this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id]) ){
             $this->respuestaE = true;
             // $this->abrirmodal('#CreateEvento');
-        }else if(!$this->userA->can('calendario_edit')){
+        }else if(!$this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id]) ){
             $this->respuestaE = false;
         }
     }
