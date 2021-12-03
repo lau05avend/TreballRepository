@@ -12,13 +12,14 @@ class DropzoneController extends Controller
     public function store_dropzone(Request $request){
 
         $image = $request->file('fileUpload');
+        $hola = $request->input('val');
 
         // $image = $image->storeAs('disenos',('siii.'.$image->extension()),'public');
         $url = Storage::url($image);
 
         $idk = $request->file('collection_name');
 
-        return response()->json(compact('image'), Response::HTTP_CREATED);
+        return response()->json($hola, Response::HTTP_CREATED);
     }
 
 }

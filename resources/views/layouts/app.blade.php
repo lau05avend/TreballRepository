@@ -98,7 +98,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" />
 
         <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
+        <script src="{{ mix('js/app.js') }}" ></script>
 
         @yield('js')
         @stack('jss')

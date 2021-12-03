@@ -15,8 +15,8 @@
                         </div>
                         <div class="form-group">
                             <label for="ImagenPlano">Imagen:</label>
-                            <input type="file" name="ImagenPlano" wire:model="image" id="ImagenPlano"><br>
-                            @error('image')<span class="error text-danger">{{ $message }}</span> @enderror
+                            <input type="file" name="ImagenPlano" wire:model="images" id="snPlano"><br>
+                            @error('images.*')<span class="error text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="form-group">
                             <label for="ObservacionDiseno">Observacion Diseño:</label><br>

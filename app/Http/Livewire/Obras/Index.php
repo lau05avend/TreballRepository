@@ -45,8 +45,8 @@ class Index extends Component
     public function verifyShow()
     {
         if(session()->has('openShow')){
-            // dd(session('openShow')[1]);
-            $this->show(session('openShow')[1] );
+            // dd(session('openShow'));
+            $this->show(session('openShow'));
         }
     }
 

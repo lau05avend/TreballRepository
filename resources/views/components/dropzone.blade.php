@@ -1,6 +1,7 @@
 <div wire:ignore>
     <form action="{{ route('dropzone') }}" method="post" class="dropzone" {{ $attributes }}>
     @csrf
+    <input type="hidden" value="a" name="val">
     </form>
     {{-- <div class="dropzone" {{ $attributes }}></div> --}}
 </div>
@@ -8,11 +9,8 @@
 @push('jss')
    <script>
 
-       document.addEventListener('DOMContentLoaded', function(){
-            @this.on('modalOpen', function(){
-
-            })
-       })
+       alert(@this.filterStateIn)
+       var eee = localStorage.setItem('valSuccess', false);
 
         Dropzone.options.{{ $attributes['id'] }} = {
             maxFilesize: {{ $attributes['max-file-size'] ?? 2 }},
@@ -29,11 +27,14 @@
                 collection_name: "default"
             },
             success: function (file, response) {
-                console.log(file)
+                console.log(file.upload)
                 console.log(response)
-                document.addEventListener("livewire:load", () => {
-                    
+                if(file.upload != null){
+                    console.log('Upload')
+                    localStorage.setItem('valSuccess', true)
+                    document.dispatchEvent('livewire:load');
                 }
+                // valueUpload = 'upload';
                 // @this.addMedia(response.media)
             },
             error: function (file, response) {
@@ -41,6 +42,20 @@
                 file.previewElement.classList.add('dz-error')
                 let message = $.type(response) === 'string' ? response : response.errors.file
                 return _.map(file.previewElement.querySelectorAll('[data-dz-errormessage]'), r => r.textContent = message)
+            },
+
+            init: function() {
+                this.on("success", function(file, responseText) {
+
+                    document.addEventListener('livewire:load', function(){
+                        console.log('neh')
+                    })
+                })
+                document.addEventListener("livewire:load", () => {
+                    this.on("success", function(file, responseText) {
+                        console.log('neh')
+                    })
+                });
             }
                 //     removedfile: function (file) {
                 //         file.previewElement.remove()
@@ -52,16 +67,36 @@
                 //         if (file.xhr) {
                 //             var response = JSON.parse(file.xhr.response)
                 // @this.removeMedia(response.media)
-                //         } else {
-                // @this.removeMedia(file)
+            //         } else {
+            // @this.removeMedia(file)
 
-                //             if (this.options.maxFiles !== null) {
-                //                 this.options.maxFiles++
-                //             }
-                //         }
-                //     },
+            //             if (this.options.maxFiles !== null) {
+            //                 this.options.maxFiles++
+            //             }
+            //         }
+            //     },
 
-        }
+        };
+
+        document.addEventListener('livewire:load', function(){
+            @this.on('modalOpen', function(){
+                // Livewire.emit('crearPlano');
+            })
+
+            // $('#photo').on('success', function() {
+            //     alert('dxvfidchvgjnk')
+            //     var args = Array.prototype.slice.call(arguments);
+
+            //     // Look at the output in you browser console, if there is something interesting
+            //     console.log(args);
+            // })
+
+            if(localStorage.getItem('valSuccess')){
+                alert('ao');
+            }
+
+       })
+
 
     </script>
 @endpush

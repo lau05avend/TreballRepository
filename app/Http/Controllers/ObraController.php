@@ -18,7 +18,7 @@ class ObraController extends Controller
     {
         $this->authorize('AccessObra', Obra::class);
         if($op != 0 && $op > 0){
-            return redirect()->route('obra.index')->with('openShow',[true,$op]);
+            return redirect()->route('obra.index')->with('openShow',$op);
         }
         else if($op == 0){
             return redirect()->route('clientes');

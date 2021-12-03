@@ -31,6 +31,9 @@ class Index extends Component
     public $images = [];
     public $idD, $filterStateIn =  'Active';
     public $openModal = false, $openDelete = false;
+    public $listeners = [
+        'crearPlano'
+    ];
     public $tipoM;
 
     public function updatingSearch(){
@@ -96,10 +99,12 @@ class Index extends Component
 
     //CREAR ============================================================================
 
-    public function crearPlano($imgs){
-        $this->authorize('CreateDiseño', Diseno::class);
+    public function crearPlano(){
+        // $this->authorize('CreateDiseño', Diseno::class);
 
-        $this->images = $imgs;
+        // $this->images = array_push($this->images,$imgs);
+
+        dd("yepppp");
     }
 
     public function create(){
@@ -115,7 +120,7 @@ class Index extends Component
             // 'diseno.ImagenPlano'=> ['required' ],
             'diseno.ObservacionDiseno'=> ['required','min: 5'],
             'diseno.obra_id' => ['required' ],
-            'image' => ['required','image'],
+            'images.*' => ['required','image'],
         ];
     }
     public function validationAttributes (){
@@ -123,7 +128,7 @@ class Index extends Component
             'ImagenPlano' => 'Imagen del Plano',
             'ObservacionDiseno' => 'Observación de Diseno',
             'obra_id' => 'Obra',
-            'image' => 'Imagen del Plano'
+            'images.*' => 'Imagen del Plano'
         ];
     }
     public function updated($propertyName)

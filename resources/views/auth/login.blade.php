@@ -85,12 +85,7 @@
 						<input class="input100" type="password" name="pass" placeholder="Ejemplo305">
 						<span class="focus-input100" data-symbol="&#xf190;"></span> -->
                     </div>
-                    <div class="block mt-4">
-                        <label for="remember_me" class="flex items-center">
-                            <x-jet-checkbox id="remember_me" name="remember" />
-                            <span class="ml-2 text-sm text-gray-600">{{ __('Recuerdame') }}</span>
-                        </label>
-                    </div>
+
 
                     <div class="text-right p-t-8 p-b-31">
                         <a href="{{ route('password.request') }}">
