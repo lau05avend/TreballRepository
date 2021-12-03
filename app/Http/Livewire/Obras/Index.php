@@ -67,6 +67,7 @@ class Index extends Component
 
     public function render()
     {
+        dd(phpinfo());
         if ($this->authorize('AccessObra', Obra::class) && Gate::denies('AllObra', Obra::class)) {
             if($this->userA->getRoleNames()[0] != 'Cliente') {
                 $obras = Obra::select(['obras.*','clientes.id as idCl','clientes.NombreCC','cities.id as idCity', 'cities.ciudad'])
