@@ -1,10 +1,10 @@
 
 <div wire:ignore style="max-width: 100%;" >
         @if(isset($attributes['multiple']))
-            <div id="{{ $attributes['id'] }}-btn-container" class="mb-3">
-                <button type="button" class="btn btn-info btn-sm select-all-button">Seleccionar Todos</button>
-                <button type="button" class="btn btn-info btn-sm deselect-all-button">Deseleccionar todos</button>
-            </div>
+            {{-- <div id="{{ $attributes['id'] }}-btn-container" class="mb-2">
+                <button type="button" class="btn btn-outline-warning btn-sm select-all-button">Seleccionar Todos</button>
+                <button type="button" class="btn btn-outline-warning btn-sm deselect-all-button">Deseleccionar todos</button>
+            </div> --}}
         @endif
         {{-- {{ $attributes['modalTipo'] }} --}}
         <select class="select2 form-control" data-placeholder="{{ __('Seleccione su opción') }}" {{ $attributes }}>

@@ -8,6 +8,10 @@
     table.table thead .sorting_desc_disabled:before, table.table thead .sorting_desc_disabled:after{
         top: 1.3em;
     }
+    .dz-default.dz-message span {
+        font-size: 21px;
+        color: #464343;
+    }
 </style>
 @endsection
 
@@ -74,11 +78,13 @@
                             </label>
                         </div>
                     @endcan
+                    @can('diseno_all')
                     @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
                         <div class="float-left ml-3">
                             <livewire:excel-export model="Diseno" format="csv,pdf,xlsx" />
                         </div>
                     @endif
+                    @endcan
                     <div class="float-right">
                         <label for="search" class="mr-2">Buscar: </label>
                         <input id="search" name="search" type="text" wire:model="search"
@@ -90,67 +96,98 @@
                             <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
                         </button><br>
                     @endcan
-
                 </div>
-                <div class="table-responsive">
-                    <div class="div-tab">
-                        <table class="table datatable table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="text-align: end;width: 60px;">Id @include('components.table.sort', ['field' => 'id'])</th>
-                                    <th style="width: 210px;">Obra  @include('components.table.sort', ['field' => 'DescripcionMat'])</th>
-                                    <th style="width: 90px;">Estado de Obra @include('components.table.sort', ['field' => 'Ncolor'])</th>
-                                    <th style="width: 135px;">Observacion @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
-                                    <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
-                                    <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                    @canany(['diseno_edit','diseno_delete','diseno_show'])
-                                        <th style="width: 90px;">Opciones</th>
-                                    @endcanany
-                                </tr>
-                            </thead>
-                            <tbody id="bodyC"></tbody>
-                                @forelse ($disenos as $l)
-                                <tr>
-                                    {{-- <td>{{ $l }}</td> --}}
-                                    <td>{{ $l->id }}</td>
-                                    <th>{{ $l->Obra->NombreObra }}</th>
-                                    <th>{{ $l->Obra->EstadoObra }}</th>
-                                    <td>{{ $l->ObservacionDiseno == "" ? 'Sin observación' : 'Con observación' }}</td>
-                                    <td>{{ $l->created_at?date('d/m/Y h:i A', strtotime($l->created_at )) : '-' }}</td>
-                                    <td>{{ $l->updated_at?date('d/m/Y h:i A', strtotime($l->updated_at )) :'-' }}</td>
-
-                                    @canany(['updateMaterial','deleteMaterial','diseno_show'])
-                                        @if ($l->isActive == 'Active')
-                                            <td class="actions justify-center">
-                                                @can('diseno_show')
-                                                    <button><i style="font-size:32px" wire:click="show({{$l->id}})" class="ion-ios-eye-outline"></i></button>
-                                                @endcan
-                                                @can('diseno_edit')
-                                                    <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
-                                                @endcan
-                                                @can('diseno_delete')
-                                                    <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
-                                                @endcan
-                                            </td>
-                                        @else
-                                            @can('diseno_delete')
-                                                <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                            @endcan
-                                        @endif
-                                    @endcanany
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay
-                                        resultados para la búsqueda {{ $search }}.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                @can ('diseno_all')
+                    <div class="selectType mb-3" wire:ignore>
+                        <div class="pr-4" style="width: 300px; text-align: center;">
+                            <label for="selectTipo">Preferencia de Contenido:</label>
+                            <select class="inpt form-control" name="selectTipo" id="selectTipo">
+                                <option value="All">Todas las obras</option>
+                                <option value="PerObra">Por obra</option>
+                            </select>
+                        </div>
+                        <div style="width: 310px;" class="" id="searchObraDiv">
+                            <label for="searchObra">Consultar obra:</label>
+                            <x-select2 class="inpt form-control" style="width:201px;" id="searchObra" name="searchObra" :options="$obra"></x-select2>
+                        </div>
                     </div>
+                @endcan
+                <div class="table-responsive">
+                    <div wire:loading class="position-absolute top-28 font-semibold text-lg py-1 px-3">
+                        <i wire:loading.class="fas fa-spinner fa-spin" ></i>
+                        Cargando...
+                    </div>
+                    @if ($selectTipo == 'PerObra' && $searchObra == null)
+                        <div class="div-selectN ">
+                            <span class="text-2xl">Seleccione el empleado</span>
+                        </div>
+                    @else
+                        <div class="div-tab">
+                            <table class="table datatable table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: end;width: 60px;">Id @include('components.table.sort', ['field' => 'id'])</th>
+                                        <th style="width: 210px;">Obra  @include('components.table.sort', ['field' => 'NombreObra'])</th>
+                                        <th style="width: 90px;">Estado de Obra @include('components.table.sort', ['field' => 'EstadoObra'])</th>
+                                        <th style="width: 135px;">Observacion </th>
+                                        <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
+                                        <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
+                                        @canany(['diseno_edit','diseno_delete','diseno_show'])
+                                            <th style="width: 90px;">Opciones</th>
+                                        @endcanany
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyC"></tbody>
+                                    @forelse ($disenos as $l)
+                                    <tr>
+                                        {{-- <td>{{ $l }}</td> --}}
+                                        <td>{{ $l->id }}</td>
+                                        <th>{{ $l->Obra->NombreObra }}</th>
+                                        <th>{{ $l->Obra->EstadoObra }}</th>
+                                        <td>{{ $l->ObservacionDiseno == "" ? 'Sin observación' : 'Con observación' }}</td>
+                                        <td>{{ $l->created_at?date('d/m/Y h:i A', strtotime($l->created_at )) : '-' }}</td>
+                                        <td>{{ $l->updated_at?date('d/m/Y h:i A', strtotime($l->updated_at )) :'-' }}</td>
+
+                                        @canany(['updateMaterial','deleteMaterial','diseno_show'])
+                                            @if ($l->isActive == 'Active')
+                                                <td class="actions justify-center">
+                                                    @can('diseno_show')
+                                                        <button><i style="font-size:32px" wire:click="show({{$l->id}})" class="ion-ios-eye-outline"></i></button>
+                                                    @endcan
+                                                    @can('diseno_edit')
+                                                        <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                                    @endcan
+                                                    @can('diseno_delete')
+                                                        <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                                    @endcan
+                                                </td>
+                                            @else
+                                                @can('diseno_delete')
+                                                    <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                                @endcan
+                                            @endif
+                                        @endcanany
+                                    </tr>
+                                    @empty
+                                    @if($searchObra != null && count($disenos)<=0)
+                                        <tr>
+                                            <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">Esta obra no tiene diseños registradas.</td>
+                                        </tr>
+                                        @else
+                                        <tr>
+                                            <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda.</td>
+                                        </tr>
+                                        @endif
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                    @if ($disenos != null && count($disenos)>0)
                     <div style="color: black;">
                         {{ $disenos->links('components.custom-pagination-links') }}
                     </div>
+                    @endif
                 </div>
             </div>
 
@@ -181,9 +218,41 @@
 
 
 @push('jss')
+<script src={{ asset('assets-admin/js/page/accordion.js') }}></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        var inputSearch = document.querySelector('#searchObraDiv');
 
+            if( $('#searchObra').val() == "null"){
+                    $("#searchObra option[value='null']").remove();
+            }
+
+            if( $('#selectTipo').val() == 'PerObra'){
+                $('#searchObra').val(null).trigger('change');
+                inputSearch.classList.remove('hidden');
+            }
+            else if( $('#selectTipo').val() == 'All'){
+                $('#searchObra').val(null).trigger('change');
+                inputSearch.classList.add('hidden');
+            }
+
+            $('#selectTipo').on('change', function(event){
+                let value = event.target.value;
+                @this.set('selectTipo',value);
+
+                if(value == 'PerObra'){
+                    $('#searchObra').val(null).trigger('change');
+                    inputSearch.classList.remove('hidden');
+                }
+                else if(value == 'All'){
+                    $('#searchObra').val(null).trigger('change');
+                    inputSearch.classList.add('hidden');
+                }
+            })
+            $('#searchObra').on('change', function(event){
+                let value = event.target.value;
+                @this.set('searchObra',value);
+            });
     });
 </script>
 @endpush

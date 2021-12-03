@@ -23,10 +23,13 @@ class Index extends Component
     use AuthorizesRequests;
 
     public $search;
+    public $selectTipo, $searchObra;
     public $perPage = '5';
     protected $queryString = [
         'search' => ['except' => ''],
-        'filterStateIn' => ['except' => 'Active']
+        'filterStateIn' => ['except' => 'Active'],
+        'selectTipo' => ['except' => 'All'],
+        'searchObra' => ['except' => ''],
     ];
     public Diseno $diseno;
     public User $userA;
@@ -37,6 +40,7 @@ class Index extends Component
         'crearPlano'
     ];
     public $tipoM, $openShow = false;
+    public $resinaC = [], $baseC, $cauchoC, $pisosC;
 
     public function updatingSearch(){
         $this->resetPage();
@@ -48,11 +52,16 @@ class Index extends Component
     public function updateFilterState(){
         $this->perPage = '';
     }
+    public function hydrate(){
+        $this->resetValidation();
+    }
     public function mount(){
         $this->diseno = new Diseno();
         $this->sortBy = 'id';
         $this->sortDirection = 'desc';
         $this->userA = Auth::user();
+        $this->searchObra = null;
+        $this->selectTipo = 'All';
         // $this->material = new ModelsMaterial();
     }
 
@@ -64,32 +73,73 @@ class Index extends Component
                 ->leftJoin('obras','obras.id','=','disenos.obra_id')
                 ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
                 ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
-                // ->where('disenos.isActive','=', 'Active')
+                ->where('disenos.isActive','=', 'Active')
                 ->where(function($query){
                     $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
                         ->orWhere('NombreObra','like','%'.$this->search.'%');
                 })
+                ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage);
+
+             $IdObra = Obra::select(['obras.NombreObra','obras.id'])
+                ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
+                ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])->orderBy('id','asc')
+                ->pluck('NombreObra','id')->toArray();
 
         }
         else if($this->authorize('AllDiseno', Diseno::class)){
-            $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
-                ->leftJoin('obras','obras.id','=','disenos.obra_id')
-                ->where('disenos.isActive', 'Active')
-                ->where(function($query){
-                    $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
-                            ->orWhere('NombreObra','like','%'.$this->search.'%');
-                })
-                ->paginate($this->perPage);
+            if($this->selectTipo == 'All'){
+                $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
+                    ->leftJoin('obras','obras.id','=','disenos.obra_id')
+                    ->where('disenos.isActive','=', $this->filterStateIn)
+                    ->where(function($query){
+                        $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
+                                ->orWhere('NombreObra','like','%'.$this->search.'%');
+                    })
+                    ->orderBy($this->sortBy, $this->sortDirection)
+                    ->paginate($this->perPage);
+            }
+            else if($this->selectTipo = 'PerObra'){
+                $disenos = null;
+                if($this->searchObra != null){
+                    $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
+                        ->leftJoin('obras','obras.id','=','disenos.obra_id')
+                        ->where('obra_id','=', $this->searchObra)
+                        ->where('disenos.isActive','=', $this->filterStateIn)
+                        ->where(function($query){
+                            $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
+                                ->orWhere('NombreObra','like','%'.$this->search.'%');
+                        })
+                        ->orderBy($this->sortBy, $this->sortDirection)
+                        ->paginate($this->perPage);
+                }
+            }
+            $IdObra = Obra::select(['NombreObra','id'])->where('isActive','Active')->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
         }
 
-        $IdObra = Obra::select(['NombreObra','id'])->where('isActive','Active')->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
-        $materials = Material::where('isActive','Active')->get();
+        $resina = Material::select(['materials.id','DescripcionMat'])->where('isActive','Active')->where('tipo_material_id',1)->get()
+                    ->pluck('DescripcionMat','id')->toArray();
+        $base = Material::select(['materials.id','Ncolor'])->leftJoin('colors','colors.id' ,'=','color_id')
+                    ->where('isActive','Active')->where('tipo_material_id',2)->get()
+                    ->pluck('Ncolor','id')->toArray();
+
+        $caucho = Material::select(['materials.id','Ncolor'])
+                    ->leftJoin('colors','colors.id' ,'=','color_id')
+                    ->where('isActive','Active')->where('tipo_material_id',3)->get()
+                    ->pluck('Ncolor','id')->toArray();
+        $pisos = Material::select(['materials.id','Ncolor'])
+                    ->leftJoin('colors','colors.id' ,'=','color_id')
+                    ->where('isActive','Active')->where('tipo_material_id',4)->get()
+                    ->pluck('Ncolor','id')->toArray();
 
         return view('livewire.diseno.index', [
             'disenos' => $disenos,
             'obra' => $IdObra,
-            'materials' => $materials
+            'resina' => $resina,
+            'base' => $base,
+            'caucho' => $caucho,
+            'pisos' => $pisos,
         ]);
     }
     public function abrirmodal($Nmodal){
@@ -147,6 +197,12 @@ class Index extends Component
             'images.*' => 'Imagen del Plano'
         ];
     }
+    public function messages(){
+        return [
+            'images.required' => 'Es obligatorio registrar imagenes/archivos.',
+        ];
+    }
+
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
@@ -161,13 +217,7 @@ class Index extends Component
         foreach ($this->images as $image) {   // imagenes
             $this->diseno->Images()->create(['archivo'=>$image['nameFile']]);
         }
-
-        // $this->diseno->material()->sync($this->material); // para tabla N:M con usuarios
-
-        // foreach ($this->image as $image) {   // imagenes
-        //     $imagen = $image->store('obras','public');
-        //     $this->obra->Images()->create(['archivo'=>$imagen]);
-        // }
+        $this->MaterialDiseno();
 
         $this->cerrarmodal('#CreateDiseno');
         session()->flash('message', 'Diseño creado satisfactoriamente.');
@@ -224,19 +274,34 @@ class Index extends Component
     public function update(){
         $this->authorize('DiseñoEdit', Diseno::class);
         $this->validate();
-        $imagen = $this->image->store('disenos','public');
-        $this->diseno->ImagenPlano = $imagen;
-
+        $this->diseno->ImagenPlano = count($this->images);
         $this->diseno->save();
+
+        // dd($this->diseno->Images()->get());
+        if(count($this->diseno->Images()->get()) > 0 ){
+            foreach($this->diseno->Images()->get() as $img){
+                $img->delete();
+            }
+        }
+
+        foreach ($this->images as $image) {   // imagenes
+            $this->diseno->Images()->create(['archivo'=>$image['nameFile']]);
+
+        }
+        // $this->MaterialDiseno();
+
         $this->cerrarmodal('#EditDiseno');
         session()->flash('message', 'Diseño actualizado satisfactoriamente.');
+
     }
 
 
     // =================================================================================
 
     public function MaterialDiseno(){
-
+        if($this->userA->can('material_diseno_save')){
+            $this->diseno->material()->sync($this->resinaC); // para tabla N:M con usuarios
+        }
     }
 
 }

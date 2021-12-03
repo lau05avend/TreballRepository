@@ -28,24 +28,37 @@
                         </div>
 
                         @can('material_diseno_save')
-                            <div class="form-group">
+                            <div class="mt-12">
                                 <h3>Asignar Materiales </h3><br>
-                                {{-- <form method="POST" class="form-as" wire:submit.prevent="MaterialDiseno"> --}}
-                                    @forelse ($materials as $m)
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Usuarios" value="{{$m->id}}" id="{{ $m->id }}">
-                                        <label class="form-check-label" for="{{ $m->id }}">
-                                            {{$m->id.' . '.$m->NombreCompleto}}
-                                            <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{'Estado:'.$m->EstadoUsuario }}
-                                        </label>
-                                    </div><br>
-                                    @empty
-                                    <p>
-                                        NO HAY USUARIOS DISPONIBLES.
-                                    </p>
-                                    @endforelse
-                                    <br><br>
-                                {{-- </form> --}}
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                      <label for="resinaM">Tipo de resina:</label>
+                                      <x-select2 wire:ignore class="inpt form-control" modalTipo="CreateDiseno" id="resinaM" name="resinaM" :options="$resina" ></x-select2>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                      <label for="inputPassword4">Cantidad del Material</label>
+                                      <input type="number" class="form-control" id="material" placeholder="Password">
+                                    </div>
+                                    <div class="form-group col-md-2 text-right">
+                                        <button style="margin-top: 30px; font-size: 18px;" class="btn btn-primary">+</button>
+                                    </div>
+                                </div>
+
+                                {{ var_dump($resinaC) }}
+                                <div class="form-group">
+                                    <label for="baseM">Base</label><br>
+                                    <x-select2 wire:ignore class="inpt form-control" modalTipo="CreateDiseno" id="baseM" name="baseM" :options="$base" multiple></x-select2>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cauchoM">Caucho EPDM</label><br>
+                                    <x-select2 wire:ignore class="inpt form-control" modalTipo="CreateDiseno" id="cauchoM" name="cauchoM" :options="$caucho" multiple></x-select2>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pisoM">Pisos en caucho</label><br>
+                                    <x-select2 wire:ignore class="inpt form-control" modalTipo="CreateDiseno" id="pisoM" name="pisoM" :options="$pisos" multiple></x-select2>
+                                </div>
+
+                                <br><br>
                             </div>
                         @endcan
 
@@ -61,8 +74,15 @@
         </div>
     </div>
 </div>
+
 @push('jss')
+
 <script>
+
+    $('#resinaM').on('change',function(event){
+        console.log($('#resinaM').val());
+        @this.resinaC = $('#resinaM').val();
+    })
 
     var form = document.getElementById('photo');
     @this.on('modalOpen', function(){

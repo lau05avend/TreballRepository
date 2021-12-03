@@ -69,6 +69,8 @@ class Index extends Component
     public function mount(){
         $this->userA = Auth::user();
         $this->planilla = new Planilla();
+        $this->sortBy = 'id';
+        $this->sortDirection = 'desc';
         $this->selectTipo = 'All';
         $this->searchEmpleado = null;
     }
@@ -97,6 +99,7 @@ class Index extends Component
                     $query->orWhere('EstadoPlanilla','LIKE','%'.$this->search.'%');
                     $query->orWhere('empleados.NombreCompleto','LIKE', '%'.$this->search.'%');
                 })
+                ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage);
             }
             else if($this->selectTipo = 'PerEmpleado'){
@@ -116,6 +119,7 @@ class Index extends Component
                             $query->orWhere('EstadoPlanilla','LIKE','%'.$this->search.'%');
                             $query->orWhere('empleados.NombreCompleto','LIKE', '%'.$this->search.'%');
                         })
+                        ->orderBy($this->sortBy, $this->sortDirection)
                         ->paginate($this->perPage);
                 }
             }
