@@ -1,22 +1,23 @@
 <div wire:ignore>
     <form action="{{ route('dropzone') }}" method="post" class="dropzone" {{ $attributes }}>
     @csrf
-    <input type="hidden" value="a" name="val">
+    <input type="hidden" value="{{ $attributes['model'] }}" name="model">
     </form>
-    {{-- <div class="dropzone" {{ $attributes }}></div> --}}
 </div>
 
 @push('jss')
    <script>
-
-       alert(@this.filterStateIn)
-       var eee = localStorage.setItem('valSuccess', false);
+        var form = document.getElementById('photo');
+        // @this.on('modalOpen', function(){
+        //         $('{{ $attributes['id'] }}').removeAllFiles();
+        // })
 
         Dropzone.options.{{ $attributes['id'] }} = {
-            maxFilesize: {{ $attributes['max-file-size'] ?? 2 }},
+            maxFilesize: {{ $attributes['max-file-size'] ?? 3 }},
             maxFiles: {{ $attributes['max-files'] ?? 'null' }},
             dictDefaultMessage: "Arrastre o seleccione las imagenes",
             paramName: "{{ $attributes['paramName'] }}",
+            acceptedFiles: "{{ $attributes['acceptedFiles'] }}",
             addRemoveLinks: true,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -27,15 +28,31 @@
                 collection_name: "default"
             },
             success: function (file, response) {
-                console.log(file.upload)
-                console.log(response)
-                if(file.upload != null){
-                    console.log('Upload')
-                    localStorage.setItem('valSuccess', true)
-                    document.dispatchEvent('livewire:load');
+                var valfile = {nameFile:response};
+                let fileupload = {
+                    ...file.upload,
+                    ...valfile
+                };
+                console.log(fileupload)
+                // valfile = fileupload.push(response);
+                var val = JSON.parse(localStorage.getItem('upload'));
+                localStorage.setItem('upload', JSON.stringify(val.concat(fileupload) ))  ;
+                @this.imagesUpdate();
+            },
+            removedfile: function (file) {
+                file.previewElement.remove()
+                console.log(file)
+                var val = JSON.parse(localStorage.getItem('upload'));
+                console.log(val)
+                for(var i = 0; i < val.length; i++){
+                    if(val[i].uuid == file.upload.uuid){
+                        @this.removeFile(val[i].nameFile);
+                        val.splice(i, 1);
+                    }
                 }
-                // valueUpload = 'upload';
-                // @this.addMedia(response.media)
+                localStorage.setItem('upload', JSON.stringify(val));
+                @this.imagesUpdate();
+
             },
             error: function (file, response) {
                 console.log(response)
@@ -45,57 +62,37 @@
             },
 
             init: function() {
-                this.on("success", function(file, responseText) {
+                localStorage.setItem('upload',JSON.stringify([]) );
 
-                    document.addEventListener('livewire:load', function(){
-                        console.log('neh')
-                    })
-                })
-                document.addEventListener("livewire:load", () => {
-                    this.on("success", function(file, responseText) {
-                        console.log('neh')
-                    })
-                });
-            }
-                //     removedfile: function (file) {
-                //         file.previewElement.remove()
+                // $("#dropzon").click(function () {
+                //     photo.removeAllFiles();
+                // });
 
-                //         if (file.status === 'error') {
-                //             return;
+                // this.on("complete", function(file) {
+                //     this.removeAllFiles(true);
+                // })
+                // let files = @this.mediaCollections["{{ $attributes['collection-name'] ?? 'default' }}"]
+                // if (files !== undefined && files.length) {
+                //     files.forEach(file => {
+                //         let fileClone = JSON.parse(JSON.stringify(file))
+                //         this.files.push(fileClone)
+                //         this.emit("addedfile", fileClone)
+
+                //         if (fileClone.preview_thumbnail !== undefined) {
+                //             this.emit("thumbnail", fileClone, fileClone.preview_thumbnail)
+                //         } else {
+                //             this.emit("thumbnail", fileClone, fileClone.url)
                 //         }
 
-                //         if (file.xhr) {
-                //             var response = JSON.parse(file.xhr.response)
-                // @this.removeMedia(response.media)
-            //         } else {
-            // @this.removeMedia(file)
-
-            //             if (this.options.maxFiles !== null) {
-            //                 this.options.maxFiles++
-            //             }
-            //         }
-            //     },
+                //         this.emit("complete", fileClone)
+                //         if (this.options.maxFiles !== null) {
+                //             this.options.maxFiles--
+                //         }
+                //     })
+                // }
+            },
 
         };
-
-        document.addEventListener('livewire:load', function(){
-            @this.on('modalOpen', function(){
-                // Livewire.emit('crearPlano');
-            })
-
-            // $('#photo').on('success', function() {
-            //     alert('dxvfidchvgjnk')
-            //     var args = Array.prototype.slice.call(arguments);
-
-            //     // Look at the output in you browser console, if there is something interesting
-            //     console.log(args);
-            // })
-
-            if(localStorage.getItem('valSuccess')){
-                alert('ao');
-            }
-
-       })
 
 
     </script>

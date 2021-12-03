@@ -110,7 +110,8 @@ class Menu extends Component
 
     public function openObraModal($obra){
         // $this->dispatchBrowserEvent('name-updated', ['newName' => 2]);
-        return redirect()->route('obra.index')->with('openShow',[true,$obra]);
+        // return redirect()->route('obra.index')->with('openShow',[true,$obra]);
+        return redirect()->route('obra.index')->with('openShow',$obra);
     }
 
 

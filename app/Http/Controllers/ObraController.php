@@ -21,7 +21,7 @@ class ObraController extends Controller
             return redirect()->route('obra.index')->with('openShow',$op);
         }
         else if($op == 0){
-            return redirect()->route('clientes');
+            return redirect()->back();
         }
             // return dd($op);
     }

@@ -1,5 +1,3 @@
-
-
 <div class="-mt-5">
     <div class="container-fluid px-0 -pr-2">
         <!--========== CONTENT ==========-->
@@ -78,7 +76,7 @@
                 </div>
             @endif
 
-            
+
             <div class="contOb mx-0 mt-2 block">
                     <div class="px-3 pb-4">
                         <input wire:model='search' type="text" class="form-control rounded-sm focus:border-gray-700 shadow-none" name="search" id="search" placeholder="Buscar Obra">
@@ -139,8 +137,8 @@
     </script>
 @endpush
 
-@section('scripts')
+{{-- @section('scripts')
     @include('sweetalert::alert')
     <script src="{{ asset('js/script-obra.js'); }}"></script>
-@endsection
+@endsection --}}
 

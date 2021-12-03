@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use App\Http\Livewire\WithSorting;
 use App\Models\Diseno;
+use App\Models\Material;
 use App\Models\Obra;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 
 class Index extends Component
@@ -28,13 +30,13 @@ class Index extends Component
     ];
     public Diseno $diseno;
     public User $userA;
-    public $images = [];
+    public $images = [], $imagesDis = [];
     public $idD, $filterStateIn =  'Active';
     public $openModal = false, $openDelete = false;
     public $listeners = [
         'crearPlano'
     ];
-    public $tipoM;
+    public $tipoM, $openShow = false;
 
     public function updatingSearch(){
         $this->resetPage();
@@ -82,29 +84,43 @@ class Index extends Component
         }
 
         $IdObra = Obra::select(['NombreObra','id'])->where('isActive','Active')->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
+        $materials = Material::where('isActive','Active')->get();
 
         return view('livewire.diseno.index', [
             'disenos' => $disenos,
-            'obra' => $IdObra
+            'obra' => $IdObra,
+            'materials' => $materials
         ]);
     }
     public function abrirmodal($Nmodal){
-        $this->emit('modalOpen');
         $this->emit('openModal', $Nmodal);
     }
     public function cerrarmodal($Nmodal){
         $this->emit('closeModal', $Nmodal);
-        // $this->diseno = null;
     }
 
     //CREAR ============================================================================
 
-    public function crearPlano(){
-        // $this->authorize('CreateDiseño', Diseno::class);
+    public function imagesUpdate(){
+        $this->authorize('CreateDiseño', Diseno::class);
+        $this->emit('disenosUpdate');
+        // $this->imagesDiseno();
+        // dd($this->imagesDis);
+    }
 
-        // $this->images = array_push($this->images,$imgs);
+    public function imagesDiseno(){
+        foreach($this->images as $image){
+            for ($i=0; $i < count($this->images) ; $i++) {
+                $this->imagesDis[$i] = Storage::get('public/'.$image['nameFile']);
+            }
+        }
+        dd($this->imagesDis);
+    }
 
-        dd("yepppp");
+    public function removeFile($nameFile){
+        if(Storage::disk('public')->exists($nameFile)){
+            Storage::delete('public/'.$nameFile);
+        }
     }
 
     public function create(){
@@ -112,15 +128,15 @@ class Index extends Component
         // $this->tipoM = 'create';
         $this->openModal = true;
         $this->diseno = new Diseno();
+        $this->emit('modalOpen');
         $this->abrirmodal('#CreateDiseno');
     }
 
     public function rules(){
         return [
-            // 'diseno.ImagenPlano'=> ['required' ],
-            'diseno.ObservacionDiseno'=> ['required','min: 5'],
+            'images' => ['required'],
+            'diseno.ObservacionDiseno'=> ['nullable','min: 8'],
             'diseno.obra_id' => ['required' ],
-            'images.*' => ['required','image'],
         ];
     }
     public function validationAttributes (){
@@ -138,9 +154,13 @@ class Index extends Component
     public function store(){
         $this->authorize('CreateDiseño', Diseno::class);
         $this->validate();
-        $imagen = $this->image->store('disenos','public');
-        $this->diseno->ImagenPlano = $imagen;
+
+        $this->diseno->ImagenPlano = count($this->images);
         $this->diseno->save();
+
+        foreach ($this->images as $image) {   // imagenes
+            $this->diseno->Images()->create(['archivo'=>$image['nameFile']]);
+        }
 
         // $this->diseno->material()->sync($this->material); // para tabla N:M con usuarios
 
@@ -159,12 +179,12 @@ class Index extends Component
 
     public function show($id){
         $this->authorize('ShowDiseño', Diseno::class);
-        $this->tipoM = 'show';
         $this->openModal = true;
-        $this->abrirmodal('#showModel');
-        $ob = Diseno::findOrFail($id);
-        $this->obra = $ob;
-        $this->users = $ob->Usuarios()->get()->sortBy('id');
+        $this->openShow = true;
+        $this->abrirmodal('#ShowDiseno');
+        $diseno = Diseno::findOrFail($id);
+        $this->diseno = $diseno;
+        // $this->users = $ob->Usuarios()->get()->sortBy('id');
     }
 
     //DELETE ============================================================================
@@ -214,6 +234,10 @@ class Index extends Component
 
 
     // =================================================================================
+
+    public function MaterialDiseno(){
+
+    }
 
 }
 
