@@ -46,7 +46,8 @@ class Index extends Component
     {
         if(session()->has('openShow')){
             // dd(session('openShow'));
-            $this->show(session('openShow'));
+            $ob = session('openShow');
+            $this->show($ob);
         }
     }
 

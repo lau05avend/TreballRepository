@@ -8,6 +8,7 @@
         </div>
     @section('js')
     <script>
+    </script>
 
     @endsection
 </x-app-layout>

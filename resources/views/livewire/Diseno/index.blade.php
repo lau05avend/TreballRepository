@@ -39,6 +39,9 @@
             @can('diseno_create')
                 @include('livewire.diseno.create')
             @endcan
+            @can('diseno_show')
+                @include('livewire.diseno.show')
+            @endcan
             @can('diseno_edit')
                 @include('livewire.diseno.edit')
             @endcan
@@ -120,7 +123,7 @@
                                         @if ($l->isActive == 'Active')
                                             <td class="actions justify-center">
                                                 @can('diseno_show')
-                                                    <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                                    <button><i style="font-size:32px" wire:click="show({{$l->id}})" class="ion-ios-eye-outline"></i></button>
                                                 @endcan
                                                 @can('diseno_edit')
                                                     <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
