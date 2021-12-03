@@ -6,7 +6,7 @@
 
 <div>
     {{ Breadcrumbs::render('NovedadesBC') }}
-    <div class="shadow-2xl pt-8 px-5 bg-white">
+    <div class="cardCustom">
 
         <!--========== CONTENT ==========-->
 
