@@ -29,42 +29,42 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('admin.menu');
-})->name('dashboard');
+// Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+//     return view('admin.menu');
+// })->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::resource('/obras', ObraController::class)->names('obra');
-    Route::get('/materiales', MaterialesIndex::class)->name('material');
-    Route::get('/novedad', NovedadIndex::class)->name('novedad');
-    Route::get('/empleados', EmpleadosIndex::class)->name('empleado');
-    Route::get('/clientes', Index::class)->name('clientes');
-    Route::get('/disenos', DisenoIndex::class)->name('diseno');
-    Route::get('/planilla', PlanillaIndex::class)->name('planilla');
-    Route::get('/secciones', SeccionesIndex::class)->name('secciones');
-    Route::resource('obras.cronograma', EventoController::class)->names('calendar')->parameters(['cronograma' => 'evento']);
-    // Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
-    Route::get('/secciones', SeccionesIndex::class)->name('secciones');
+// Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+//     Route::resource('/obras', ObraController::class)->names('obra');
+//     Route::get('/materiales', MaterialesIndex::class)->name('material');
+//     Route::get('/novedad', NovedadIndex::class)->name('novedad');
+//     Route::get('/empleados', EmpleadosIndex::class)->name('empleado');
+//     Route::get('/clientes', Index::class)->name('clientes');
+//     Route::get('/disenos', DisenoIndex::class)->name('diseno');
+//     Route::get('/planilla', PlanillaIndex::class)->name('planilla');
+//     Route::get('/secciones', SeccionesIndex::class)->name('secciones');
+//     Route::resource('obras.cronograma', EventoController::class)->names('calendar')->parameters(['cronograma' => 'evento']);
+//     // Route::resource('/calendar', EventoController::class)->names('calendar')->parameters(['calendar' => 'evento']);
+//     Route::get('/secciones', SeccionesIndex::class)->name('secciones');
 
-    // Rutas Desarrollador
-    Route::get('/obrasss/{op?}', [ObraController::class, 'showBread'])->name('obraB');
-    Route::get('/calendar/{obra?}', [EventoController::class, 'showCalendarObra'])->name('obraCalendar');
-    Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
-    Route::get('/faseall', [EventoController::class,"allF"]);
-    Route::post('/dropzone', [DropzoneController::class,"store_dropzone"])->name('dropzone');
+//     // Rutas Desarrollador
+//     Route::get('/obrasss/{op?}', [ObraController::class, 'showBread'])->name('obraB');
+//     Route::get('/calendar/{obra?}', [EventoController::class, 'showCalendarObra'])->name('obraCalendar');
+//     Route::get('/calendarall/{obra}', [EventoController::class,"allA"]);
+//     Route::get('/faseall', [EventoController::class,"allF"]);
+//     Route::post('/dropzone', [DropzoneController::class,"store_dropzone"])->name('dropzone');
 
-    Route::get('/markAsRead', function(){
-        auth()->user()->unreadNotifications->markAsRead();
-        return redirect()->back();
-    })->name('markAsRead');
+//     Route::get('/markAsRead', function(){
+//         auth()->user()->unreadNotifications->markAsRead();
+//         return redirect()->back();
+//     })->name('markAsRead');
 
-    Route::get('/visualizar/{archivoplanilla}', [PDFController::class,'viewPlanillaPDF'])->name('viewplanilla');
+//     Route::get('/visualizar/{archivoplanilla}', [PDFController::class,'viewPlanillaPDF'])->name('viewplanilla');
 
-    Route::get('pdf', [PDFController::class,'pdf'])->name('pdf');
+//     Route::get('pdf', [PDFController::class,'pdf'])->name('pdf');
 
-    // Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
+//     // Route::resource('/pruebacal/{obra}', CronogramaController::class)->names('pruebacal');
 
-});
+// });
 
 
 
