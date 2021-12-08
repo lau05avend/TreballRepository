@@ -103,7 +103,7 @@ class Menu extends Component
         $this->novedadesUlt =  ModelsNovedad::take(5)->where('isActive','=','Active')->orderBy('created_at','desc')->get();
         $this->empleadosUlt = Obra::take(6)->select(['obras.id','obras.NombreObra','obras.EstadoObra'])->where('obras.isActive','=','Active')->orderBy('obras.created_at','desc')
                             ->Join('obra_usuario','obras.id','=','obra_id')
-                            ->groupBy(['obras.id','obras.NombreObra','obras.EstadoObra'])
+                            ->groupBy(['obras.id','obras.NombreObra','obras.EstadoObra','obras.created_at'])
                             // ->having('obra_usuario.empleado_id', '<>', null)
                             ->get();
     }

@@ -384,44 +384,6 @@ INSERT INTO `empleados` (`id`, `NombreCompleto`, `NumeroDocumento`, `NumeCelular
 (25, 'Juan Ramirez', 4567747469, 3584576899, 4656563, '2000-02-09', 'juanram062@gmail.com', 'Masculino', NULL, 'cra 567', 23, '$2y$10$y70mvrvJmakw.VZeHlYtUubXFlrxy.n4dwpx.xoR2gzG.hA0fOnHG', 'Disponible', 'Active', 4, 1, 2, 1, '2021-12-01 03:19:42', '2021-12-01 03:19:42', 54),
 (26, 'Danna Suarez', 359876598, 3194588977, 5456464, '1999-01-01', 'dan.suar123@gmail.com', 'Femenino', NULL, 'dfd', 23, '$2y$10$lB74A6N9uwuSdFmqcGqkXeAdxmClQJKfcPpHyFTES5m5mk6R5z0a2', 'Ocupado', 'Active', 2, 1, 1, 4, '2021-12-01 03:21:18', '2021-12-01 03:21:18', 55);
 
---
--- Triggers `empleados`
---
-DELIMITER $$
-CREATE TRIGGER `ActualizarStatePlanilla` BEFORE UPDATE ON `empleados` FOR EACH ROW update `planillas` set `isActive`= new.`EstadoUsuario` where `empleado_id` = new.`id`
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `Actualizar_Usuarios_BU` BEFORE UPDATE ON `empleados` FOR EACH ROW INSERT INTO usuarios_actualizados (Anterior_Nombre_Completo,Anterior_NumeroCelular,Anterior_Correo,Anterior_Edad,Anterior_Foto,Nuevo_NombreCompleto,Nuevo_NumeroCelular,Nuevo_Correo,Nueva_Edad,Nueva_Foto,Fecha_Modificación)VALUES(OLD.NombreCompleto,OLD.NumeCelular,OLD.CorreoUsuario,OLD.EdadU,OLD.FotoUsuario,NEW.NombreCompleto,NEW.NumeCelular,NEW.CorreoUsuario,NEW.EdadU,NEW.FotoUsuario, NOW())
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `AfterInsertEmpleado` BEFORE INSERT ON `empleados` FOR EACH ROW BEGIN
-	insert into `users` (`name`, `email`, `password`, `RolExterno`,`profile_photo_path`, `created_at`, `NumeroDocumento`) VALUES (new.`NombreCompleto`, new.`CorreoUsuario`, new.`contrasena`, 'empleado', new.`FotoUsuario`, new.`created_at`, new.`NumeroDocumento`);
-    set new.`user_id` = (SELECT MAX(id) FROM `users`);
-    insert into `model_has_roles` (`role_id`, `model_type`,`model_id`) values ((new.`rol_id`)+2,'App\Models\User', new.`user_id`);
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `AfterUpdateEmpleado` AFTER UPDATE ON `empleados` FOR EACH ROW UPDATE `users` set `name` = new.`NombreCompleto`, `email`= new.`CorreoUsuario`, `password`= new.`contrasena`, `profile_photo_path`= new.`FotoUsuario`, `NumeroDocumento` = new.`NumeroDocumento`, `created_at`= new.`created_at`, `isActive` = new.`EstadoUsuario`, `updated_at` = new.`updated_at`  where `id` = new.`user_id`
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `RevisarEdad` BEFORE UPDATE ON `empleados` FOR EACH ROW BEGIN
-if(new.EdadU<=0 or new.EdadU<18) THEN
-set new.EdadU=18;
-ELSEIF(new.EdadU>=70) THEN
-set new.EdadU=70;
-end if;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `UsuariosInhabilitadosAF` AFTER DELETE ON `empleados` FOR EACH ROW INSERT INTO usuarios_eliminados(Nombre_Completo,Numero_Documento,Foto_Usuario)VALUES(OLD.NombreCompleto,OLD.NumeroDocumento,OLD.FotoUsuario)
-$$
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -1005,25 +967,6 @@ INSERT INTO `obras` (`id`, `NombreObra`, `MedidaArea`, `MedidaPerimetro`, `Condi
 (45, 'parque dgfg', 45, 45, 45, 'Cemento', NULL, 0, 'rdhfghfj', NULL, 'Sin Iniciar', 'Active', 1, 4, 5, '2021-12-01 02:41:18', '2021-12-01 02:41:18'),
 (46, 'reglas', 45, 65, 45, 'Cemento', NULL, 0, 'ghfgh', NULL, 'Terminada', 'Active', 1, 4, 4, '2021-12-01 21:33:19', '2021-12-01 21:33:19');
 
---
--- Triggers `obras`
---
-DELIMITER $$
-CREATE TRIGGER `EstadoClienteObra` AFTER UPDATE ON `obras` FOR EACH ROW BEGIN
-call InactivarCliente(new.`cliente_id`);
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `EstadoDisenoObra` AFTER UPDATE ON `obras` FOR EACH ROW BEGIN
-	if(new.`isActive` = 'Inactive') THEN
-    update `disenos` set `isActive` = 'Inactive' where obra_id = new.`id`;
-    elseif(new.`isActive` = 'Active') THEN
-     update `disenos` set `isActive` = 'Active' where obra_id = new.`id`;
-    end if;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -1086,16 +1029,6 @@ INSERT INTO `obra_usuario` (`id`, `obra_id`, `empleado_id`, `created_at`, `updat
 (147, 3, 5, NULL, NULL),
 (148, 32, 22, NULL, NULL),
 (149, 21, 22, NULL, NULL);
-
---
--- Triggers `obra_usuario`
---
-DELIMITER $$
-CREATE TRIGGER `EstadoEmpleado` AFTER INSERT ON `obra_usuario` FOR EACH ROW BEGIN
-	update empleados set Disponibilidad = 'Ocupado' where id = new.empleado_id;
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -1286,17 +1219,6 @@ INSERT INTO `planillas` (`id`, `ArchivoPlanilla`, `FechaPlanilla`, `FechaExpirac
 (30, 'planillas/afiliacion_Mariana_December.pdf', '2021-12-02', '2022-01-01', 'vigente', 'Active', '2021-12-02 08:10:56', '2021-12-02 08:10:56', 6),
 (31, 'planillas/afiliacion_JuanSebastian_December.pdf', '2021-12-02', '2022-01-01', 'vigente', 'Active', '2021-12-03 04:32:35', '2021-12-03 04:32:35', 3);
 
---
--- Triggers `planillas`
---
-DELIMITER $$
-CREATE TRIGGER `FechaExpiracionInsert` BEFORE INSERT ON `planillas` FOR EACH ROW set new.`FechaExpiracion` = DATE_ADD(new.`FechaPlanilla`, INTERVAL 30 DAY)
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `FechaExpiracionUpdate` BEFORE UPDATE ON `planillas` FOR EACH ROW set new.`FechaExpiracion` = DATE_ADD(new.`FechaPlanilla`, INTERVAL 30 DAY)
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
