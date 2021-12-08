@@ -15,7 +15,7 @@ class CreateEstadoCivilsTable extends Migration
     {
         Schema::create('estado_civils', function (Blueprint $table) {
             $table->unsignedTinyInteger('id')->autoIncrement();
-            $table->string("EstadoCivil",45)->unique();
+            $table->string("EstadoCivil",50)->unique();
 
         });
     }

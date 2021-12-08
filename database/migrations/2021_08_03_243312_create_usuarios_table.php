@@ -13,10 +13,9 @@ class CreateUsuariosTable extends Migration
      */
     public function up()
     {
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('empleados', function (Blueprint $table) {
             $table->id('id');
-            $table->string("NombreUsuario", 50);
-            $table->string("ApellidosUsuario", 50);
+            $table->string("NombreCompleto", 100);
             $table->unsignedBigInteger("NumeroDocumento")->unique();
             $table->unsignedBigInteger("NumeCelular");
             $table->unsignedInteger("NumTelefono");
@@ -28,11 +27,12 @@ class CreateUsuariosTable extends Migration
             $table->unsignedTinyInteger("EdadU");
             $table->string("contrasena",22);
             $table->enum("Disponibilidad",array("Ocupado","No Disponible","Disponible"))->default('Disponible');
-            $table->enum("EstadoUsuario",array('Activo', 'Inhabilitado'))->default('Activo');
+            $table->enum("EstadoUsuario",array('Active', 'Inactive'))->default('Active');
             $table->unsignedTinyInteger("rol_id");
             $table->unsignedTinyInteger("tipo_identificacion_id");
             $table->unsignedTinyInteger("estado_civil_id");
             $table->unsignedTinyInteger("city_id");
+            $table->unsignedBigInteger("user_id");
 
             $table->foreign("rol_id")
                 ->references("id")->on("rols");
@@ -46,6 +46,9 @@ class CreateUsuariosTable extends Migration
              $table->foreign("city_id")
              ->references("id")->on("cities");
 
+             $table->foreign('user_id')
+             ->references('id')->on('users');
+
             $table->timestamps();
         });
     }
@@ -57,6 +60,6 @@ class CreateUsuariosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('usuarios');
+        Schema::dropIfExists('empleados');
     }
 }

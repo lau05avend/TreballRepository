@@ -18,6 +18,7 @@ class CreateSeccionsTable extends Migration
             $table->string("NombreSeccion",60);
             $table->float("AreaSeccion");
             $table->float("PerimetroSec");
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->unsignedTinyInteger("color_id")->nullable();
             $table->unsignedInteger("diseno_id");
 
@@ -26,6 +27,8 @@ class CreateSeccionsTable extends Migration
 
             $table->foreign("diseno_id")
             ->references("id")->on("disenos")->onDelete('cascade');
+
+            $table->timestamps();
         });
     }
 

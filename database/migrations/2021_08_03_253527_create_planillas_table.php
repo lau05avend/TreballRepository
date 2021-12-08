@@ -16,12 +16,14 @@ class CreatePlanillasTable extends Migration
         Schema::create('planillas', function (Blueprint $table) {
             $table->id('id');
             $table->string('ArchivoPlanilla');
+            $table->dateTime('FechaPlanilla');
             $table->dateTime('FechaExpiracion');
             $table->enum("EstadoPlanilla", array("vigente","vencida"))->default('vigente');
-            $table->unsignedBigInteger('usuario_id');
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
+            $table->unsignedBigInteger('empleado_id');
 
-            $table->foreign("usuario_id")
-            ->references("id")->on("usuarios");
+            $table->foreign("empleado_id")
+            ->references("id")->on("empleados");
 
             $table->timestamps();
         });

@@ -15,12 +15,12 @@ class CreateActividadsTable extends Migration
     {
         Schema::create('actividads', function (Blueprint $table) {
             $table->id('id');
-            $table->string('NombreActividad',60);
+            $table->string('title',70);
             $table->string('DescripcionActividad',255);
             $table->dateTime('start');
             $table->dateTime('end');
             $table->unsignedTinyInteger('CantidadDias')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->timestamps();
 
             $table->unsignedTinyInteger('estado_actividad_id')->default(1);

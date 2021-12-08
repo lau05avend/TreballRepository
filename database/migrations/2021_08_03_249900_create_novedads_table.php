@@ -19,9 +19,10 @@ class CreateNovedadsTable extends Migration
             $table->string('AsuntoNovedad', 70);
             $table->enum("EstadoNovedad", array("Sin atender", "Atendida", "En espera"))->default('Sin atender');
             $table->string('DescripcionN', 355);
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->unsignedTinyInteger('tipo_novedad_id');
             $table->unsignedBigInteger('actividad_id');
-            $table->unsignedBigInteger('usuario_id')->nullable();
+            $table->unsignedBigInteger('empleado_id')->nullable();
             $table->unsignedInteger('cliente_id')->nullable();
 
             $table->foreign('tipo_novedad_id')
@@ -30,8 +31,8 @@ class CreateNovedadsTable extends Migration
             $table->foreign('actividad_id')
                 ->references('id')->on('actividads');
 
-            $table->foreign('usuario_id')
-                ->references('id')->on('usuarios');
+            $table->foreign('empleado_id')
+                ->references('id')->on('empleados');
 
             $table->foreign('cliente_id')
                 ->references('id')->on('clientes');

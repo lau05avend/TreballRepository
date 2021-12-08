@@ -18,20 +18,25 @@ class CreateClientesTable extends Migration
             $table->unsignedInteger('id')->autoIncrement();
             $table->string("NombreCC",80)->unique();
             $table->unsignedBigInteger("NumIdentificacion")->unique();
-            $table->string("ContrasenaC",22);
+            $table->string("ContrasenaC",255);
             $table->string("CorreoCliente",50);
             $table->unsignedInteger("NumCelular");
             $table->unsignedInteger("NumTelefono");
+            $table->string("FotoL")->nullable();
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->unsignedTinyInteger("tipo_cliente_id");
             $table->unsignedTinyInteger("tipo_identificacion_id");
-            $table->string("FotoL")->nullable();
-
+            $table->unsignedBigInteger("user_id");
+            $table->timestamp("email_verified_at");
 
             $table->foreign('tipo_cliente_id')
             ->references('id')->on('tipo_clientes');
 
             $table->foreign('tipo_identificacion_id')
             ->references('id')->on('tipo_identificacions');
+
+            $table->foreign('user_id')
+            ->references('id')->on('users');
 
             $table->timestamps();
         });

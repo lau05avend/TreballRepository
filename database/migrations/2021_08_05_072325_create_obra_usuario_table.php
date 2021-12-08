@@ -16,13 +16,13 @@ class CreateObraUsuarioTable extends Migration
         Schema::create('obra_usuario', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('obra_id');
-            $table->unsignedBigInteger('usuario_id');
+            $table->unsignedBigInteger('empleado_id');
 
             $table->foreign('obra_id')
                 ->references('id')->on('obras')->onDelete('cascade');
 
-            $table->foreign('usuario_id')
-                ->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('empleado_id')
+                ->references('id')->on('empleados')->onDelete('cascade');
 
             $table->timestamps();
         });

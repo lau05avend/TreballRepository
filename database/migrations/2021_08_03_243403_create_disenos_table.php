@@ -18,6 +18,7 @@ class CreateDisenosTable extends Migration
 
             $table->string("ImagenPlano",120);
             $table->string("ObservacionDiseno",350)->nullable();
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->timestamps();
 
             $table->unsignedBigInteger("obra_id");

@@ -25,6 +25,7 @@ class CreateObrasTable extends Migration
             $table->string('DireccionObra',40);
             $table->string('DatosAdicionales',255)->nullable();
             $table->enum('EstadoObra',array('Activa','Terminada','Sin Iniciar','Cancelada'))->default('Sin Iniciar');
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->unsignedTinyInteger('tipo_obra_id');
             $table->unsignedInteger('cliente_id');
             $table->unsignedTinyInteger("city_id");

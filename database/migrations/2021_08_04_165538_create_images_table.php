@@ -18,11 +18,8 @@ class CreateImagesTable extends Migration
             $table->string('archivo', 80);
             $table->string('modelo_id');
             $table->string('modelo_type');
-            $table->longText('descripcion')->nullable();
-            $table->unsignedBigInteger('obra_id')->nullable();
-
-            $table->foreign("obra_id")
-                ->references("id")->on("obras")->cascadeOnDelete();
+            // $table->longText('descripcion')->nullable();
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
         });
     }
 
