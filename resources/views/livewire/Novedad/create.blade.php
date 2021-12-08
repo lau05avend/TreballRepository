@@ -14,7 +14,7 @@
                         <input type="text" class="form-control" name="novedad.AsuntoNovedad" wire:model="novedad.AsuntoNovedad" id="AsuntoN" placeholder="Asunto Novedad">
                         @error('novedad.AsuntoNovedad')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
-
+{{--
                     <div class="form-group">
                         <label for="EstadoNovedad">Estado Novedad:</label>
                         <select name="EstadoNovedad" wire:model="novedad.EstadoNovedad" class="EstadoNovedad form-select" id="EstadoNovedad">
@@ -24,20 +24,7 @@
                             <option value="3">En espera</option>
                         </select>
                         @error('novedad.EstadoNovedad')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tiponov">Tipo Novedad:</label>
-                        <select class="inpt form-select" wire:model="novedad.tipo_novedad_id" name="tipo_novedad_id" id="tiponov">
-                            <option value="">Seleccione su opcion</option>
-                            @forelse($Tiponov as $key => $value)
-                                <option value="{{ $key }}">{{ $value }}</option>
-                            @empty
-                                <option value="">Ups! No hay disponibles. </option>
-                            @endforelse
-                        </select>
-                        @error('novedad.tipo_novedad_id')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div>
+                    </div> --}}
 
                     <div class="form-group">
                         <label for="DescripcionN">Descripción Novedad:</label><br>
@@ -46,45 +33,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="Activity">Actividad:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="actividad_idReg" name="novedad.actividad_id" modalTipo="CreateNovedad" wire:model="novedad.actividad_id" :options="$Act"></x-select2>
-                        <select class="inpt form-select" name="actividad_id" wire:model="novedad.actividad_id" id="Activity">
-                            <option value="">Seleccione fijo</option>
+                        <label for="obra_idReg">Obra:</label>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="obra_idReg" name="obraSel" modalTipo="CreateNovedad" :options="$obras"></x-select2>
+                    </div>
+                    <div class="form-group">
+                        <label for="actividad_idReg">Actividad:</label>
+                        <select class="inpt form-control" name="actividad_id" wire:model="novedad.actividad_id" id="actividad_idReg">
+                            {{-- <option value="">Seleccione Actividad</option> --}}
                             @forelse($Act as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
                             @empty
-                                <option value="">Ups! No hay disponibles. </option>
+                                @if ($obraSel == null)
+                                    <option value="">seleccione obra </option>
+                                @else
+                                    <option value="">Ups! No hay actividades registradas. </option>
+                                @endif
                             @endforelse
                         </select>
                         @error('novedad.actividad_id') <span class="error text-danger">{{ $message }}</span>@enderror
                     </div>
-
-                    {{-- <div class="form-group">
-                        <label for="Usu">Empleado:</label>
-                        <select class="inpt form-select" wire:model="novedad.empleado_id" name="empleado_id" id="Usu">
-                            <option value="">Seleccione</option>
-                            @forelse ($Usua as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreCompleto }}</option>
-                            @empty
-                                <option value="">Ups! Selecciona alguno para continuar </option>
-                            @endforelse
-                        </select>
-                        @error('novedad.empleado_id') <span class="error text-danger">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Cl">Cliente:</label>
-                        <select class="inpt form-select" wire:model="novedad.cliente_id" name="cliente_id" id="Cl">
-                            <option value="">Seleccione</option>
-                            @forelse ($Client as $cl)
-                                <option value="{{ $cl->id }}">{{ $cl->NombreCC }}</option>
-                            @empty
-                                <option value="">Ups! Selecciona algun cliente para continuar </option>
-                            @endforelse
-                        </select>
-                        @error('novedad.cliente_id') <span class="error text-danger">{{ $message }}</span>@enderror
-                    </div> --}}
-
 
                     <button type="submit" class="btn btn-primary close-modal">Save</button>
                 </form>
@@ -95,3 +62,19 @@
         </div>
     </div>
 </div>
+
+@push('jss')
+<script>
+    $('#obra_idReg').on('change', function(e){
+        @this.set('obraSel', e.target.value);
+    })
+    $('#actividad_idReg').on('change', function(e){
+        @this.set('novedad.actividad_id', e.target.value);
+    })
+    $('#CreateNovedad').on('hidden.bs.modal', function(){
+        @this.set('obraSel', null);
+        $('#obra_idReg').select2().select2('val',@this.obraSel);
+    })
+</script>
+@endpush
+

@@ -69,23 +69,42 @@ class Index extends Component
     {
 
         if ($this->authorize('AccessDiseno', Diseno::class) && Gate::denies('AllDiseno', Diseno::class)) {
-            $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
-                ->leftJoin('obras','obras.id','=','disenos.obra_id')
-                ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
-                ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
-                ->where('disenos.isActive','=', 'Active')
-                ->where(function($query){
-                    $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
-                        ->orWhere('NombreObra','like','%'.$this->search.'%');
-                })
-                ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage);
 
-             $IdObra = Obra::select(['obras.NombreObra','obras.id'])
-                ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
-                ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
-                ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])->orderBy('id','asc')
-                ->pluck('NombreObra','id')->toArray();
+            if($this->userA->getRoleNames()[0] == 'Cliente'){
+                $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
+                    ->leftJoin('obras','obras.id','=','disenos.obra_id')
+                    ->where('obras.cliente_id','=', $this->userA->cargo()->select('clientes.id')->first()['id'])
+                    ->where('disenos.isActive','=', 'Active')
+                    ->where(function($query){
+                        $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
+                            ->orWhere('NombreObra','like','%'.$this->search.'%');
+                    })
+                    ->orderBy($this->sortBy, $this->sortDirection)
+                    ->paginate($this->perPage);
+
+                $IdObra = Obra::select(['obras.NombreObra','obras.id'])
+                    ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                    ->where('obras.cliente_id','=', $this->userA->cargo()->select('clientes.id')->first()['id'])->orderBy('id','asc')
+                    ->pluck('NombreObra','id')->toArray();
+            }else{
+                $disenos = Diseno::select(['disenos.*','obras.NombreObra','EstadoObra'])
+                    ->leftJoin('obras','obras.id','=','disenos.obra_id')
+                    ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
+                    ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])
+                    ->where('disenos.isActive','=', 'Active')
+                    ->where(function($query){
+                        $query->orWhere('EstadoObra','LIKE', '%'.$this->search.'%')
+                            ->orWhere('NombreObra','like','%'.$this->search.'%');
+                    })
+                    ->orderBy($this->sortBy, $this->sortDirection)
+                    ->paginate($this->perPage);
+
+                $IdObra = Obra::select(['obras.NombreObra','obras.id'])
+                    ->where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                    ->leftJoin('obra_usuario','obras.id','=','obra_usuario.obra_id')
+                    ->where('empleado_id','=', $this->userA->cargo()->select('empleados.id')->first()['id'])->orderBy('id','asc')
+                    ->pluck('NombreObra','id')->toArray();
+            }
 
         }
         else if($this->authorize('AllDiseno', Diseno::class)){
@@ -142,6 +161,7 @@ class Index extends Component
             'pisos' => $pisos,
         ]);
     }
+
     public function abrirmodal($Nmodal){
         $this->emit('openModal', $Nmodal);
     }

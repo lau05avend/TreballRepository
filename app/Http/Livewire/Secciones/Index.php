@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Secciones;
 use App\Http\Livewire\WithSorting;
 use App\Models\Color;
 use App\Models\Diseno;
+use App\Models\Obra;
 use App\Models\seccion;
 use App\Models\User;
 use App\Models\Usuario;
@@ -28,10 +29,10 @@ class Index extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'filterSecciones' => ['except' => 'Active'],
-        'selectDiseno' => ['except' => ''],
+        'searchDiseno' => ['except' => ''],
     ];
     public $openDelete = false, $openModal = false, $openShow = false, $idS , $filterSecciones = 'Active';
-    public $selectDiseno;
+    public $searchDiseno = null, $selectObraD = null;
 
     public function updatingSearch(){   //search dinamico, necesario
         $this->resetPage();
@@ -49,7 +50,7 @@ class Index extends Component
     public function mount(){
         $this->sortBy = 'id';
         $this->sortDirection = 'desc';
-        $this->selectDiseno = null;
+        $this->searchDiseno = null;
         $this->userA = Auth::user();
         $this->seccion = new Seccion();
     }
@@ -59,8 +60,16 @@ class Index extends Component
         $this->authorize('accessSeccion', Seccion::class);
 
         if ($this->authorize('AccessDiseno', Diseno::class) && Gate::denies('AllDiseno', Diseno::class)) {
+
+            $obrasD = $this->userA->Cargo()->get()->first()->Obras()->where('obras.isActive','Active')
+                            ->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])->get();
+
+            $disenos = Diseno::where('isActive', 'Active')->where('obra_id',$this->selectObraD)
+                        ->orderBy('id','asc')->pluck('id','id')->toArray();
+
             $seccioness = Seccion::select(['seccions.*', 'colors.id as idC'])
                 ->leftJoin('colors', 'colors.id', '=', 'color_id')
+                ->where('diseno_id',$this->searchDiseno)
                 ->when($this->filterSecciones, function($query){
                     $query->where('seccions.isActive', $this->filterSecciones);
                 })
@@ -71,12 +80,16 @@ class Index extends Component
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
 
-            $diseno = Diseno::select('');
-
         }
         else if($this->authorize('AllDiseno', Diseno::class)){
+            $obrasD = Obra::where('obras.isActive','Active')->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])
+                            ->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
+            $disenos = Diseno::where('isActive', 'Active')->where('obra_id',$this->selectObraD)
+                        ->orderBy('id','asc')->pluck('id','id')->toArray();
+
             $seccioness = Seccion::select(['seccions.*', 'colors.id as idC'])
                 ->leftJoin('colors', 'colors.id', '=', 'color_id')
+                ->where('diseno_id',$this->searchDiseno)
             ->when($this->filterSecciones, function($query){
                 $query->where('isActive', $this->filterSecciones);
             })
@@ -88,13 +101,13 @@ class Index extends Component
             ->paginate($this->perPage);
 
         }
-        $diseno = Diseno::get();
         $color = Color::get();
 
         return view('livewire.secciones.index', [
             'seccioness' => $seccioness,
-            'diseno' => $diseno,
+            'disenos' => $disenos,
             'color' => $color,
+            'obrasD' => $obrasD
         ]);
     }
 

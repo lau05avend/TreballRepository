@@ -81,7 +81,7 @@ class PermissionsToRolesSeeder extends Seeder
         // NOVEDAD
         Permission::where('name', 'novedad_create')->first()->syncRoles([$roles[1],$roles[3],$roles[4]]);
         Permission::where('name', 'novedad_edit')->first()->syncRoles([$roles[3]]);
-        Permission::where('name', 'novedad_editTime')->first()->syncRoles([$roles[1],$roles[4]]);
+        Permission::where('name', 'novedad_editTime')->first()->syncRoles([$roles[1],$roles[3],$roles[4]]);
         Permission::where('name', 'novedad_show')->first()->syncRoles([$roles[1],$roles[2],$roles[3],$roles[4],$roles[5]]);
         Permission::where('name', 'novedad_delete')->first()->syncRoles([$roles[3]]);
         Permission::where('name', 'novedad_active')->first()->syncRoles([$roles[3]]);

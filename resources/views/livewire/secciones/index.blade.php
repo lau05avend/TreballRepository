@@ -1,4 +1,5 @@
 @section('css')
+
 <link rel="stylesheet" href="{{ asset('css/styles-general.css'); }}">
 @endsection
 
@@ -31,10 +32,10 @@
         <div class="position-absolute">
             @if ($openModal)
                 @can('seccion_create')
-                    @include('livewire.secciones.create')
+                    {{-- @include('livewire.secciones.create') --}}
                 @endcan
                 @can('seccion_edit')
-                    @include('livewire.secciones.edit')
+                    {{-- @include('livewire.secciones.edit') --}}
                 @endcan
             @endif
         </div>
@@ -75,71 +76,102 @@
                         </button><br>
                     @endcan
                 </div>
-                <div class="selectType mb-3" wire:ignore>
+                <div class="selectType mb-3" wire:ignore.self>
+                    <div style="width: 310px;" class="" id="searchObraDiv">
+                        <label for="searchObraD">Seleccione una obra:</label>
+                        <x-select2 class="inpt form-control" style="width:201px;" id="searchObraD" name="searchObraD" :options="$obrasD"></x-select2>
+                    </div>
                     <div class="pr-4" style="width: 300px; text-align: center;">
-                        <label for="selectTipo">Seleccione un diseño:</label>
-                        <x-select2 class="inpt form-control" style="width:201px;" id="searchObra" name="searchObra" :options="$diseno"></x-select2>
+                        <label for="searchDiseno">Seleccione un diseño:</label>
+                        <select class="inpt form-control" style="width:241px;" wire:model="searchDiseno" id="searchDiseno" name="searchDiseno" >
+                            <option value="">Escoja el diseño</option>
+                            @forelse ($disenos as $key => $value)
+                            <option value="{{ $key }}">Diseño {{ $value }}</option>
+                            @empty
+                            @if ($selectObraD != null && $disenos == null)
+                                <option value="" selected>No hay diseños en esta obra</option>
+                            @endif
+                            @endforelse
+                        </select>
                     </div>
                 </div>
                 <div class="table-responsive">
-                        <div class="div-tab">
-                    <table class=" table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Id @include('components.table.sort', ['field' => 'id'])</th>
-                                <th>Nombre Seccion @include('components.table.sort', ['field' => 'NombreSeccion'])</th>
-                                <th>área @include('components.table.sort', ['field' => 'AreaSeccion'])</th>
-                                <th>Perímetro @include('components.table.sort', ['field' => 'PerimetroSec'])</th>
-                                <th>Color @include('components.table.sort', ['field' => 'Ncolor'])</th>
-                                <th>Creada en @include('components.table.sort', ['field' => 'created_at'])</th>
-                                <th>Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                {{-- <th>isActive</th> --}}
-                                <th colspan="2">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyC">
-                            @forelse ($seccioness as $l)
-                            <tr>
-                                <td>{{ $l->id }}</td>
-                                <td>{{ $l->NombreSeccion}}</td>
-                                <td>{{ $l->AreaSeccion }}</td>
-                                <td>{{ $l->PerimetroSec }}</td>
-                                <td>{{ $l->Color->Ncolor }}</td>
-                                <td>{{ $l->created_at?date('d-m-Y h:i:s A', strtotime($l->created_at )) : '-' }}</td>
-                                <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
+                    <div wire:loading class="position-absolute top-28 font-semibold text-lg py-1 px-3">
+                        <i wire:loading.class="fas fa-spinner fa-spin" ></i>
+                        Cargando...
+                    </div>
+                    @if ($searchDiseno == "" || $selectObraD == null)
+                        <div class="div-selectN ">
+                            <span class="text-2xl">Seleccione el diseño</span>
+                        </div>
+                    @else
 
-                                @canany(['seccion_edit','seccion_delete','seccion_show'])
-                                    @if ($l->isActive == 'Active')
-                                        <td class="actions">
-                                            @can('seccion_show')
-                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
-                                            @endcan
-                                            @can('seccion_edit')
-                                                <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
-                                            @endcan
-                                            @can('seccion_delete')
-                                                <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
-                                            @endcan
-                                        </td>
-                                    @else
-                                        @can('seccion_active')
-                                            <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                        @endcan
-                                    @endif
-                                @endcanany
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda {{ $search }}.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                </div>
-                <div>
-                <div style="color: black;">
+                        <div class="div-tab">
+                            <table class=" table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Id @include('components.table.sort', ['field' => 'id'])</th>
+                                        <th>Nombre Seccion @include('components.table.sort', ['field' => 'NombreSeccion'])</th>
+                                        <th>área @include('components.table.sort', ['field' => 'AreaSeccion'])</th>
+                                        <th>Perímetro @include('components.table.sort', ['field' => 'PerimetroSec'])</th>
+                                        <th>Color @include('components.table.sort', ['field' => 'Ncolor'])</th>
+                                        <th>Diseño @include('components.table.sort', ['field' => 'diseno_id'])</th>
+                                        <th>Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
+                                        {{-- <th>isActive</th> --}}
+                                        <th colspan="2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyC">
+                                    @forelse ($seccioness as $l)
+                                    <tr>
+                                        <td>{{ $l->id }}</td>
+                                        <td>{{ $l->NombreSeccion}}</td>
+                                        <td>{{ $l->AreaSeccion }}</td>
+                                        <td>{{ $l->PerimetroSec }}</td>
+                                        <td>{{ $l->Color->Ncolor }}</td>
+                                        <td>{{ $l->diseno_id }}</td>
+                                        <td>{{ $l->updated_at?date('d-m-Y h:i:s A', strtotime($l->updated_at )) :'-' }}</td>
+
+                                        @canany(['seccion_edit','seccion_delete','seccion_show'])
+                                            @if ($l->isActive == 'Active')
+                                                <td class="actions">
+                                                    @can('seccion_show')
+                                                        <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                                    @endcan
+                                                    @can('seccion_edit')
+                                                        <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                                    @endcan
+                                                    @can('seccion_delete')
+                                                        <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                                    @endcan
+                                                </td>
+                                            @else
+                                                @can('seccion_active')
+                                                    <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                                @endcan
+                                            @endif
+                                        @endcanany
+                                    </tr>
+                                    @empty
+                                        @if($searchDiseno != null && count($seccioness)<=0)
+                                            <tr>
+                                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">Este diseño no tiene secciones registrados.</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda.</td>
+                                            </tr>
+                                        @endif
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                    @if ($searchDiseno != null && count($seccioness)>0)
+                        <div style="color: black;">
                             {{ $seccioness->links('components.custom-pagination-links') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -167,3 +199,26 @@
         @endcan
     </div>
 </div>
+
+@push('jss')
+<script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+        var inputSearch = document.querySelector('#searchObraDiv');
+
+            if( $('#searchDiseno').val() == "null"){
+                    $("#searchDiseno option[value='null']").remove();
+            }
+
+            if( $('#searchObraD').val() == null){
+                $('#searchDiseno').val(null).trigger('change');
+            }
+
+            $('#searchObraD').on('change', function(event){
+                let value = event.target.value;
+                @this.set('selectObraD',value);
+                $('#searchDiseno').val("");
+                console.log(@json($disenos))
+            })
+    });
+</script>
+@endpush

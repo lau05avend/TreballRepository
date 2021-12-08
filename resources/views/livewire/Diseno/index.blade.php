@@ -219,7 +219,7 @@
 
 @push('jss')
 <script src={{ asset('assets-admin/js/page/accordion.js') }}></script>
-<script>
+<script defer>
     document.addEventListener("DOMContentLoaded", () => {
         var inputSearch = document.querySelector('#searchObraDiv');
 

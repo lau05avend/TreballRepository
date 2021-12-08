@@ -128,7 +128,7 @@ class Index extends Component
         $usuarios= Usuario::select(['NombreCompleto','id'])->where('EstadoUsuario','Active')->orderBy('id','asc')->pluck('NombreCompleto','id')->toArray();
         return view('livewire.Planilla.index', [
             'planillas' => $planillas,
-            'usuario' => $usuarios
+            'usuarios' => $usuarios
         ]);
     }
 

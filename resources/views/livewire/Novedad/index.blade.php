@@ -16,8 +16,11 @@
                 @include('livewire.novedad.create')
             @endcan
 
-            @can('novedad_edit')
+            @canany(['novedad_edit','novedad_editTime'])
                 @include('livewire.novedad.edit')
+            @endcanany
+            @can('novedad_show')
+                @include('livewire.novedad.show')
             @endcan
             {{-- @endif --}}
         </div>
@@ -58,6 +61,7 @@
                             </select>
                         registros</label>
                     </div>
+                    @can('novedad_all')
                     <div class="float-left pl-6">
                         <label for="filterState">Estado
                             <select name="filterState" id="filterState" wire:model="filterState" class="py-0.5 focus:ring-0 focus:border-gray-600">
@@ -66,11 +70,15 @@
                             </select>
                         </label>
                     </div>
-                    @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
-                    <div class="float-left ml-2">
-                        <livewire:excel-export model="Novedad" format="csv,pdf,xlsx" />
-                    </div>
-                    @endif
+                    @endcan
+
+                    @can('novedad_all')
+                        @if(file_exists(app_path('Http/Livewire/ExcelExport.php')))
+                        <div class="float-left ml-2">
+                            <livewire:excel-export model="Novedad" format="csv,pdf,xlsx" />
+                        </div>
+                        @endif
+                    @endcan
                     <div class="float-right">
                         <label for="search" class="mr-2">Buscar: </label>
                         <input id="search" name="search" type="text" wire:model="search" class="h-8 border-gray-500 w-72 rounded">
@@ -79,72 +87,91 @@
                         <button class="buttonN position-absolute bg-gray-800 py-2 px-4 -top-16 right-2" wire:click="create()">NUEVO</button><br>
                     @endcan
                 </div>
-                <div class="table-responsive">
-                <div class="div-tab">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                            <th>AsuntoNovedad</th>
-                            <th>EstadoNovedad</th>
-                            <th>DescripcionN</th>
-                            <th>tipo_novedad</th>
-                            <th>actividad</th>
-                            <th>Empleado</th>
-                            <th>cliente</th>
-                            <th>Estado Obra</th>
-                            <th>Registrado en</th>
-                            <th>Actualizado</th>
-
-                            <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyC">
-                            @forelse ($lista as $l)
-                            <tr>
-                                <td>{{ $l->id }}</td>
-                                <td>{{ $l->AsuntoNovedad }}</td>
-                                <td>{{ $l->EstadoNovedad }}</td>
-                                <td>{{ $l->DescripcionN }}</td>
-                                <td>{{ $l->TipoNovedad->NombreTipoN }}</td>
-                                <td>{{ $l->Actividad->title }}</td>
-                                <td>{{ $l->Usuario? $l->Usuario->NombreCompleto:'-' }}</td>
-                                <td>{{ $l->Cliente?$l->Cliente->NombreCC:'-' }}</td>
-                                <td>{{ $l->EstadoObra }}
-                                    {{ $l->Actividad()->get()->first()->Obra()->select('obras.id','obras.EstadoObra')->get()->first() }}</td>
-                                <td>{{ date_format($l->created_at, 'jS M Y') }}</td>
-                                <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
-
-                                @canany(['novedad_edit','novedad_delete','novedad_active'])
+                <table class="mt-6 table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">
+                            </th>
+                            <th colspan="3">
+                                <div class="inbox-header">
+                                    <div class="mail-option">
+                                        <div class="email-btn-group m-l-15">
+                                            <div class="btn-group mr-4 mb-2 float-left mb-sm-0">
+                                                <button type="button" class=" btn btn-primary waves-light waves-effect dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-tag"></i> <i class="mdi mdi-chevron-down ml-1"></i>
+                                                </button>
+                                                <div class="dropdown-menu" style="">
+                                                    <a class="dropdown-item" href="#">Todas</a>
+                                                    <a class="dropdown-item" href="#">Sin Atender</a>
+                                                    <a class="dropdown-item" href="#">En espera</a>
+                                                    <a class="dropdown-item" href="#">Atentida</a>
+                                                </div>
+                                            </div>
+                                            <div class="btn-group mr-2 ml-2 mb-2 mb-sm-0" style="margin-top: -17px;">
+                                                <button type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-inbox"></i></button>
+                                                <button type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-exclamation-circle"></i></button>
+                                                <button type="button" class="btn btn-primary waves-light waves-effect"><i class="far fa-trash-alt"></i></button>
+                                            </div>
+                                            <a href="#" class="col-dark-gray waves-effect m-r-20" title="Archive" data-toggle="tooltip">
+                                                <i class="material-icons">archive</i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="hidden-xs" colspan="2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($lista as $l)
+                            <tr class="unread">
+                                <td class="tbl-checkbox">
+                                    <label class="form-check-label">
+                                        <input type="checkbox">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </td>
+                                <td class="hidden-xs">#{{ $l->id }}</td>
+                                <td class="hidden-xs">{{ $l->reportadoPor->user->name }}</td>
+                                <td class="max-texts">
+                                    <a href="#">
+                                        @if($l->reportadoPor->user->getRoleNames()[0] == 'Cliente')
+                                            <span class="badge badge-success">Cliente</span>
+                                        @else
+                                            <span class="badge badge-secondary">Empleado</span>
+                                        @endif
+                                        {{ $l->AsuntoNovedad }}</a>
+                                </td>
+                                <td class="text-right"> {{ date_format($l->created_at, 'jS M Y') }} </td>
+                                @canany(['novedad_edit','novedad_delete','novedad_active','novedad_editTime'])
 
                                 @if ($l->isActive == 'Active')
-                                            <td class="actions">
-                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
-                                                @can('novedad_edit')
-                                                    <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
-                                                @endcan
-                                                @can('novedad_delete')
-                                                    <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
-                                                @endcan
-                                            </td>
-                                        @else
-                                            @can('novedad_active')
-                                                <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
-                                            @endcan
-                                        @endif
+                                    <td class="actions">
+                                        <button wire:click="show({{$l->id}})"><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                        @canany(['novedad_edit','novedad_editTime'])
+                                            <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                        @endcanany
+                                        @can('novedad_delete')
+                                            <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
+                                        @endcan
+                                    </td>
+                                @else
+                                    @can('novedad_active')
+                                        <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
+                                    @endcan
+                                @endif
 
 
                                 @endcanany
                             </tr>
-                            @empty
+                        @empty
                             <tr>
-                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda {{ $search }}.</td>
+                                <td colspan="100%" class="font-bold text-gray-800 text-center px-4 py-3 sm:px-6 ">No hay resultados para la búsqueda.</td>
                             </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                   </div>
-                </div>
+                        @endforelse
+
+                    </tbody>
+                  </table>
                 <div>
                 {{ $lista->links('components.custom-pagination-links') }}
                 </div>
@@ -175,3 +202,15 @@
         @endif
     </div>
 </div>
+
+@push('jss')
+<script>
+    if( $('#obra_idReg').val() == "null"){
+        $("#obra_idReg option[value='null']").remove();
+    }
+    if( $('#obra_idAct').val() == "null"){
+        $("#obra_idAct option[value='null']").remove();
+    }
+</script>
+@endpush
+

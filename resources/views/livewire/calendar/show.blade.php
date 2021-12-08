@@ -80,14 +80,17 @@
                             <ul class="mr-8 mt-2.5">
                                 @foreach($evento->Usuarios as $user)
                                     <li class="form-row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-5">
                                             @if (Storage::disk('public')->exists("$user->FotoUsuario") )
                                                 <img src="{{ '/storage/'.$user->FotoUsuario }}" alt="Admin" class="rounded-circle" width="24px">
                                             @else
                                                 <img src="https://ui-avatars.com/api/?name={{ $user->NombreCompleto }}&color=7F9CF5&background=EBF4FF" alt="Admin" class="rounded-circle" width="24">
                                             @endif
-                                            <span class="ml-2">{{ $user->NombreCompleto }}</span>
+                                            <span class="ml-2 ">{{ $user->NombreCompleto }}</span>
                                         </div>
+                                        @can('empleado_access')
+                                            <i wire:click="redirectEmpleado({{ $user->id }})" style="font-size: 15px;hover:color: #8c8686;" data-toggle="tooltip" data-placement="bottom" title="Ver detalle" class="col-md-2 cursor-pointer material-icons">call_made</i>
+                                        @endcan
                                     </li>
                                 @endforeach
                             </ul>

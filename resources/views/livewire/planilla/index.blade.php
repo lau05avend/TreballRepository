@@ -121,7 +121,7 @@
                                         <th>Fecha Inicio Vigencia</th>
                                         <th>Fecha Expiración Vigencia</th>
                                         <th>EstadoPlanilla </th>
-                                        @canany(['planilla_edit','planilla_delete','planilla_show'])
+                                        @canany(['planilla_edit','planilla_delete'])
                                             <th style="text-align:center; color: #302c2c;">Opciones</th>
                                         @endcanany
                                     </tr>

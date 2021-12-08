@@ -212,6 +212,14 @@
     $('#search').on('blur', function(){
         console.log('blurrr')
     })
+
+    document.addEventListener('DOMContentLoaded', function(){
+        if({{ session()->has('openShow') }}){
+            var idEm = {{ session('openShow') }}
+            @this.show(idEm);
+        }
+    })
+
 </script>
 
 @endpush
