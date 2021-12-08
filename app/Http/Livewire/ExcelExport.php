@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Livewire\Component;
-// use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Excel;
 
 class ExcelExport extends Component
 {

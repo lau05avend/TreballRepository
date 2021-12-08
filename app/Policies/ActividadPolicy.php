@@ -103,12 +103,10 @@ class ActividadPolicy
         else if($op == 0){
             return redirect()->route('clientes');
         }
-            // return dd($op);
     }
 
     public function RutasDesarrolladorA(User $user){
         if($user->getRoleNames()[0] == 'Admin'){
-            dd('yeppppp');
             return true;
         }
     }

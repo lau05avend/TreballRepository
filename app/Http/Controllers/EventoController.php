@@ -39,6 +39,7 @@ class EventoController extends Controller
             'idobr' => $obra,
             'actividadBread' => $actividadBread,
             'obraModal' => $obraModal,
+            'users' => $obra->usuarios,
         ]);
     }
 
@@ -77,10 +78,11 @@ class EventoController extends Controller
         }
     }
 
-    public function show(Evento $evento)
+    public function show($obra, $eventoE)
     {
         $this->authorize('ShowActividad', Actividad::class);
-        return response()->json($evento);
+        $eventoE = Actividad::find($eventoE);
+        return response()->json($eventoE);
     }
 
     public function create(){
@@ -99,9 +101,11 @@ class EventoController extends Controller
             'end' => $request->end,
             'estado_actividad_id' => $request->estado_actividad_id,
             'fase_tarea_id' => $request->fase_tarea_id,
-            // 'obra_id' => $request->obra_id,
-            'obra_id' => $obra,
+            'obra_id' => $request->obra_id
         ]);
+
+        $actividad->Usuarios()->sync($request->Empleados);
+        // $actividad->Usuarios()->attach($request->Instalador);
 
         // $ac = $actividad;
 
