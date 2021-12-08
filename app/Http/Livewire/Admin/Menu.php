@@ -27,49 +27,57 @@ class Menu extends Component
 
     public function newClientes(){
         $this->newClientes[0] = Cliente::whereMonth('created_at',date('m'))
-                            ->whereYear('created_at', date('Y'))
-                            ->get()
-                            ->count();
+                            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $oldCliente = Cliente::whereMonth('created_at',(date('m')-1))
+            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $clientesAnt = $oldCliente == 0 ? 1 : $oldCliente;
+        $clientesYa =  $this->newClientes[0] == 0 ? 1 : $this->newClientes[0];   //100%
+        // if($clientesAnt>$clientesYa){
+        $this->newClientes[1] = round( ((100*$clientesYa)/$clientesAnt)-100, 2);
 
     }
     public function newUsuario(){
         $this->newUsuario[0] = Usuario::whereMonth('created_at',date('m'))
-                            ->whereYear('created_at', date('Y'))
-                            ->get()
-                            ->count();
+                            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $oldUsuario = Usuario::whereMonth('created_at',(date('m')-1))
+            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $usuarioAnt = $oldUsuario == 0 ? 1 : $oldUsuario;
+        $usuarioYa =  $this->newUsuario[0] == 0 ? 1 : $this->newUsuario[0];   //100%
+        $this->newUsuario[1] = round( ((100*$usuarioYa)/$usuarioAnt)-100, 2);
 
     }
     public function newNovedad(){
         $this->newNovedad[0] = ModelsNovedad::whereMonth('created_at',date('m'))
-                            ->whereYear('created_at', date('Y'))
-                            ->get()
-                            ->count();
+                            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $oldNovedad = ModelsNovedad::whereMonth('created_at',(date('m')-1))
+            ->whereYear('created_at', date('Y'))->get()->count();
+
+        $novedadsAnt = $oldNovedad == 0 ? 1 : $oldNovedad;
+        $novedadsYa =  $this->newNovedad[0] == 0 ? 1 : $this->newNovedad[0];   //100%
+        // if($novedadsAnt>$novedadsYa){
+        $this->newNovedad[1] = round( ((100*$novedadsYa)/$novedadsAnt)-100, 2);
     }
 
 
 
     public function newObras(){
         $this->newObras[0] = Obra::whereMonth('created_at',date('m'))
-                            ->whereYear('created_at', date('Y'))
-                            ->get()
-                            ->count();
+                            ->whereYear('created_at', date('Y'))->get()->count();
 
         $oldObras = Obra::whereMonth('created_at',(date('m')-1))   //arregalr enero PROBLEMA FUTURO
-                    ->whereYear('created_at', date('Y'))
-                    ->get()
-                    ->count();
-        // $this->newObras[1] = round((100 * $oldObras)/$this->newObras[0]);
+                    ->whereYear('created_at', date('Y'))->get()->count();
 
         $totalObras = Obra::get()->count();
 
-        $obrasAnt = 20;  //100%
-        $obrasYa = 10;
+        $obrasAnt = $oldObras == 0 ? 1 : $oldObras;
+        $obrasYa =  $this->newObras[0] == 0 ? 1 : $this->newObras[0];   //100%
         // if($obrasAnt>$obrasYa){
-        $this->newObras[1] = ((100*$obrasYa)/$obrasAnt)-100;
-        // }
-        // else{
-            // $this->newObras[1] = ((100*$obrasYa)/$obrasAnt);
-        // }
+        $this->newObras[1] = round( ((100*$obrasYa)/$obrasAnt)-100, 2);
 
     }
 
@@ -98,9 +106,8 @@ class Menu extends Component
 
 
     public function mount(){
-
         $this->obrasUlt =  Obra::take(5)->where('isActive','=','Active')->orderBy('created_at','desc')->get();
-        $this->novedadesUlt =  ModelsNovedad::take(5)->where('isActive','=','Active')->orderBy('created_at','desc')->get();
+        $this->novedadesUlt =  ModelsNovedad::take(6)->where('isActive','=','Active')->orderBy('created_at','desc')->get();
         $this->empleadosUlt = Obra::take(6)->select(['obras.id','obras.NombreObra','obras.EstadoObra'])->where('obras.isActive','=','Active')->orderBy('obras.created_at','desc')
                             ->Join('obra_usuario','obras.id','=','obra_id')
                             ->groupBy(['obras.id','obras.NombreObra','obras.EstadoObra','obras.created_at'])
@@ -110,8 +117,8 @@ class Menu extends Component
 
     public function openObraModal($obra){
         // $this->dispatchBrowserEvent('name-updated', ['newName' => 2]);
-        // return redirect()->route('obra.index')->with('openShow',[true,$obra]);
         return redirect()->route('obra.index')->with('openShow',$obra);
+        // return redirect()->route('obra.index')->with('openShow',[true,$obra]);
     }
 
 

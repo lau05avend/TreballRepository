@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ActividadEvent;
 use App\Models\Actividad;
 use App\Models\EstadoActividad;
 use App\Models\Evento;
@@ -53,7 +54,7 @@ class EventoController extends Controller
 
         $obra = Obra::find($obra);
 
-        $evento = $obra->Actividades()->get();
+        $evento = $obra->Actividades()->where('isActive','Active')->get();
         return response()->json($evento);
     }
     public function allF(){
@@ -90,6 +91,7 @@ class EventoController extends Controller
 
     public function store($obra, CronogramaRequestSave $request)
     {
+
         $this->authorize('CreateActividad', [Actividad::class, $obra]);
         $actividad = Actividad::updateOrCreate(['id' => $request->id],[
             'title' => $request->title,
@@ -101,21 +103,17 @@ class EventoController extends Controller
             'end' => $request->end,
             'estado_actividad_id' => $request->estado_actividad_id,
             'fase_tarea_id' => $request->fase_tarea_id,
-            'obra_id' => $request->obra_id
+            'obra_id' => $request->obra_id,
+            'obra_id' => $obra,
         ]);
 
-        $actividad->Usuarios()->sync($request->Empleados);
-        // $actividad->Usuarios()->attach($request->Instalador);
-
-        // $ac = $actividad;
-
-        // $actividadP = Actividad::where('title', '=', $request->title)->get()->first();
-        // $actividadP = Actividad::find($ac->data->id);
-        // dd($actividadP);
-
-        // if(Carbon::parse($actividadP->created_at) == Carbon::now() ){
-        //     dd('yep');
+        // if(json_decode($request->Empleados) != null){
+            $actividad->Usuarios()->sync(json_decode($request->Empleados));
         // }
+
+        if(count($actividad->Usuarios()->get() ) > 0 ){
+            event(new ActividadEvent($actividad));
+        }
 
         return $actividad;
     }

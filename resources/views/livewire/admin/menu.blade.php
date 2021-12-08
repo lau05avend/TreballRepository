@@ -12,16 +12,6 @@
     @endsection
 
     <div class="">
-        {{-- <section class="section">
-            <div class="container">
-                <div class="wrapper">
-                    <img src=https://cdn.forbes.com.mx/2021/09/Mario-bros.jpeg>
-                    <img src=https://cdn.forbes.com.mx/2021/09/Mario-bros.jpeg>
-                    <img src=https://cdn.forbes.com.mx/2021/09/Mario-bros.jpeg>
-                    <img src=https://cdn.forbes.com.mx/2021/09/Mario-bros.jpeg>
-                </div>
-            </div>
-        </section> --}}
         <div class="position-absolute">
             @include('components.message-general')
         </div>
@@ -37,7 +27,7 @@
                                             <h5 class="font-15 titleInfo">Nuevos Proyectos</h5>
                                             <h2 class="mb-3 font-18">{{ $newObras[0] }}</h2>
                                             <p class="mb-0">
-                                                <span class="{{ $newObras[1]< 0 ? "col-orange":"col-green" }}">{{ $newObras[1]< 0 ? $newObras[1]*-1: $newObras[1] }} %</span>
+                                                <span class="{{ $newObras[1]< 0 ? "col-orange":"col-green" }}">{{ $newObras[1]< 0 ? $newObras[1]*-1: $newObras[1] }} %</span><br>
                                                 {{ $newObras[1]< 0 ? 'Decremento': 'Incremento' }}
                                             </p>
 
@@ -62,7 +52,10 @@
                                         <div class="card-content">
                                             <h5 class="font-15 titleInfo">Clientes nuevos </h5>
                                             <h2 class="mb-3 font-18">{{$newClientes[0]}}</h2>
-                                            <p class="mb-0"><span class="col-orange">06%</span> Decremento</p>
+                                            <p class="mb-0">
+                                                <span class="{{ $newClientes[1]< 0 ? "col-orange":"col-green" }}">{{ $newClientes[1]< 0 ? $newClientes[1]*-1: $newClientes[1] }} %</span><br>
+                                                {{ $newClientes[1]< 0 ? 'Decremento': 'Incremento' }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
@@ -84,8 +77,10 @@
                                         <div class="card-content">
                                             <h5 class="font-15 titleInfo">Nuevas Novedades </h5>
                                             <h2 class="mb-3 font-18">{{ $newNovedad[0]}}</h2>
-                                            <p class="mb-0"><span class="col-green">18%</span>
-                                                Incremento</p>
+                                            <p class="mb-0">
+                                                <span class="{{ $newNovedad[1]< 0 ? "col-orange":"col-green" }}">{{ $newNovedad[1]< 0 ? $newNovedad[1]*-1: $newNovedad[1] }} %</span><br>
+                                                {{ $newNovedad[1]< 0 ? 'Decremento': 'Incremento' }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
@@ -107,9 +102,10 @@
                                         <div class="card-content">
                                             <h5 class="font-15 titleInfo">Empleados Disponibles</h5>
                                             <h2 class="mb-3 font-18">{{ $newUsuario[0]}}</h2>
-                                            <p class="mb-0"><span class="col-green">22%
-
-                                            </span>Incremento</p>
+                                            <p class="mb-0">
+                                                <span class="{{ $newUsuario[1]< 0 ? "col-orange":"col-green" }}">{{ $newUsuario[1]< 0 ? $newUsuario[1]*-1: $newUsuario[1] }} %</span><br>
+                                                {{ $newUsuario[1]< 0 ? 'Decremento': 'Incremento' }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
@@ -137,9 +133,13 @@
                                     <div class="swiper-slide">
                                         <div class="testimonial-wrap">
                                             <div class="testimonial-item equalizer" style="height: auto !important; box-shadow: -8px -4px 15px rgb(0 0 0 / 8%) !important;">
-                                                <div class="testimonial-img justify-center" style="float:none !important;">
+                                                <div class="testimonial-img justify-center text-center" style="float:none !important;">
                                                     @if ($obra->Images()->first())
-                                                        <img class="max-h-28 " src="{{ '/storage/'. $obra->Images()->first()->archivo }}" alt="img">
+                                                        @if (Storage::disk('public')->exists($obra->Images()->first()->archivo))
+                                                            <img class="max-h-28 " src="{{ '/storage/'. $obra->Images()->first()->archivo }}" alt="img">
+                                                        @else
+                                                            <img src="https://images.unsplash.com/photo-1547517023-7ca0c162f816" alt="">
+                                                        @endif
                                                     @else
                                                             <img src="https://images.unsplash.com/photo-1547517023-7ca0c162f816" alt="">
                                                     @endif
@@ -178,60 +178,26 @@
                         <div class="card-body">
                             @foreach ($novedadesUlt as $novedad)
 
-                                <th>{{$novedad->id}}</th>
-                                <th>{{$novedad->AsuntoNovedad}}</th>
-
                                 <div class="support-ticket media pb-1 mb-3">
                                     <img src="assets/img/users/user-1.png" class="user-img mr-2" alt="">
                                     <div class="media-body ml-3">
-                                        <div class="badge badge-pill badge-warning mb-1 float-right">Cliente</div>
-                                        <span class="font-weight-bold">{{$novedad->id}}</span>
-                                        <a href="javascript:void(0)">Please add advance table</a>
-                                        <p class="my-1">Hi, can you please add new table for advan...</p>
-                                        <small class="text-muted">Reportado por <span class="font-weight-bold font-13">John
-                                                Deo</span>
-                                            &nbsp;&nbsp; - 1 día antes</small>
+                                        @if ($novedad->reportadoPor->user->getRoleNames()[0] == 'Cliente')
+                                            <div class="badge badge-pill badge-warning mb-1 float-right">Cliente</div>
+                                        @else
+                                            <div class="badge badge-pill badge-primary mb-1 float-right">Empleado</div>
+                                        @endif
+                                        <span class="font-weight-bold">#{{$novedad->id}}</span>
+                                        <a href="javascript:void(0)">{{ $novedad->AsuntoNovedad }}</a>
+                                        <p class="my-1">{{ $novedad->DescripcionN }}</p>
+                                        <small class="text-muted">Reportado por <span class="font-weight-bold font-13">
+                                            {{$novedad->reportadoPor->user->name}}
+                                        </span>
+                                            &nbsp;&nbsp; {{ $novedad->created_at? $novedad->created_at->diffForHumans():'-' }}</small>
                                     </div>
                                 </div>
                             @endforeach
-                            <div class="support-ticket media pb-1 mb-3">
-                                <img src="assets/img/users/user-2.png" class="user-img mr-2" alt="">
-                                <div class="media-body ml-3">
-                                    <div class="badge badge-pill badge-warning mb-1 float-right">Cliente</div>
-                                    <span class="font-weight-bold">#57854</span>
-                                    <a href="javascript:void(0)">Select item not working</a>
-                                    <p class="my-1">please check select item in advance form not work...</p>
-                                    <small class="text-muted">Reportado por <span class="font-weight-bold font-13">Sarah
-                                            Smith</span>
-                                        &nbsp;&nbsp; - 2 día antes</small>
-                                </div>
-                            </div>
-                            <div class="support-ticket media pb-1 mb-3">
-                                <img src="assets/img/users/user-3.png" class="user-img mr-2" alt="">
-                                <div class="media-body ml-3">
-                                    <div class="badge badge-pill badge-primary mb-1 float-right">Empleado</div>
-                                    <span class="font-weight-bold">#85784</span>
-                                    <a href="javascript:void(0)">Are you provide template in Angular?</a>
-                                    <p class="my-1">can you provide template in latest angular 8.</p>
-                                    <small class="text-muted">Reportado por <span class="font-weight-bold font-13">Ashton
-                                            Cox</span>
-                                        &nbsp;&nbsp; -2 día antes</small>
-                                </div>
-                            </div>
-                            <div class="support-ticket media pb-1 mb-3">
-                                <img src="assets/img/users/user-6.png" class="user-img mr-2" alt="">
-                                <div class="media-body ml-3">
-                                    <div class="badge badge-pill badge-primary mb-1 float-right">Empleado</div>
-                                    <span class="font-weight-bold">#25874</span>
-                                    <a href="javascript:void(0)">About template page load speed</a>
-                                    <p class="my-1">Hi, John, can you work on increase page speed of template...</p>
-                                    <small class="text-muted">Reportado por <span class="font-weight-bold font-13">Hasan
-                                            Basri</span>
-                                        &nbsp;&nbsp; -3 día antes</small>
-                                </div>
-                            </div>
                         </div>
-                        <a href="javascript:void(0)" class="card-footer card-link text-center small ">
+                        <a href="{{ route('novedad') }}" class="card-footer card-link text-center small ">
                             Ver todo
                         </a>
                     </div>
@@ -247,11 +213,11 @@
                                 <table class="table table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Nombre Obra</th>
-                                            <th>Empleados</th>
-                                            <th>Cantidad Actividades</th>
-                                            <th>Fase Actual</th>
+                                            <th class="align-middle">#</th>
+                                            <th class="align-middle">Nombre Obra</th>
+                                            <th class="align-middle">Empleados</th>
+                                            <th class="align-middle">Cantidad Actividades</th>
+                                            <th class="align-middle">Fase Actual</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -267,7 +233,14 @@
                                                                 @php
                                                                     $usuarioE = $user->User()->get()->first()
                                                                 @endphp
-                                                                <li class="team-member team-member-sm"><img class="rounded-circle" src="{{ $usuarioE->profile_photo_url }}" alt="#" data-toggle="tooltip" title="" data-original-title="{{ $usuarioE->name }}"></li>
+                                                                @php
+                                                                    $photo = str_replace('/storage/', '', $usuarioE->profile_photo_url )
+                                                                @endphp
+                                                                @if (Storage::disk('public')->exists($photo))
+                                                                    <li class="team-member team-member-sm"><img class="rounded-circle" src="{{ '/storage/'. $photo }}" alt="#" data-toggle="tooltip" title="" data-original-title="{{ $usuarioE->name }}"></li>
+                                                                @else
+                                                                    <li class="team-member team-member-sm"><img src="https://ui-avatars.com/api/?name={{ $usuarioE->name }}&color=7F9CF5&background=EBF4FF" alt="#" data-toggle="tooltip" title="" data-original-title="{{ $usuarioE->name }}"></li>
+                                                                @endif
                                                             @endforeach
                                                             <li class="avatar avatar-sm"><span class="badge badge-primary">+{{ $empleado->Usuarios()->get()->count() }}</span></li>
                                                         @else
@@ -276,7 +249,7 @@
 
                                                     </ul>
                                                 </td>
-                                                <td>{{ $empleado->Actividades()->get()->count() }}</td>
+                                                <td class="text-center">{{ $empleado->Actividades()->get()->count() }}</td>
                                                 <td>{{ $empleado->EstadoObra }}</td>
                                             </tr>
                                        @endforeach

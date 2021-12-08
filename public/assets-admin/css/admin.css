@@ -55,6 +55,7 @@
 
   .testimonials .testimonial-item .testimonial-img {
     width: auto;
+    height: 150px;
     border-radius: 10px;
     /* border: 6px solid #fff; */
     float: left;

@@ -1,5 +1,3 @@
-{{-- @extends('partials/nav')--}}
-
 <x-app-layout>
     @section('title','Cronograma')
 
@@ -13,25 +11,6 @@
         @livewire('calendar.index',[$idobr->id])
     </div>
 
-    {{-- <div class="card p">
-        <div class="card-header">
-            <span class="text-4xl w-full text-gray-900 mb-10 text-center mt-4">Cronograma de Actividades</span>
-        </div>
-        <div class="card-body">
-            <div class="mb-9 position-relative">
-                <div id="loading">
-                    <span>CARGANDO...</span>
-                </div>
-                <button class="btn btn-outline-dark position-absolute -top-14 right-8" data-toggle="tooltip" data-placement="top" title="Tooltip idk on top" id="newActividad">NUEVO</button>
-                <div id="calendar"></div>
-            </div>
-        </div>
-        <div>
-            @include('funcionalidades.calendar.create')
-            @include('funcionalidades.calendar.edit')
-        </div>
-    </div> --}}
-
     @push('jss')
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/main.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.9.0/locales-all.js"></script>
@@ -42,7 +21,6 @@
         <script>
             var numObra = {!! json_encode($idobr->id) !!}
             var obraModal = {!! json_encode($obraModal) !!}
-
         </script>
         @include('sweetalert::alert')
 

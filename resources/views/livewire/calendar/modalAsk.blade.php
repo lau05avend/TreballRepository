@@ -1,4 +1,4 @@
-<div wire:ignore.self class="modal fade" id="staticBackdrop" data-backdrop="static" id="modalAsk" data-backdrop="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div wire:ignore.self class="modal fade" id="staticBackdrop" data-backdrop="static" id="modalAsk" data-backdrop="modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog showo" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,9 +11,8 @@
                 <form class="px-14" wire:submit.prevent="defineObra()" id="DisenoMCreate">
                     <div class="form-group">
                         <label for="ImagenPlano">Seleccione la obra a la que pertenece el Cronograma que desea consultar:</label><br>
-                        <x-select2 class="inpt form-control" id="selectObra" modalTipo="formAsk" name="selectObra" :options="$obrasdisp" ></x-select2>
+                        <x-select2 class="inpt form-control" id="selectObra" modalTipo="staticBackdrop" name="selectObra" :options="$obrasdisp" ></x-select2>
                         {{-- <input type="text" class="form-control" wire:model="inputA"> --}}
-                        {{ $inputA }}
                         @error('inputA')<span class="error text-danger">{{ $message }}</span> @enderror
 
                         <br>

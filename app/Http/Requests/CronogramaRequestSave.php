@@ -30,7 +30,9 @@ class CronogramaRequestSave extends FormRequest
             'end' => ['required', 'date', 'after:start'],
             'estado_actividad_id' => 'required',
             'fase_tarea_id' => 'required',
-            // 'obra_id' => 'required'
+            'obra_id' => 'required',
+            'Empleados' => 'nullable',
+            'Instalador'=> 'nullable'
         ];
     }
 

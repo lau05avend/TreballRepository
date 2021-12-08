@@ -2,13 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Models\Actividad;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NovedadNotification extends Notification
+class ActividadNotification extends Notification
 {
     use Queueable;
 
@@ -56,7 +57,9 @@ class NovedadNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-
+            'id' => $this->actividad->id,
+            'title' => $this->actividad->title,
+            'subtitle' => $this->actividad->Obra->NombreObra
         ];
     }
 }

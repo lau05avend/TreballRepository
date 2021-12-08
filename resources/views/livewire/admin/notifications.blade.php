@@ -22,12 +22,17 @@
             <a href="#" class="dropdown-item dropdown-item-unread">
                 @if($notification->type == "App\\Notifications\\ObraNotification")
                     <span class="dropdown-item-icon bg-success text-white"><i class="fas fa-check"></i></span>
+                @elseif ($notification->type == "App\\Notifications\\ActividadNotification")
+                    <span class="dropdown-item-icon bg-primary text-white"> <i class="fas fa-code"></i></span>
+                @elseif ($notification->type == "App\\Notifications\\NovedadNotification")
+                    <span class="dropdown-item-icon bg-warning text-white"> <i class="fas fa-code"></i></span>
                 @endif
-                {{-- <span class="dropdown-item-desc"> {{ $notification->data["title"] }} <span class="time">{{ $notification->created_at->diffForHumans() }}</span> --}}
+
+                <span class="dropdown-item-desc"> {{ $notification->data["title"] }} <span class="time">{{ $notification->created_at->diffForHumans() }}</span>
                 </span>
             </a>
             @endforeach
-            <a href="#" class="dropdown-item dropdown-item-unread py-2 justify-center">
+            <a href="#" class="dropdown-item dropdown-item-unread py-2 justify-center" style="background: #f1efef;">
                 <span class=""> Notificaciones Leídas
                 </span>
             </a>

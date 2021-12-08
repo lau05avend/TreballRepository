@@ -1,6 +1,5 @@
 @section('css')
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.3.1/main.min.css' rel='stylesheet' />
-
 @endsection
 
 <div>
@@ -10,6 +9,12 @@
                 @include('funcionalidades.calendar.create')
             @endcan
             @include('livewire.calendar.modalAsk')
+            @can('calendario_show')
+                @include('livewire.calendar.show')
+            @endcan
+            @can('calendario_edit')
+                @include('livewire.calendar.asignarEmpl')
+            @endcan
         </div>
 
         <div class="float-left" style="margin-top: -62px;">
@@ -51,8 +56,8 @@
 
 @push('jss')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
 
+        document.addEventListener('DOMContentLoaded', function() {
             $('#OpenSelectO').on('click', function(){
                 $('#staticBackdrop').modal('show');
             })
@@ -94,11 +99,18 @@
 
             // ========================= MODAL ============================
 
+            $("#closebtn").on('click',function(){
+                $('#CreateEvento').modal("hide");
+            });
             $("#close").on('click',function(){
                 $('#CreateEvento').modal("hide");
             });
+
+            if( $('#obra_id').val() == "null"){
+                    $("#obra_id option[value='null']").remove();
+            }
+
             $("#newActividad").on('click',function(){
-                console.log(openCreate())
                 if(openCreate()){
                     form.reset();
                     $('#CreateEvento').modal("show");
@@ -256,8 +268,20 @@
                 //   console.log(start);
                 },
 
+                eventClick:function(info){
+                    var evento = info.event;
+                    axios.get(URLp+'/obras/'+numObra+'/cronograma/'+evento.id).then((eventoE) => {
+                        @this.getEvent(evento.id)
 
-                eventClick:function (info){
+                        $('#showActividad').modal('show');
+                    }). catch(
+                    error => {
+                        if(error.response){
+                            console.log(error.response.data);
+                        }
+                    });
+                },
+                /*function (info){
                     var evento = info.event;
                     // console.log(evento)
                     axios.get(URLp+'/obras/'+numObra+'/cronograma/'+evento.id+"/edit").then((repuesta) => {  //acceder a una url
@@ -276,7 +300,7 @@
                             console.log(error.response.data);
                         }
                     });
-                },
+                },*/
 
                 // ========================= OTHER CALENDARIO ============================
                 loading: function(bool) {
@@ -300,14 +324,16 @@
 
             $("#btnSave").on('click',function(){
                 const datos = new FormData(form);
-                console.log(datos);
-                console.log(form.start.value);
-                if(form.start.value >= moment(Date.now()).format('YYYY-MM-DD')){
-                    console.log('funciona')
+
+                var ing = datos.getAll("Instalador[]");
+                var ins = datos.getAll("Ingeniero[]")
+                var empleados = [ ...ing, ...ins ];
+                console.log(empleados);
+
+                if( $('#asignUs').is(":checked") ){
+                    datos.append('Empleados', JSON.stringify(empleados))
                 }
-                else{
-                    console.log('idk');
-                }
+
                 axios.post(URLp+'/obras/'+numObra+'/cronograma', datos).then(    //acceder a una url
                     (respuesta) => {
                         console.log(respuesta)
@@ -326,28 +352,26 @@
                     error => {
                         if(error.response){
                             $.each(error.response.data.errors, function name(attribute,message) {
-                                // if($('#'+attribute)){
+                                $('#'+attribute+'Message').html(message[0]);
 
-                                // }
-                                // else{
-                                    $('#'+attribute+'Message').html(message[0]);
-                                // }
-                                attr.push('#'+attribute);
+                                attr.push('#'+attribute+'Message');
                             })
-                            console.log(attr)
                             console.log(error.response.data.errors);
                         }
                     }
                 )
             });
-            $(attr).each(function(atrr){
-                $(atrr).on('blur', function(){
-                    // if($(this).val().trim() != "") {
-                    //     $('#'+attr+'Message').text() = '';
-                    // }
-                    alert(this)
-                })
+
+            $('.input-event').each(function(){
+                $(this).focus(function(){
+                    var thisAlert = $(this);
+                    // console.log(thisAlert)
+                    // console.log(thisAlert[0].id)
+
+                    $('#'+thisAlert[0].id+'Message').html('');
+                });
             })
+
 
             // ========================= ELIMINAR CALENDARIO ============================
 
@@ -402,7 +426,6 @@
 
 
         });
-
 
     </script>
     {{-- <script src="{{ asset('js/calendar.js') }}" defer></script> --}}

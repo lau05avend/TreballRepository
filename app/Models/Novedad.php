@@ -19,6 +19,16 @@ class Novedad extends Model
     public function Usuario(){
         return $this->belongsTo(Usuario::class, 'empleado_id', 'id');
     }
+
+    public function reportadoPor() {
+        if($this->cliente_id != null && $this->empleado_id == null){
+            return $this->belongsTo(Cliente::class, 'cliente_id', 'id');
+        }else if($this->empleado_id != null && $this->cliente_id == null){
+            return $this->belongsTo(Usuario::class, 'empleado_id', 'id');
+        }
+        return $this->belongsTo(Cliente::class, 'cliente_id', 'id');
+    }
+
     public function Actividad(){
         return $this->belongsTo(Actividad::class);
     }

@@ -30,10 +30,10 @@ class ActividadListener
 
 
     public function handle($event){
-
-
-
-
+        $event->actividad->Usuarios()->get()
+        ->each(function(Usuario $usuario) use ($event){
+            Notification::send($usuario->User()->get()->first(), new ActividadNotification($event->actividad));
+        });
     }
 
 

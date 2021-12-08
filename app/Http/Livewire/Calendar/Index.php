@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Calendar;
 
+use App\Events\ActividadEvent;
 use App\Models\Actividad;
 use App\Models\EstadoActividad;
 use App\Models\FaseTarea;
@@ -17,8 +18,9 @@ class Index extends Component
 {
     use AuthorizesRequests;
 
-    public $eventos = '', $evento = '';
-    public $obra_;
+    public $eventos = '';
+    public Actividad $evento;
+    public $obra_, $users, $asignadosE = [];
     public $respuestaC, $respuestaE, $inputA;
     protected $listeners = ['postAdded'];
     public Actividad $actividad;
@@ -28,6 +30,7 @@ class Index extends Component
         $this->obra_ = Obra::find($obra);
         $this->userA = Auth::user();
         $this->inputA = null;
+        $this->users = $this->obra_->usuarios;
         $this->respuestaC = $this->userA->can('CreateActividad', [Actividad::class, $obra]) ? true : false;
         $this->respuestaE = $this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id] )? true : false;
     }
@@ -71,7 +74,7 @@ class Index extends Component
             $obras = Obra::select(['NombreObra','id'])->where('isActive','Active')
                         ->orderBy('id','asc')->pluck('NombreObra','id')->toArray();
         }
-        $eventos = $this->obra_->Actividades()->get();
+        $eventos = $this->obra_->Actividades()->where('isActive','Active')->get();
         $this->eventos = json_encode($eventos);
 
         $estadoA = EstadoActividad::get()->sortBy('id');
@@ -92,20 +95,19 @@ class Index extends Component
 
     }
 
-    public function neh(){
+    public function refreshCalendar(){
         $this->emit('refreshCalendar');
     }
 
     /* --------------------------------  SHOW  ------------------------------------- */
 
     public function getEvent($idEv){
-
+        $this->evento = new Actividad;
         $evento = Actividad::find($idEv);
-        $evento->start = date('Y-m-d\TH:i', strtotime($evento->start));
-        $evento->end = date('Y-m-d\TH:i', strtotime($evento->end));
-        // $eventos = Actividad::select('id','title','start')->get();
-
-        return  json_encode($evento);
+        $evento->start = Carbon::parse($evento->start)->locale('es')->isoFormat('dddd d \d\e MMMM h:mm a');
+        $evento->end = Carbon::parse($evento->end)->locale('es')->isoFormat('dddd d \d\e MMMM h:mm a');
+        $this->evento = $evento;
+        return $evento;
     }
 
     /* --------------------------------  CREATE  ------------------------------------- */
@@ -141,6 +143,24 @@ class Index extends Component
 
     /* --------------------------------  EDIT  ------------------------------------- */
 
+    public function asignarEmpleados($ing){
+        $this->evento->Usuarios()->sync($ing);
+        if(count($this->evento->Usuarios()->get() ) > 0 ){
+            event(new ActividadEvent($this->evento));
+        }
+        // $this->evento = new Actividad();
+        $this->asignadosE = [];
+        return true;
+    }
+
+    public function redirectObra(){
+        return redirect()->route('obra.index')->with('openShow',$this->obra_->id);
+    }
+
+    public function redirectEmpleado($id){
+        return redirect()->route('empleado')->with('openShow',$id);
+    }
+
     public function edit(){
         if($this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id]) ){
             $this->respuestaE = true;
@@ -148,6 +168,12 @@ class Index extends Component
         }else if(!$this->userA->can('UpdateActividad',[Actividad::class, $this->obra_->id]) ){
             $this->respuestaE = false;
         }
+    }
+
+    public function eventDelete($id) {
+        $eventDel = Actividad::find($id);
+        $eventDel->update(['isActive'=>'Inactive']);
+        // $event->delete();
     }
 
 

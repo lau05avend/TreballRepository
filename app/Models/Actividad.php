@@ -31,13 +31,13 @@ class Actividad extends Model
 
     //relacion muchos a muchos
     public function Usuarios(){
-        return $this->belongsToMany(Usuario::class)->withTimestamps();
+        return $this->belongsToMany(Usuario::class, 'actividad_usuario', 'actividad_id', 'empleado_id', 'id', 'id')->withTimestamps();
     }
 
     //Scopes
     public function scopeActive($query) {
         return $query->where('is_active', 1);
     }
-    
+
 }
 
