@@ -89,9 +89,6 @@ class Index extends Component
 
     public function postAdded($actividad){
         $this->actividad = Actividad::find($actividad['id']);
-        if($this->actividad->created_at ==  $this->actividad->updated_at){
-            dd('creaaaar');
-        }
 
     }
 
