@@ -60,13 +60,8 @@
                         </select>
                         @error('cliente.tipo_cliente_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div><br>
-                    <div class="form-group">
-                        <label for="ContrasenaC">Contraseña:</label>
-                        <input type="password" name="ContrasenaC" id="ContrasenaC" wire:model="cliente.ContrasenaC" placeholder="contrasena"><br>
-                        @error('cliente.ContrasenaC')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div><br>
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Guardar</button>
                 </form>
             </div>
             <div class="modal-footer">

@@ -187,9 +187,9 @@
                 <x-slot name="title">{{$idE->EstadoUsuario == 'Active'?'Eliminar':'Activar '}} Empleado</x-slot>
                 <x-slot name="body">
                     @if ($idE->EstadoUsuario == 'Active')
-                        <p>¿Esta seguro que desea eliminar el registro {{ $idE->id }} ?</p>
+                        <p>¿Esta seguro que desea eliminar este registro?</p>
                     @else
-                        <p>¿Esta seguro que desea activar el registro {{ $idE->id }} ?</p>
+                        <p>¿Esta seguro que desea activar este registro?</p>
                     @endif
                 </x-slot>
                 <x-slot name="method">
@@ -208,17 +208,14 @@
 @push('jss')
 
 <script>
-    console.log();
-    $('#search').on('blur', function(){
-        console.log('blurrr')
-    })
 
     document.addEventListener('DOMContentLoaded', function(){
-        if({{ session()->has('openShow') }}){
-            var idEm = {{ session('openShow') }}
-            @this.show(idEm);
+        var idEm = @json(session('openShow'));
+        if(idEm != null){
+            @this.show(idEm)
         }
     })
+
 
 </script>
 

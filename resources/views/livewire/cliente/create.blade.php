@@ -1,8 +1,8 @@
 <div wire:ignore.self class="modal fade overflow-scroll" id="CreateCliente" data-backdrop="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog showo" role="document">
+    <div class="modal-dialog showo" style="max-width: 100%;width: 780px;" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crear Nuevo Cliente</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Crear cliente</h5>
                 <button type="button" class="close" wire:click.prevent="cerrarmodal('#CreateCliente')" aria-label="Close">
                     <span aria-hidden="true close-btn">X</span>
                 </button>
@@ -60,15 +60,10 @@
                         </select>
                         @error('cliente.tipo_cliente_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div><br>
-                    <div class="form-group">
-                        <label for="ContrasenaC">Contraseña:</label>
-                        <input type="password" name="ContrasenaC" id="ContrasenaC" wire:model="cliente.ContrasenaC" placeholder="contrasena"><br>
-                        @error('cliente.ContrasenaC')<span class="error text-danger">{{ $message }}</span> @enderror
-                    </div><br>
 
                     <button type="submit" wire:loading.delay.longest.attr="disabled" class="btn btn-primary close-modal">
                         <i wire:loading.delay.longest.class="fas fa-spinner fa-spin" ></i>
-                        Save
+                        Guardar
                     </button>
                 </form>
             </div>

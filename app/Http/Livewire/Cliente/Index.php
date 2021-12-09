@@ -57,13 +57,11 @@ class Index extends Component
         $this->sortBy = 'updated_at';
         $this->sortDirection = 'desc';
         $this->userA = Auth::user();
-        // $this->con = Crypt::decryptString($this->userA->cargo()->get()->pluck('contrasena')[0]);
-        // $this->con = Crypt::decryptString('$2y$10$fojWoXIX0cE3n6/fp2.P4eGrFzyO701sTsqWyfjlxJ/elIgDZBY12');
     }
 
     public function render()
     {
-        $this->authorize('accessClie');
+        $this->authorize('accessClie', Cliente::class);
         $tipoc = TipoCliente::get();
         $tipoi = TipoIdentificacion::get();
         $clientes = Cliente::
@@ -99,12 +97,12 @@ class Index extends Component
         return [
             'cliente.NombreCC' => ['required',Rule::unique('clientes','NombreCC')->ignore($this->cliente)],
             'cliente.NumIdentificacion' => ['required',Rule::unique('clientes','NumIdentificacion')->ignore($this->cliente),'min:5','max:15'],
-            'cliente.NumCelular' => 'required|min:10|max:10 ',
-            'cliente.NumTelefono' => 'required | min:7 | max:7',
+            'cliente.NumCelular' => 'required|digits:10',
+            'cliente.NumTelefono' => 'required | min:7 ',
             'cliente.CorreoCliente' => ['required',Rule::unique('clientes','CorreoCliente')->ignore($this->cliente),'email'],
             'cliente.tipo_identificacion_id' => 'required',
             'cliente.tipo_cliente_id' => 'required',
-            'cliente.ContrasenaC' => 'required',
+            // 'cliente.ContrasenaC' => 'required',
             'cliente.FotoL' => 'nullable'
         ];
     }
@@ -122,7 +120,7 @@ class Index extends Component
     }
 
     public function create(){
-        $this->authorize('createClie');
+        $this->authorize('createClie', Cliente::class);
         $this->cliente = new Cliente();
         $this->abrirmodal('#CreateCliente');
     }
@@ -131,7 +129,7 @@ class Index extends Component
         $this->validate();
 
         // $this->cliente->ContrasenaC = Hash::make(substr(str_shuffle($this->caracteres), 0, $this->longitud));
-        $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
+        $this->cliente->ContrasenaC = Hash::make($this->cliente->NumIdentificacion);
         $this->cliente->save();
         $this->cerrarmodal('#CreateCliente');
         session()->flash('message', 'Cliente creado satisfactoriamente.');
@@ -146,6 +144,8 @@ class Index extends Component
     /* -------------------------------- EDIT  ------------------------------------- */
 
     public function edit($id){
+        $this->authorize('editClie', Cliente::class);
+
         $this->abrirmodal('#EditCliente');
         $this->cliente = Cliente::find($id);
         // $this->cliente->ContrasenaC = '';
@@ -153,12 +153,9 @@ class Index extends Component
 
     public function update(){
 
-        $this->authorize('editClie');
+        $this->authorize('editClie', Cliente::class);
         $this->validate();
-        $this->cliente->ContrasenaC = Hash::make($this->cliente->ContrasenaC);
-        if(!isset($this->cliente->fotoL)){
-            $this->cliente->FotoL = 'https://ui-avatars.com/api/?name='+$this->cliente->NombreCC+'&color=7F9CF5&background=EBF4FF';
-        }
+        $this->cliente->ContrasenaC = Hash::make($this->cliente->NumIdentificacion);
         $this->cliente->save();
         $this->cerrarmodal('#EditCliente');
         session()->flash('message', 'Cliente actializado satisfactoriamente.');
@@ -167,7 +164,7 @@ class Index extends Component
     /* -------------------------------- DELETE  ------------------------------------- */
 
     public function delete($id){   // modal de confirmacion de eliminacion
-        $this->authorize('deleteClie');
+        $this->authorize('deleteClie', Cliente::class);
         $this->openDelete = true;
         $this->idC = Cliente::find($id);
         $this->abrirmodal('#deleteConfirm');
@@ -179,7 +176,7 @@ class Index extends Component
     }
 
     public function activeConfirm($id){
-        $this->authorize('activeClie');
+        $this->authorize('activeClie', Cliente::class);
         Cliente::find($id)->update(['isActive'=>'Active']);
         $this->cerrarmodal('#deleteConfirm');
         session()->flash('message', 'Registro '.$this->idC->id.' activado satisfactoriamente.');

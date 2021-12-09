@@ -46,10 +46,12 @@
                 </a>
             </div>
             <ul class="sidebar-menu">
-                <li class="menu-header">Principal</li>
-                <li class="dropdown {{request()->routeIs('dashboard')?'active':'nonee' }}" >
-                    <a href="{{ route('dashboard') }}" class="nav-link toggled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Inicio</span></a>
-                </li>
+                @if(Auth::user()->getRoleNames()[0] == 'Gerente' || Auth::user()->getRoleNames()[0] == 'Admin' )
+                    <li class="menu-header">Principal</li>
+                    <li class="dropdown {{request()->routeIs('dashboard')?'active':'nonee' }}" >
+                        <a href="{{ route('dashboard') }}" class="nav-link toggled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Inicio</span></a>
+                    </li>
+                @endif
                 <li class="menu-header">Funcionalidades</li>
                 @can('obra_access')
                     <li class="{{request()->routeIs('obra.*')?'active':'nonee' }}">
@@ -95,9 +97,9 @@
                         <a class="dropdown" href="{{route('clientes')}}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>Clientes</span></a>
                     </li>
                 @endcan
-                <li><a class="dropdown" href="{{route('obra.index')}}">
+                {{-- <li><a class="dropdown" href="{{route('obra.index')}}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg><span>Reportes</span></a>
-                </li>
+                </li> --}}
             </ul>
         </aside>
     </div>

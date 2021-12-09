@@ -158,7 +158,7 @@ class Index extends Component
             'resina' => $resina,
             'base' => $base,
             'caucho' => $caucho,
-            'pisos' => $pisos,
+            'pisos' => $pisos
         ]);
     }
 

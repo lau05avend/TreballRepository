@@ -37,7 +37,7 @@
                     </div> --}}
                     <div class="form-group">
                         <label for="empleado_idReg">Empleado: </label><br>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="empleado_idReg" name="planilla.empleado_id" modalTipo="form-planilla" wire:model="planilla.empleado_id" :options="$usuario"></x-select2>
+                        <x-select2 class="inpt form-control" wire:ignore style="width:801px;" id="empleado_idReg" name="planilla.empleado_id" modalTipo="form-planilla" :options="$usuario"></x-select2>
                         @error('planilla.empleado_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
 
@@ -62,6 +62,10 @@
 
             $("#FechaPlanilla").val(@this.planilla.FechaPlanilla);
             $("#FechaExpiracion").val(@this.planilla.FechaExpiracion);
+        })
+
+        $('#empleado_idReg').on('change', function(e){
+            @this.set('planilla.empleado_id', e.target.value);
         })
 
         $('#FechaPlanilla').on('change', function (date){

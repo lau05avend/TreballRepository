@@ -136,9 +136,9 @@
                                 <td class="max-texts">
                                     <a href="#">
                                         @if($l->reportadoPor->user->getRoleNames()[0] == 'Cliente')
-                                            <span class="badge badge-success">Cliente</span>
+                                            <span class="badge badge-success" style="width:80px;margin-right:24px;">Cliente</span>
                                         @else
-                                            <span class="badge badge-secondary">Empleado</span>
+                                            <span class="badge badge-secondary" style="margin-right:24px;">Empleado</span>
                                         @endif
                                         {{ $l->AsuntoNovedad }}</a>
                                 </td>

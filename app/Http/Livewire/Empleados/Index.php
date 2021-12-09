@@ -9,13 +9,16 @@ use App\Models\Rol;
 use App\Models\TipoIdentificacion;
 use App\Models\User;
 use App\Models\Usuario;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class Index extends Component
@@ -23,8 +26,9 @@ class Index extends Component
     use WithPagination;
     use WithSorting;
     use AuthorizesRequests;
+    use WithFileUploads;
 
-    public $search;
+    public $search, $photo, $fotoEmpleado;
     public Usuario $empleado;
     public User $userA;
 
@@ -96,7 +100,11 @@ class Index extends Component
         }
 
         $estadocivil = EstadoCivil::get();
-        $rol = Rol::get();
+        if($this->userA->getRoleNames()[0] == "Admin"){
+            $rol = Rol::get();
+        }else{
+            $rol = Rol::get()->where('NombreRol','!=','Gerente');
+        }
         $ciudad = City::get();
         $tipoiden = TipoIdentificacion::get();
 
@@ -110,7 +118,7 @@ class Index extends Component
     }
 
     public function mount(){
-        $this->sortBy = 'NombreCompleto';
+        $this->sortBy = 'empleados.id';
         $this->sortDirection = 'desc';
         $this->perPage = '5';
         $this->empleado = new Usuario();
@@ -159,14 +167,12 @@ class Index extends Component
             'empleado.CorreoUsuario' => ['required',Rule::unique('empleados','CorreoUsuario')->ignore($this->empleado),'email'],
             'empleado.GeneroUsuario' => 'required',
             'empleado.DireccionUsuario' => 'required',
-            'empleado.EdadU' => 'required',
-            'empleado.Disponibilidad' => 'required',
             'empleado.rol_id' => 'required',
+            'empleado.Disponibilidad' => 'nullable',
             'empleado.city_id' => 'required',
             'empleado.tipo_identificacion_id' => 'required',
             'empleado.estado_civil_id' => 'required',
-            'empleado.contrasena' => 'required',
-            'empleado.FotoUsuario' => 'nullable'
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024']
         ];
     }
     public function validationAttributes (){
@@ -183,16 +189,25 @@ class Index extends Component
             'tipo_identificacion_id' => 'Tipo Identificación',
             'rol_id' => 'Rol de Usuario',
             'city_id' => 'Ciudad',
-            'estado_civil_id' => 'Estado Civil',
-            'contrasena' => 'Contraseña',
+            'photo' => 'la imagen',
+            'estado_civil_id' => 'Estado Civil'
         ];
     }
 
     public function store(){
         $this->authorize('createEmpleado', Usuario::class);
         $this->validate();
-        $this->empleado->contrasena = Hash::make($this->empleado->contrasena);
+        $this->empleado->contrasena = Hash::make($this->empleado->NumeroDocumento);
+        $this->empleado->Disponibilidad = 'Disponible';
+        if($this->photo != null){
+            $this->empleado->FotoUsuario = $this->photo->storeAs(
+                'profile-photos',
+                ('perfil_'.str_replace(" ","",$this->empleado->NombreCompleto.'.'.$this->photo->getClientOriginalExtension())),
+                'public');
+        }
+
         $this->empleado->save();
+        $this->photo = null;
         $this->cerrarmodal('#CreateEmpleado');
         session()->flash('message', 'Empleado creado satisfactoriamente.');
 
@@ -207,7 +222,7 @@ class Index extends Component
 
         $this->openShow = true;
         $this->abrirmodal('#ShowEmpleado');
-        $empleado = Usuario::findOrFail($idE);
+        $empleado = Usuario::find($idE);
         $this->empleado = $empleado;
         // $this->users = $ob->Usuarios()->get()->sortBy('id');
     }
@@ -218,15 +233,28 @@ class Index extends Component
         $this->authorize('EditEmpleado', Usuario::class);
         $this->openModal = true;
         $this->abrirmodal('#EditEmpleado');
+        $this->photo = null;
         $this->empleado = Usuario::find($id);
     }
 
     public function update(){
         $this->authorize('EditEmpleado', Usuario::class);
         $this->validate();
-        $this->empleado->contrasena = Hash::make($this->empleado->contrasena);
+        if($this->photo != null){
+            if(Storage::disk('public')->exists($this->empleado->FotoUsuario) ){
+                Storage::disk('public')->delete($this->empleado->FotoUsuario);
+            }
+            $photoNew = $this->photo->storeAs(
+                'profile-photos',
+                ('perfil_'.str_replace(" ","",$this->empleado->NombreCompleto.'_'.Carbon::now()->format('Ymd').'.'.$this->photo->getClientOriginalExtension())),
+                'public');
+
+            $this->empleado->FotoUsuario = $photoNew;
+            // $this->fotoEmpleado = $photoNew;
+        }
         $this->empleado->save();
         $this->cerrarmodal('#EditEmpleado');
+        $this->photo = null;
         // $this->openModal = false;
         session()->flash('message', 'Empleado actualizado satisfactoriamente.');
     }

@@ -176,7 +176,7 @@ class Index extends Component
             'lista' => $lista,
             'Tiponov'=>$TipoNov,
             'Act'=>$Acti,
-            'obras' => $obras,
+            'obras' => $obras
         ]);
     }
 

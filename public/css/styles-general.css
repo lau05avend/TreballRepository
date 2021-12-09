@@ -233,5 +233,132 @@ table.dataTable thead>tr>th {
 
 }
 
+/* ===========================    CLASES STEPER ==================================== */
 
+.wizard ul {
+    list-style: none!important;
+    padding: 0;
+    margin: 0;
+}
+
+/* steps */
+
+.wizard>.steps>ul>li {
+    width: 33%;
+}
+
+.steps .current-info{
+    position: absolute;
+    left: -999em;
+}
+
+.steps a, .steps a:active, .steps a:hover {
+    margin: 3px;
+    padding: 15px;
+    display: block;
+    width: auto;
+    border-radius: 5px;
+}
+
+.wizard>.steps .current a, .wizard>.steps .current a:active, .wizard>.steps .current a:hover {
+    background-color: #609e7f;
+    color: #fff;
+}
+
+.wizard>.steps .disabled a, .wizard>.steps .disabled a:active, .wizard>.steps .disabled a:hover, .wizard>.steps .done a, .wizard>.steps .done a:active, .wizard>.steps .done a:hover {
+    background-color: #bdd5c9;
+    color: #305e47;
+}
+
+
+.steps .current .number {
+    border: 2px solid white;
+}
+
+.wizard>.steps .current .number{
+    background-color: #609e7f;
+}
+
+.wizard>.steps .number {
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    width: 38px;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    margin-right: 10px;
+}
+
+
+/* content */
+
+.wizard>.content {
+    background-color: transparent;
+    margin: 0 5px;
+    border-radius: 0;
+    min-height: 150px;
+}
+
+.wizard>.content>.body {
+    width: 100%;
+    height: 100%;
+    padding: 30px 34px;
+    margin-top: 10px;
+    position: static;
+}
+
+.wizard>.steps .disabled a .number, .wizard>.steps .disabled a:active .number, .wizard>.steps .disabled a:hover .number, .wizard>.steps .done a .number, .wizard>.steps .done a:active .number, .wizard>.steps .done a:hover .number {
+    border-color: #609e7f;
+}
+
+/* next-prev */
+
+.wizard>.actions {
+    position: relative;
+    display: block;
+    text-align: right;
+    width: 100%;
+}
+
+.wizard>.actions>ul {
+    display: inline-block;
+    text-align: right;
+}
+
+.wizard>.actions>ul>li, .wizard>.steps>ul>li {
+    float: left;
+}
+
+.wizard>.actions>ul>li {
+    display: block;
+    margin: 0 0.5em;
+}
+
+.wizard>.actions .disabled a, .wizard>.actions .disabled a:active, .wizard>.actions .disabled a:hover {
+    opacity: 0.65;
+    background-color: #3b5de7;
+    color: #fff;
+    cursor: not-allowed;
+}
+.wizard>.actions a, .wizard>.actions a:active, .wizard>.actions a:hover {
+    background-color: #3b5de7;
+    border-radius: 4px;
+    padding: 8px 15px;
+    color: #fff;
+}
+
+
+  @media (max-width: 768px) {
+    .wizard>.steps>ul>li {
+        width: 50%;
+    }
+  }
+
+  @media (max-width: 520px){
+    .wizard>.steps>ul>li {
+        width: 100%;
+    }
+  }
 

@@ -22,6 +22,12 @@ class Create extends Component
     public User $userA;
     public array $Usuarios = [];
     public $image = [], $identificator;
+    public $step, $totalSteps;
+    public $stepActions = [
+        'submit1',
+        'submit2',
+        'submit3'
+    ];
 
     use WithFileUploads;
 
@@ -40,6 +46,8 @@ class Create extends Component
     }
 
     public function mount(){
+        $this->step = 0;
+        $this->totalSteps = 3;
         $this->obra = new Obra();
         $this->identificator = rand();   //numero aleatorio
         $this->userA = Auth::user();
@@ -48,6 +56,60 @@ class Create extends Component
     {
         $this->validateOnly($propertyName);
     }
+
+    public function decreaseStep(){
+        if($this->step > 0){
+            $this->step--;
+        }
+    }
+    public function submitStep(){
+        $action = $this->stepActions[$this->step];
+        $this->$action();
+    }
+
+    public function submit1(){
+        $this->validate(
+            [
+                'obra.NombreObra'=> ['required', Rule::unique('obras','NombreObra')->ignore($this->obra), 'min:5'],
+                'obra.DireccionObra'=> 'required |min: 5',
+                'obra.city_id'=> 'required',
+                'obra.cliente_id' => 'required',
+                'obra.tipo_obra_id' => 'required',
+                'obra.MedidaArea' => 'nullable',
+                'obra.MedidaPerimetro' => 'nullable',
+            ],[],[
+                'NombreObra' => 'Nombre obra',
+            'cliente_id' => 'Cliente',
+            'city_id' => 'Ciudad',
+            'DireccionObra'=> 'Direccion Obra',
+            'CiudadObra'=> 'Ciudad Obra',
+            ]
+            );
+        $this->step++;
+    }
+
+    public function submit2(){
+        $this->validate(
+            [
+                'obra.CondicionDesnivel' => 'nullable',
+                'obra.DetalleCondicionPiso' => 'nullable',
+                'obra.DatosAdicionales' => 'nullable',
+                'obra.TipoMaterialSuelo' => 'required',
+            ],[],[
+                'CondicionDesnivel' => 'Condicion Desnivel',
+                'DetalleCondicionPiso' => 'Detalle Condicion Piso',
+                'DatosAdicionales' => 'Datos Adicionales',
+                'TipoMaterialSuelo' => 'Tipo de obra',
+            ]
+            );
+        $this->step++;
+    }
+
+    public function submit3(){
+        $this->step++;
+    }
+
+
     public function rules(){
         return [
             'obra.NombreObra'=> ['required', Rule::unique('obras','NombreObra')->ignore($this->obra), 'min:5'],
@@ -56,12 +118,12 @@ class Create extends Component
             'obra.TipoMaterialSuelo' => 'required',
             'obra.tipo_obra_id' => 'required',
             'obra.cliente_id' => 'required',
-            'obra.MedidaArea' => 'min:1',
-            'obra.MedidaPerimetro' => '',
-            'obra.CondicionDesnivel' => '',
-            'obra.DetalleCondicionPiso' => '',
-            'obra.DatosAdicionales' => '',
-            'obra.DatosAdicionales' => '',
+            'obra.MedidaArea' => 'nullable',
+            'obra.MedidaPerimetro' => 'nullable',
+            'obra.CondicionDesnivel' => 'nullable',
+            'obra.DetalleCondicionPiso' => 'nullable',
+            'obra.DatosAdicionales' => 'nullable',
+            'obra.DatosAdicionales' => 'nullable',
             'image.*' => 'image',
         ];
     }
