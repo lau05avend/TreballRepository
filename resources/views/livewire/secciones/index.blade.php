@@ -32,10 +32,10 @@
         <div class="position-absolute">
             @if ($openModal)
                 @can('seccion_create')
-                    {{-- @include('livewire.secciones.create') --}}
+                    @include('livewire.secciones.create')
                 @endcan
                 @can('seccion_edit')
-                    {{-- @include('livewire.secciones.edit') --}}
+                    @include('livewire.secciones.edit')
                 @endcan
             @endif
         </div>

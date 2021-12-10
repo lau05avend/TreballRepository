@@ -46,12 +46,12 @@
                 </a>
             </div>
             <ul class="sidebar-menu">
-                @if(Auth::user()->getRoleNames()[0] == 'Gerente' || Auth::user()->getRoleNames()[0] == 'Admin' )
+                {{-- @if(Auth::user()->getRoleNames()[0] == 'Gerente' || Auth::user()->getRoleNames()[0] == 'Admin' ) --}}
                     <li class="menu-header">Principal</li>
                     <li class="dropdown {{request()->routeIs('dashboard')?'active':'nonee' }}" >
                         <a href="{{ route('dashboard') }}" class="nav-link toggled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Inicio</span></a>
                     </li>
-                @endif
+                {{-- @endif --}}
                 <li class="menu-header">Funcionalidades</li>
                 @can('obra_access')
                     <li class="{{request()->routeIs('obra.*')?'active':'nonee' }}">

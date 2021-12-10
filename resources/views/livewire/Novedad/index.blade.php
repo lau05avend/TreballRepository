@@ -143,11 +143,13 @@
                                         {{ $l->AsuntoNovedad }}</a>
                                 </td>
                                 <td class="text-right"> {{ date_format($l->created_at, 'jS M Y') }} </td>
-                                @canany(['novedad_edit','novedad_delete','novedad_active','novedad_editTime'])
+                                @canany(['novedad_edit','novedad_delete','novedad_active','novedad_show'])
 
                                 @if ($l->isActive == 'Active')
                                     <td class="actions">
-                                        <button wire:click="show({{$l->id}})"><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
+                                        @can('novedad_show')
+                                        <button wire:click="show({{$l->id}})"><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>                                            
+                                        @endcan
                                         @canany(['novedad_edit','novedad_editTime'])
                                             <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
                                         @endcanany

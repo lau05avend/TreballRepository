@@ -28,13 +28,10 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary close-modal">Save</button>
+                            <button type="submit" class="btn btn-primary close-modal">Editar diseño</button>
                         </div>
                     </form>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn" wire:click.prevent="cerrarmodal('#EditDiseno')">Close</button>
             </div>
         </div>
     </div>

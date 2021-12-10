@@ -11,12 +11,12 @@
                 <form class="px-14 pb-5" wire:submit.prevent="store()">
                     <div class="form-group">
                         <label for="tipo_material_id">Tipo de Material:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idReg" name="material.tipo_material_id" modalTipo="CreateMaterial" wire:model="material.tipo_material_id" :options="$TipoMaterial"></x-select2>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idReg" name="material.tipo_material_id" modalTipo="CreateMaterial" :options="$TipoMaterial"></x-select2>
                         @error('material.tipo_material_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
                     <div class="form-group">
                         <label for="color_idReg">Color del Material:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="color_idReg" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
+                        <x-select2 class="inpt form-control" style="width:801px;" id="color_idReg" name="material.color_id" modalTipo="CreateMaterial" :options="$color"></x-select2>
                         @error('material.color_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div><br>
                     <div class="form-group">
@@ -25,7 +25,7 @@
                         @error('material.DescripcionMat') <span class="error text-danger">{{ $message }}</span>@enderror
                     </div><br>
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Registrar Material</button>
                 </form>
             </div>
             <div class="modal-footer">
@@ -34,4 +34,5 @@
         </div>
     </div>
 </div>
+
 

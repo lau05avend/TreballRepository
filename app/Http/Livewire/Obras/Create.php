@@ -36,7 +36,7 @@ class Create extends Component
         $tipo_obra = TipoObra::get();
         $cliente = Cliente::where('isActive','Active')->pluck('NombreCC','id')->toArray();
         $ciudad = City::pluck('ciudad','id')->toArray();
-        $empleados = Usuario::all()->sortBy('id');
+        $empleados = Usuario::get()->where('EstadoUsuario','Active')->where('Disponibilidad','Disponible')->sortBy('id');
         return view('livewire.obras.create',[
             'ciudad' => $ciudad,
             'tipo_obra' => $tipo_obra,
@@ -79,12 +79,11 @@ class Create extends Component
                 'obra.MedidaPerimetro' => 'nullable',
             ],[],[
                 'NombreObra' => 'Nombre obra',
-            'cliente_id' => 'Cliente',
-            'city_id' => 'Ciudad',
-            'DireccionObra'=> 'Direccion Obra',
-            'CiudadObra'=> 'Ciudad Obra',
-            ]
-            );
+                'cliente_id' => 'Cliente',
+                'city_id' => 'Ciudad',
+                'DireccionObra'=> 'Direccion Obra',
+                'CiudadObra'=> 'Ciudad Obra',
+            ]);
         $this->step++;
     }
 
@@ -95,18 +94,34 @@ class Create extends Component
                 'obra.DetalleCondicionPiso' => 'nullable',
                 'obra.DatosAdicionales' => 'nullable',
                 'obra.TipoMaterialSuelo' => 'required',
+                'image.*' => ['required', 'mimes:jpg,jpeg,png', 'max:1024']
             ],[],[
                 'CondicionDesnivel' => 'Condicion Desnivel',
                 'DetalleCondicionPiso' => 'Detalle Condicion Piso',
                 'DatosAdicionales' => 'Datos Adicionales',
                 'TipoMaterialSuelo' => 'Tipo de obra',
+                'image.*' => 'La imagen seleccionada'
             ]
             );
         $this->step++;
     }
 
     public function submit3(){
-        $this->step++;
+        $this->validate();
+        $this->obra->save();
+        $this->obra->Usuarios()->sync($this->Usuarios); // para tabla N:M con usuarios
+
+        foreach ($this->image as $image) {   // imagenes
+            $imagen = $image->store('obras','public');
+            $this->obra->Images()->create(['archivo'=>$imagen]);
+        }
+
+        if(count($this->obra->Usuarios()->get()) > 0 ){
+            event(new ObraEvent($this->obra));
+        }
+
+        session()->flash('message', 'Obra creada satisfactoriamente.');
+        return redirect()->route('obra.index');
     }
 
 
@@ -124,7 +139,7 @@ class Create extends Component
             'obra.DetalleCondicionPiso' => 'nullable',
             'obra.DatosAdicionales' => 'nullable',
             'obra.DatosAdicionales' => 'nullable',
-            'image.*' => 'image',
+            'image.*' => ['required', 'mimes:jpg,jpeg,png', 'max:1024']
         ];
     }
     public function validationAttributes (){
@@ -136,24 +151,25 @@ class Create extends Component
             'CiudadObra'=> 'Ciudad Obra',
             'TipoMaterialSuelo' => 'Tipo de obra',
             'tipo_obra_id' => 'Tipo de Material Suelo',
+            'image.*' => 'La imagen seleccionada'
         ];
     }
 
     public function store(){
-        $this->validate();
-        $this->obra->save();
-        $this->obra->Usuarios()->sync($this->Usuarios); // para tabla N:M con usuarios
+        // $this->validate();
+        // $this->obra->save();
+        // $this->obra->Usuarios()->sync($this->Usuarios); // para tabla N:M con usuarios
 
-        foreach ($this->image as $image) {   // imagenes
-            $imagen = $image->store('obras','public');
-            $this->obra->Images()->create(['archivo'=>$imagen]);
-        }
+        // foreach ($this->image as $image) {   // imagenes
+        //     $imagen = $image->store('obras','public');
+        //     $this->obra->Images()->create(['archivo'=>$imagen]);
+        // }
 
-        if(count($this->obra->Usuarios()->get()) > 0 ){
-            event(new ObraEvent($this->obra));
-        }
+        // if(count($this->obra->Usuarios()->get()) > 0 ){
+        //     event(new ObraEvent($this->obra));
+        // }
 
-        session()->flash('message', 'Obra Successfully created.');
-        return redirect()->route('obra.index');
+        // session()->flash('message', 'Obra Successfully created.');
+        // return redirect()->route('obra.index');
     }
 }

@@ -41,11 +41,8 @@
                         @error('planilla.empleado_id')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Registrar Planilla</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn" wire:click.prevent="cerrarmodal('#CreatePlanilla')">Close</button>
             </div>
         </div>
     </div>

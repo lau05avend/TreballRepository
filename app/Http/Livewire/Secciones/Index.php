@@ -62,7 +62,7 @@ class Index extends Component
         if ($this->authorize('AccessDiseno', Diseno::class) && Gate::denies('AllDiseno', Diseno::class)) {
 
             $obrasD = $this->userA->Cargo()->get()->first()->Obras()->where('obras.isActive','Active')
-                            ->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])->get();
+                            ->whereIn('obras.EstadoObra',['Sin Iniciar','Activa'])->pluck('NombreObra','obras.id')->toArray();
 
             $disenos = Diseno::where('isActive', 'Active')->where('obra_id',$this->selectObraD)
                         ->orderBy('id','asc')->pluck('id','id')->toArray();

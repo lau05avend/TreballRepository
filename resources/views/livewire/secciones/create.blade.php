@@ -38,25 +38,27 @@
                         </select>
                         @error('seccion.color_id ')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
-                    <div class="form-group">
-                        <label for="diseno_id">Diseño:</label>
-                        <select class="form-select" wire:model="seccion.diseno_id" class="inpt" name="diseno_id" id="diseno_id">
-                            <option value="">Seleccione</option>
-                            @forelse ($diseno as $dn)
-                            <option value="{{ $dn->id }}">{{ $dn->ImagenPlano }}</option>
+                    <div style="width: 310px;" class="" id="searchObraDiv">
+                        <label for="searchObraD">Seleccione una obra:</label>
+                        <x-select2 class="inpt form-control" style="width:201px;" id="searchObraD" name="searchObraD" :options="$obrasD"></x-select2>
+                    </div>
+                    <div class="pr-4" style="width: 300px; text-align: center;">
+                        <label for="searchDiseno">Seleccione un diseño:</label>
+                        <select class="inpt form-control" style="width:241px;" wire:model="seccion.diseno_id" id="searchDiseno" name="searchDiseno" >
+                            <option value="">Escoja el diseño</option>
+                            @forelse ($disenos as $key => $value)
+                            <option value="{{ $key }}">Diseño {{ $value }}</option>
                             @empty
-                            <option value="">Ups! Registra algun tipo de identificacion para continuar.</option>
+                            @if ($selectObraD != null && $disenos == null)
+                                <option value="" selected>No hay diseños en esta obra</option>
+                            @endif
                             @endforelse
                         </select>
-                        @error('seccion.diseno_id ')<span class="error text-danger">{{ $message }}</span> @enderror
                     </div>
 
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Registrar seccion</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn" wire:click.prevent="cerrarmodal('#CreateSecciones')">Close</button>
             </div>
         </div>
     </div>

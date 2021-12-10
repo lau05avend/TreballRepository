@@ -11,8 +11,8 @@
                 <form class="px-14 pb-5" wire:submit.prevent="update()">
                     <div class="form-group">
                         <label for="tipo_material_idAct">Tipo de Material:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idAct" name="material.tipo_material_id" modalTipo="EditMaterial" wire:model="material.tipo_material_id" :options="$TipoMaterial"></x-select2>
-                        <select class="form-select" wire:model="material.tipo_material_id" class="inpt" name="tipo_material_id" id="tipo_material_id">
+                        {{-- <x-select2 class="inpt form-control" style="width:801px;" id="tipo_material_idAct" name="material.tipo_material_id" modalTipo="EditMaterial" :options="$TipoMaterial"></x-select2> --}}
+                        <select class="form-control" wire:model="material.tipo_material_id" class="inpt" name="tipo_material_id" id="tipo_material_id">
                             <option value="">Seleccione</option>
                             @forelse ($TipoMaterial as $key=>$value)
                             <option value="{{ $key }}">{{ $value }}</option>
@@ -24,8 +24,8 @@
                     </div><br>
                     <div class="form-group">
                         <label for="color_idAct">Color del Material:</label>
-                        <x-select2 class="inpt form-control" style="width:801px;" id="color_idAct" name="material.color_id" modalTipo="CreateMaterial" wire:model="material.color_id" :options="$color"></x-select2>
-                        <select class="form-select" wire:model="material.color_id" class="inpt" name="color_id" id="color_id">
+                        {{-- <x-select2 class="inpt form-control" style="width:801px;" id="color_idAct" name="material.color_id" modalTipo="CreateMaterial" :options="$color"></x-select2> --}}
+                        <select class="form-control" wire:model="material.color_id" class="inpt" name="color_id" id="color_id">
                             <option value="">Seleccione</option>
                             @forelse ($color as $key=>$value)
                             <option value="{{ $key }}">{{ $value }}</option>
@@ -41,7 +41,7 @@
                         @error('material.DescripcionMat') <span class="error text-danger">{{ $message }}</span>@enderror
                     </div><br>
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Editar material</button>
                 </form>
             </div>
             <div class="modal-footer">

@@ -36,10 +36,10 @@
         @endif
 
         <div class="position-absolute">
-            @can('createMaterial')
+            @can('material_create')
                 @include('livewire.Material.create')
             @endcan
-            @can('updateMaterial')
+            @can('material_edit')
                 @include('livewire.Material.edit')
             @endcan
         </div>
@@ -61,7 +61,7 @@
                             </select>
                             registros</label>
                     </div>
-                    @can('MaterialActive')
+                    @can('material_active')
                         <div class="float-left pl-6">
                             <label for="filterState">Estado
                                 <select name="filterState" id="filterState" wire:model="filterState" class="py-0.5 focus:ring-0 focus:border-gray-600">
@@ -81,7 +81,7 @@
                         <input id="search" name="search" type="text" wire:model="search"
                             class="h-8 border-gray-500 w-68 rounded">
                     </div>
-                    @can('createMaterial')
+                    @can('material_create')
                         <button class="buttonN" wire:click="create">
                             <span>NUEVO</span>
                             <i class="ion-android-add-circle" style="font-size:19px; margin-left:3px"></i>
@@ -100,7 +100,7 @@
                                     <th style="width: 135px;">Tipo Material @include('components.table.sort', ['field' => 'NombreTipoM'])</th>
                                     <th style="width: 145px;">Registrado en @include('components.table.sort', ['field' => 'created_at'])</th>
                                     <th style="width: 145px;">Actualizada en @include('components.table.sort', ['field' => 'updated_at'])</th>
-                                    @canany(['updateMaterial','deleteMaterial','material_active'])
+                                    @canany(['material_edit','material_delete','material_active'])
                                         <th style="width: 102px;">Opciones</th>
                                     @endcanany
                                 </tr>
@@ -115,19 +115,18 @@
                                     <td>{{ $l->created_at? $l->created_at : '' }}</td>
                                     <td>{{ $l->updated_at? $l->updated_at :'' }}</td>
 
-                                    @canany(['updateMaterial','deleteMaterial','material_active'])
+                                    @canany(['material_edit','material_delete','material_active'])
                                         @if ($l->isActive == 'Active')
                                             <td class="actions">
-                                                <button><i style="font-size:32px" class="ion-ios-eye-outline"></i></button>
-                                                @can('updateMaterial')
-                                                    <button style="margin-top: 5px;" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
+                                                @can('material_edit')
+                                                    <button style="margin-top: 5px;" id="editMat" wire:click="edit({{$l->id}})" class="cursor-pointer"><i class="material-icons">create</i></button>
                                                 @endcan
-                                                @can('deleteMaterial')
+                                                @can('material_delete')
                                                     <button wire:click="delete({{$l->id}})" class="cursor-pointer" style="font-size: 25px;"><i class="ion-trash-a"></i></button>
                                                 @endcan
                                             </td>
                                         @else
-                                            @can('MaterialActive')
+                                            @can('material_active')
                                                 <td><button class="bg-green-500 butt hover:bg-green-400 px-3 py-1 rounded" wire:click="delete({{$l->id}})" >Activar</button></td>
                                             @endcan
                                         @endif
@@ -150,7 +149,7 @@
 
         </div>
     </div>
-    @can('deleteMaterial')
+    @can('material_delete')
         @if ($openDelete)
             <x-delete>
                 <x-slot name="title">{{$idM->isActive == 'Active'?'Eliminar':'Activar '}} Cliente</x-slot>
@@ -172,5 +171,28 @@
         @endif
     @endcan
 </div>
+
+@push('jss')
+
+<script>
+    $('#tipo_material_idReg').val(@this.material.tipo_material_id)
+
+    $('#tipo_material_idReg').on('change', function(event){
+        let value = event.target.value;
+        @this.set('material.tipo_material_id',value);
+    })
+
+    $('#color_idReg').val(@this.material.color_id)
+
+    $('#color_idReg').on('change', function(event){
+        let value = event.target.value;
+        @this.set('material.color_id',value);
+    })
+
+    
+
+</script>
+
+@endpush
 
 

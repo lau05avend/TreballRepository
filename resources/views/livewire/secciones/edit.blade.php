@@ -34,7 +34,7 @@
 
 
 
-                    <button type="submit" class="btn btn-primary close-modal">Save</button>
+                    <button type="submit" class="btn btn-primary close-modal">Editar seccion</button>
                 </form>
             </div>
             <div class="modal-footer">

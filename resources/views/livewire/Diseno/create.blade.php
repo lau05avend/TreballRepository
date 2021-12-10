@@ -10,7 +10,7 @@
             <div class="modal-body -mb-3">
                 <div class="px-14 mt-6">
                     <p style="font-weight: 500; color: #43475e; font-size: 15px; letter-spacing: 0.5px;" name="photoDiseno">Imagen de planos y diseños:</p>
-                    <x-dropzone id="photo" name="photo" acceptedFiles=".png, .jpg, .gif" model="diseno" paramName="fileUpload"  collection-name="fileUpload" max-file-size="2" max-width="4096" max-height="4096" max-files="12" />
+                    <x-dropzone id="photo" name="photo" acceptedFiles=".png, .jpg, .gif, .pdf" model="diseno" paramName="fileUpload"  collection-name="fileUpload" max-file-size="2" max-width="4096" max-height="4096" max-files="12" />
                     <form wire:submit.prevent="store()" id="DisenoMCreate">
                         <div class="form-group">
                             @error('images')<span class="error text-danger">{{ $message }}</span> @enderror
@@ -27,7 +27,7 @@
                             @error('diseno.obra_id') <span class="error text-danger">{{ $message }}</span> @enderror
                         </div>
 
-                        @can('material_diseno_save')
+                        {{-- @can('material_diseno_save')
                             <div class="mt-12">
                                 <h3>Asignar Materiales </h3><br>
                                 <div class="form-row">
@@ -60,16 +60,13 @@
 
                                 <br><br>
                             </div>
-                        @endcan
+                        @endcan --}}
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary close-modal">Save</button>
+                            <button type="submit" class="btn btn-primary close-modal">Registrar diseño</button>
                         </div>
                     </form>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn" wire:click.prevent="cerrarmodal('#CreateDiseno')">Close</button>
             </div>
         </div>
     </div>

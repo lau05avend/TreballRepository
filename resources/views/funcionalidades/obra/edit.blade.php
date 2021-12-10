@@ -2,6 +2,7 @@
     @section('title','Obra | Editar')
     @section('css')
     <link rel="stylesheet" href="{{ asset('css/styles-obras.css'); }}">
+    <link rel="stylesheet" href="{{ asset('css/styles-general.css'); }}">
     @endsection
 
     <div class="mt-2">

@@ -52,6 +52,7 @@ class Index extends Component
         $this->material = new ModelsMaterial();
         $this->filterState = 'Active';
         $this->userA = Auth::user();
+
     }
 
     public function render()   //renderiza el componente/
@@ -90,6 +91,8 @@ class Index extends Component
         $this->authorize('createMaterial', Material::class);
         $this->abrirmodal('#CreateMaterial');
         $this->material = new ModelsMaterial();
+        $this->material->tipo_material_id = null;
+        $this->material->color_id = null;
     }
 
     public function rules(){ //reglas
