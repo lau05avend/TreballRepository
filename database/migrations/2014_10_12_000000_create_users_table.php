@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->enum("RolExterno",array('cliente', 'empleado', 'admin'));
             $table->unsignedBigInteger('NumeroDocumento');
+            $table->enum("isActive",array('Active', 'Inactive'))->default('Active');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
